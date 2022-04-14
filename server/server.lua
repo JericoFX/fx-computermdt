@@ -197,6 +197,7 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
 		if data.report.type == "basic" then
 			TriggerEvent("qb-phone:server:sendNewMailToOffline",data.report.citizenid,{sender="Police Depto",subject =" Fine situation",message ="A fine has been created the amount to pay is $"..data.report.amount.." if you need more information, please go to the police station and give this code "..data.report.id.." to the officer."})
 		end
+
 		Wait(100)
 		MySQL.query(
 			"INSERT INTO fx_reports (id,title,name,lastname,citizenid,location,coords,observations,data,type) VALUES (?,?,?,?,?,?,?,?,?,?)",
@@ -210,7 +211,7 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
 				json.encode(coords),
 				tostring(data.report.observations),
 				json.encode(data.report.data),
-				data.report.type,
+				data.report.type or "basic",
 			}
 		)
 
@@ -290,7 +291,7 @@ end)
 
 RegisterServerEvent("fx-mdt:server:UpdateReports", function()
 	Wait(200)
-	MySQL.query("SELECT * FROM fx_reports WHERE type = 'bolo' OR  type = 'warrant'", function(res)
+	MySQL.query("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant'", function(res)
 		TriggerClientEvent("fx-mdt:client:UpdateReports", -1, res)
 	end)
 end)

@@ -16,7 +16,7 @@
 		title: 'Vehicle Missing',
 		color: '1',
 		vehicle: '',
-		plate: 'none',
+		plate: '',
 		category: '',
 		name: '',
 		lastname: '',
@@ -26,7 +26,7 @@
 		observations: '',
 		type: 'B.O.L.O',
 		taked: false,
-		callsign: 'none',
+		callsign: '',
 		bolo: true,
 		hasbolo: 0,
 		isvehicle: true,
@@ -51,7 +51,13 @@
 	async function addBolos() {
 		let open = true;
 
-		let m = new addBolo({target: content, props: {open: open, message: `Vehicle model ${Data.vehicle} with the plate ${Data.plate} has been reported missing, Color ${colors[Data.color].Description}`}});
+		let m = new addBolo({
+			target: content,
+			props: {
+				open: open,
+				message: $_('page.home.app.searchVehicle.messageReport', {values: {0: Data.vehicle.toUpperCase(), 1: Data.plate, 2: colors[Data.color].Description.toUpperCase()}}),
+			},
+		});
 
 		m.$on('addObservations', async (e) => {
 			const Datas = e.detail.message;
@@ -64,7 +70,7 @@
 						target: content,
 						props: {
 							open: opensito,
-							message: `B.O.L.O created with the id ${Data.id}`,
+							message: `{$_('b-o-l-o-created-with-the-id-data-id',{0: ${Data.id} })}`,
 						},
 					});
 				} else {
@@ -72,7 +78,7 @@
 						target: content,
 						props: {
 							open: opensito,
-							message: `Error creating the bolo`,
+							message: `{$_('error-creating-the-bolo')}`,
 						},
 					});
 					m.$on('closeModal', () => (opensito = false));

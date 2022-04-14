@@ -3,12 +3,15 @@
     "home": {
       "app": {
         "report": "Crear Reporte",
-        "user": "Buscar Usuarios",
+        "user": "Herramienta de Busqueda",
         "general": "Lista de Reportes",
         "warrant": "Warrant Tool",
         "mytool": "Mi Herramienta",
         "search": "Search",
-        "vehicle": "Vehiculos"
+        "vehicle": "Vehiculos",
+        "searchVehicle": {
+          "messageReport": "Vehiculo {0} con la placa {1} fue reportado perdido, Color {2}"
+        }
       }
     },
     "report": {
@@ -90,5 +93,8 @@
   "category": "Categoria",
   "color": "Color",
   "owner": "Nombre",
-  "last-name": "Apellido"
+  "last-name": "Apellido",
+  "error-creating-the-bolo": "Error al crear el B.O.L.O",
+  "b-o-l-o-created-with-the-id-data-id": "B.O.L.O creado con el id {0}",
+  "vehiclemodel": "El vehiculo modelo {0} con la placa {1} fue reportado perdido, Color {2}"
 }

@@ -22,10 +22,16 @@
 		Tables();
 	});
 
-	const Values = ['bolo', 'basic', 'warrant'];
-	let select = Values[1];
+	const Values = [
+		{id: 'bolo', text: 'Bolo'},
+		{id: 'warrant', text: 'Warrant'},
+		{id: 'basic', text: 'Basic'},
+	];
+	$: select = 0;
 	let grid;
-
+	$: console.log(select);
+	{
+	}
 	let reportData = {
 		id: uid(),
 		name: '',
@@ -36,7 +42,7 @@
 		coords: '',
 		observations: 'No observations',
 		title: '',
-		type: select,
+		type: Values[2].id,
 		amount: 0,
 		data: {
 			evidences: [],
@@ -49,6 +55,7 @@
 	reportData.data.polices = $PoliceLists;
 	reportData.data.fines = $PoliceFines;
 	reportData.amount = $PoliceFines.reduce((n, {amount}) => n + amount, 0);
+
 	$: disabled = false;
 	$: disableLocale = false;
 	let jerico;
@@ -342,9 +349,9 @@ this param represent the type of the search, by name, by citizenid etc etc..
 									<label for="warrant">Add Warrant</label>
 									<input bind:checked={bolo} type="checkbox" id="bolo" name="type" />
 									<label for="bolo">Add Bolo</label> -->
-									<select bind:value={select}>
+									<select bind:value={reportData.type}>
 										{#each Values as val}
-											<option value={val}>{val}</option>
+											<option value={val.id}>{val.text}</option>
 										{/each}
 									</select>
 								</div>

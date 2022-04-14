@@ -3,12 +3,15 @@
     "home": {
       "app": {
         "report": "Create Report",
-        "user": "Search Users",
+        "user": "Search Tool",
         "general": "Report Tabs",
         "warrant": "Warrant Tool",
         "mytool": "My Tool",
         "search": "Search",
-        "vehicle": "Vehicles"
+        "vehicle": "Vehicles",
+        "searchVehicle": {
+          "messageReport": "Vehicle {0} with the plate {1} has been reported missing, Color {2}"
+        }
       }
     },
     "report": {
@@ -90,5 +93,8 @@
   "category": "Category",
   "color": "Color",
   "last-name": "Last Name",
-  "owner": "Name"
+  "owner": "Name",
+  "error-creating-the-bolo": "Error creating the B.O.L.O",
+  "b-o-l-o-created-with-the-id-data-id": "B.O.L.O created with the id {0}",
+  "vehiclemodel": "Vehicle model {0} with the plate {1} has been reported missing, Color {2}"
 }
