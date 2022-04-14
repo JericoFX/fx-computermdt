@@ -47,8 +47,10 @@ RegisterNUICallback("getReportData", function(data, cb)
 		cb(dat)
 	end, data)
 end)
+
 RegisterNUICallback("deleteReport", function(data, cb)
-	local ID = data.id
+	local ID = data
+
 	QBCore.Functions.TriggerCallback("fx-mdt:server:deleteReport", function(bol)
 		cb(bol)
 		TriggerServerEvent("fx-mdt:server:UpdateReports")

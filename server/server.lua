@@ -49,7 +49,7 @@ local contain = {
 		)
 	end,
 	all = function(data)
-		return MySQL.query.await("SELECT * FROM fx_reports")
+		return MySQL.query.await("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant'")
 	end,
 	searchUser = function(data)
 		local query =
@@ -249,7 +249,10 @@ QBCore.Functions.CreateCallback("fx-mdt:server:getReportData", function(source, 
 end)
 
 QBCore.Functions.CreateCallback("fx-mdt:server:deleteReport", function(source, cb, id)
-	local result = MySQL.query.await("DELETE FROM fx_reports WHERE id = ?", { id })
+	local result = MySQL.query.await("DELETE FROM fx_reports WHERE id = ?", { id.id })
+	local deleteassignament = MySQL.query.await("DELETE FROM fx_assignment WHERE caseid = ?", { id.id })
+	-- GetMyCalls SEND AN UPDATE VERSION OF THE CALLSIGN
+	TriggerClientEvent("fx-mdt:client:sendUpdateCalls",-1,GetMyCalls(id.callsign))
 	cb(result.affectedRows > 0 and true or false)
 	TriggerEvent("fx-mdt:server:UpdateReports")
 end)
@@ -314,26 +317,34 @@ end)
 QBCore.Functions.CreateCallback("fx-mdt:server:getMyCalls", function(source, cb, id)
 	local src = source
 	local send = {}
-	local Data = MySQL.query.await(
-		"SELECT caseid,localization,coordinates,citizenid,name,callsign FROM fx_assignment WHERE callsign = ?",
-		{ id }
-	)
-	for k, v in each(Data) do
-		local el = Data[k]
-		send[#send + 1] = {
-			casid = el.caseid,
-			localization = el.localization,
-			coordinates = el.coordinates,
-			citizenid = el.citizenid,
-			name = el.name,
-			callsign = el.callsign,
-		}
-	end
-	Wait(200)
-	cb(send)
+	local Data = GetMyCalls(id)
+	cb(Data)
 	--add a check if is a police
 end)
 
+function GetMyCalls(id)
+local src = source
+local send = {}
+local p = promise.new()
+local Data = MySQL.query.await(
+	"SELECT caseid,localization,coordinates,citizenid,name,callsign FROM fx_assignment WHERE callsign = ?",
+	{ id }
+)
+for k, v in each(Data) do
+	local el = Data[k]
+	send[#send + 1] = {
+		casid = el.caseid,
+		localization = el.localization,
+		coordinates = el.coordinates,
+		citizenid = el.citizenid,
+		name = el.name,
+		callsign = el.callsign,
+	}
+	p:resolve(send)
+	return Citizen.Await(p)
+end
+
+end
 QBCore.Functions.CreateCallback("fx-mdt:server:deleteCall", function(source, cb, id)
 	local Data = MySQL.query.await("DELETE FROM fx_assignment  WHERE caseid = ?", { id })
 	local Update = MySQL.query("UPDATE fx_reports SET taked = 0,callsign = '' WHERE id = ?", { id })

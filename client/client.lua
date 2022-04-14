@@ -137,7 +137,9 @@ QBCore.Functions.Notify("Report Sended")
 end
 	
 end)
-
+RegisterNetEvent("fx-mdt:client:sendUpdateCalls",function(calls)
+	SendData("getMycalls",{calls= calls})
+end)
 -- local NPC = nil
 -- Citizen.CreateThread(function()
 -- 	local model = GetHashKey("a_m_y_hasjew_01")

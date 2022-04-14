@@ -6,8 +6,9 @@
 	import {isEnvBrowser} from '../../../utils/misc';
 	import {fetchNui} from '../../../utils/fetchNui';
 	import Searched from './Tables/Searched.svelte';
-	import {IsBoss, Reports} from '../../../store/store';
+	import {Callsign, IsBoss, Reports} from '../../../store/store';
 	import {useNuiEvent} from '../../../utils/useNuiEvent';
+	import About from '../About/About.svelte';
 
 	let grid;
 	let container;
@@ -83,10 +84,14 @@
 			}
 		});
 	}
-
+	useNuiEvent('getMycalls', ({calls}) => {
+		Reportes = calls;
+		Reportes = Reportes;
+		grid.forceRender();
+	});
 	async function deleteReport(id: string) {
 		if (!isEnvBrowser()) {
-			await fetchNui('deleteReport', {id: id}).then((cb) => {
+			await fetchNui('deleteReport', {id: id, callsign: $Callsign}).then((cb) => {
 				if (cb) {
 					Reportes.splice(
 						Reportes.findIndex((e) => e.id === id),
