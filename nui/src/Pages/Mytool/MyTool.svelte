@@ -19,6 +19,7 @@
 				})
 				.forceRender();
 		});
+		params.reload = false;
 	}
 	const columns = [
 		{
@@ -68,13 +69,16 @@
 		await fetchNui('setDestination', {coords: coords});
 	}
 
-	async function deleteAssign(id: string) {
-		await fetchNui('deleteAssignment', {id: id}).then(async (cb) => {
+	function deleteAssign(id: string) {
+		console.log(id);
+
+		fetchNui('deleteAssignment', {id: id}).then(async (cb) => {
 			if (cb) {
 				$currentAsignament.splice(
 					$currentAsignament.findIndex((e) => e.id === id),
 					1
 				);
+				$currentAsignament = $currentAsignament;
 				await grid
 					.updateConfig({
 						data: $currentAsignament,

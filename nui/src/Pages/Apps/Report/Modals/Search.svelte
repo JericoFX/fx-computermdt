@@ -44,7 +44,7 @@
 	<div class="absolute-center">
 		<div class="window" style="max-width: 100vh">
 			<div class="title-bar">
-				<div class="title-bar-text">Search by {type.toUpperCase()}</div>
+				<div class="title-bar-text">Search by {type}</div>
 				<div class="title-bar-controls">
 					<button aria-label="Close" on:click={closeModal} />
 				</div>

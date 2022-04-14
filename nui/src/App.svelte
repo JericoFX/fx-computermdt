@@ -31,6 +31,7 @@
 
 	useNuiEvent('updateReports', ({reports}) => {
 		$Reports = reports;
+		console.log(JSON.stringify($Reports));
 	});
 	function handleKeydown(event: {keyCode: number}) {
 		if (event.keyCode === 27) {

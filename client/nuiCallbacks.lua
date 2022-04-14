@@ -111,6 +111,7 @@ end)
 
 RegisterNUICallback("deleteAssignment", function(data, cb)
 	local ID = data.id
+	print(ID)
 	QBCore.Functions.TriggerCallback("fx-mdt:server:deleteCall", function(cb1)
 		cb(cb1)
 	end, ID)

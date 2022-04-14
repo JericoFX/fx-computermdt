@@ -237,11 +237,32 @@ QBCore.Functions.CreateCallback("fx-mdt:server:getReportData", function(source, 
 				citizenid = el.citizenid,
 				data = json.decode(el.data),
 				title = el.title,
-				location = el.localization,
+				location = el.location,
+				type = el.type,
+				taked = el.taked,
+				observations = el.observations,
+				callsign = el.callsign
 			}
 		end
 		if tostring(data.type) == "all" then
-			TriggerClientEvent("fx-mdt:client:UpdateReports", -1, contain["all"](""))
+			local DataReturn = contain["all"]("")
+		for k, v in ipairs(DataReturn) do
+			local el = DataReturn[k]
+			Data[#Data + 1] = {
+				id = el.id,
+				name = el.name,
+				lastname = el.lastname,
+				citizenid = el.citizenid,
+				data = json.decode(el.data),
+				title = el.title,
+				location = el.location,
+				type = el.type,
+				observations = el.observations,
+				taked = el.taked,
+				callsign = el.callsign
+			}
+		end
+		TriggerClientEvent("fx-mdt:client:UpdateReports", -1,Data )
 		end
 
 		cb(Data)
@@ -347,7 +368,7 @@ end
 end
 QBCore.Functions.CreateCallback("fx-mdt:server:deleteCall", function(source, cb, id)
 	local Data = MySQL.query.await("DELETE FROM fx_assignment  WHERE caseid = ?", { id })
-	local Update = MySQL.query("UPDATE fx_reports SET taked = 0,callsign = '' WHERE id = ?", { id })
+	local Update = MySQL.query("UPDATE fx_reports SET taked = 0,callsign = 'none' WHERE id = ?", { id })
 
 	TriggerEvent("fx-mdt:server:UpdateReports")
 	cb(true)

@@ -6,7 +6,7 @@
 	import {isEnvBrowser} from '../../../utils/misc';
 	import {fetchNui} from '../../../utils/fetchNui';
 	import Searched from './Tables/Searched.svelte';
-	import {Callsign, IsBoss, Reports} from '../../../store/store';
+	import {Callsign, currentAsignament, IsBoss, Reports} from '../../../store/store';
 	import {useNuiEvent} from '../../../utils/useNuiEvent';
 	import About from '../About/About.svelte';
 
@@ -43,7 +43,7 @@
 					'button',
 					{
 						onClick: () => {
-							openDataContainer(row.cells[0].data, row.cells[7].data);
+							openDataContainer(row.cells[0].data, row.cells[6].data);
 						},
 					},
 					'Open'
@@ -97,6 +97,11 @@
 						Reportes.findIndex((e) => e.id === id),
 						1
 					);
+					$currentAsignament.splice(
+						$currentAsignament.findIndex((e) => e.id === id),
+						1
+					);
+					$currentAsignament = $currentAsignament;
 					Reportes = Reportes;
 					grid
 						.updateConfig({
@@ -107,7 +112,7 @@
 			});
 		}
 	}
-	function openDataContainer(id: any, data: any): void {
+	function openDataContainer(id: any, data: any): Searched {
 		let open = true;
 		if (!isEnvBrowser()) {
 			let m = new Searched({
@@ -118,20 +123,21 @@
 					caseID: id,
 				},
 			});
-			m.$on('closeModal', () => (open = false));
+			m.$on('closeModal1', () => (open = false));
+			return m;
 		}
 	}
-	function SearchBy(): void {
-		grid
+	async function SearchBy(): Promise<void> {
+		await grid
 			.updateConfig({
 				data: $Reports,
 			})
 			.forceRender();
 
 		if (!isEnvBrowser()) {
-			fetchNui('getReportData', {type: selection, value: values}).then((cb) => {
+			await fetchNui('getReportData', {type: selection, value: values}).then(async (cb) => {
 				if (cb) {
-					grid
+					await grid
 						.updateConfig({
 							data: cb,
 						})
@@ -140,19 +146,22 @@
 			});
 		}
 	}
-	fetchNui('getReportData', {type: 'all', value: values}).then((cb) => {
-		if (cb) {
-			Reportes = cb;
-			Reportes = Reportes;
-			grid
-				.updateConfig({
-					data: Reportes,
-				})
-				.forceRender();
-		}
-	});
-	function ReloadData(): void {
-		fetchNui('getReportData', {type: 'all', value: values}).then((cb) => {
+	(async () => {
+		await fetchNui('getReportData', {type: 'all', value: values}).then(async (cb) => {
+			if (cb) {
+				Reportes = cb;
+				Reportes = Reportes;
+				await grid
+					.updateConfig({
+						data: Reportes,
+					})
+					.forceRender();
+			}
+		});
+	})();
+
+	async function ReloadData() {
+		await fetchNui('getReportData', {type: 'all', value: values}).then((cb) => {
 			if (cb) {
 				Reportes = cb;
 				Reportes = Reportes;
@@ -164,10 +173,10 @@
 			}
 		});
 	}
-	useNuiEvent('updateReports', ({reports}) => {
+	useNuiEvent('updateReports', async ({reports}) => {
 		Reportes = reports;
 
-		grid
+		await grid
 			.updateConfig({
 				data: Reportes,
 			})

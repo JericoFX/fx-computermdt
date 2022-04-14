@@ -40,7 +40,7 @@
 						<div class="accordion-container q-mt-sm">
 							<Panel color={data.taked === 0 ? 'primary' : 'secondary'}>
 								<Header
-									>{data.type.toUpperCase()}
+									>{data.type}
 									{data.id}
 
 									<span slot="description">{data.taked === 1 ? data.callsign : 'Not Taked'}</span>

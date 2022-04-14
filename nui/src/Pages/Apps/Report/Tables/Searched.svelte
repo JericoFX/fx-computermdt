@@ -44,19 +44,19 @@
 				<div class="q-ml-sm">
 					<fieldset>
 						<legend>Evidences</legend>
-						<Grid data={data.evidences} columns={EvidenceColums} fixedHeader pagination={{enabled: true, limit: 1}} />
+						<Grid data={data.evidences || []} columns={EvidenceColums} pagination={{enabled: true, limit: 1}} />
 					</fieldset>
 				</div>
 				<div class="q-ml-sm">
 					<fieldset>
 						<legend> Polices Involved </legend>
-						<Grid data={data.polices} columns={PolicesColums} fixedHeader pagination={{enabled: true, limit: 1}} />
+						<Grid data={data.polices || []} columns={PolicesColums} pagination={{enabled: true, limit: 1}} />
 					</fieldset>
 				</div>
 				<div class="q-ml-sm">
 					<fieldset>
 						<legend> Fines </legend>
-						<Grid data={data.fines} columns={FinesColums} fixedHeader pagination={{enabled: true, limit: 1}} />
+						<Grid data={data.fines || []} columns={FinesColums} pagination={{enabled: true, limit: 1}} />
 					</fieldset>
 				</div>
 			</div>
