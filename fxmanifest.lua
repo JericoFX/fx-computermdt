@@ -1,0 +1,33 @@
+fx_version("cerulean")
+game("gta5")
+
+description("FX-MDT")
+version("0.0.1b")
+ui_page("nui/dist/index.html")
+use_fxv2_oal("yes")
+lua54("yes")
+client_scripts({
+	"@PolyZone/client.lua",
+	"@PolyZone/BoxZone.lua",
+	"config.lua",
+	"client/nuiCallbacks.lua",
+	"client/client.lua",
+})
+shared_scripts({
+	"@qb-garages/config.lua",
+})
+files({
+	"nui/dist/index.html",
+	"nui/dist/locales/*.json",
+	"nui/dist/assets/*.js",
+	"nui/dist/assets/*.css",
+	"nui/dist/iconos/*.png",
+	"nui/dist/iconos/*.svg",
+	"nui/dist/iconos/start-button.png",
+	"nui/dist/iconos/agreement.png",
+})
+server_scripts({
+	"@oxmysql/lib/MySQL.lua",
+	"config.lua",
+	"server/server.lua",
+})

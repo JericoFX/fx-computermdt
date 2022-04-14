@@ -1,0 +1,94 @@
+{
+  "page": {
+    "home": {
+      "app": {
+        "report": "Crear Reporte",
+        "user": "Buscar Usuarios",
+        "general": "Lista de Reportes",
+        "warrant": "Warrant Tool",
+        "mytool": "Mi Herramienta",
+        "search": "Search",
+        "vehicle": "Vehiculos"
+      }
+    },
+    "report": {
+      "title": "Herramienta de Reporte",
+      "menu": {
+        "add": "Menu Añadir",
+        "addmenu": {
+          "close": "Jugador Cercano",
+          "street": "Añadir Direccion",
+          "police": "Añadir Policias",
+          "evidence": "Añadir Evidencias",
+          "fine": "Añadir Multas"
+        },
+        "search": "Buscar",
+        "searchmenu": {
+          "name": "Por Nombre"
+        },
+        "view": "Ver",
+        "viewmenu": {
+          "vpolice": "Ver Policias",
+          "vevidence": "Ver Evidencias",
+          "vfines": "Ver Multas"
+        }
+      },
+      "rcreate": "Crear Reporte",
+      "rsearch": "Buscar Reporte",
+      "rbody": {
+        "rinfo": "Informacion de Usuario",
+        "rtitle": "Titulo",
+        "rname": "Nombre",
+        "rlname": "Apellido",
+        "rcid": "CitizenID",
+        "rlocation": "Direccion",
+        "robs": "Observaciones"
+      },
+      "rbuttons": {
+        "rcancel": "Cancelar",
+        "radd": "Crear Reporte"
+      }
+    },
+    "rsapp": {
+      "title": "Buscar Reportes",
+      "rsmenu": {
+        "rname": "Nombre",
+        "rlname": "Apellido",
+        "rcid": "CitizenID",
+        "rlocation": "Direccion",
+        "rsid": "Reporte ID",
+        "rspolice": "Policias Involucrados"
+      },
+      "rsbuttons": {
+        "rsbsearch": "Buscar",
+        "rsbreload": "Actualizar"
+      }
+    },
+    "searchApp": {
+      "title": "Buscar",
+      "app": {
+        "search": "Buscar",
+        "bdata": "Datos Basicos",
+        "name": "Nombre",
+        "lname": "Apellido",
+        "job": "Trabajo",
+        "rank": "Rango",
+        "reports": "Reportes",
+        "close": "Cerrar",
+        "vehicles": "Vehiculos"
+      }
+    },
+    "generalApp": {
+      "title": "Lista General",
+      "reports": "Reportes",
+      "warrant": "Warrant",
+      "bolo": "B.O.L.O",
+      "close": "Cerrar"
+    }
+  },
+  "Cerrar": "Cerrar",
+  "category": "Categoria",
+  "color": "Color",
+  "owner": "Nombre",
+  "last-name": "Apellido"
+}

@@ -1,0 +1,32 @@
+{
+  "name": "fxmdt",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.39",
+    "@tsconfig/svelte": "^2.0.1",
+    "autoprefixer": "^10.4.4",
+    "postcss": "^8.4.12",
+    "svelte": "^3.46.4",
+    "svelte-check": "^2.4.6",
+    "svelte-preprocess": "^4.10.4",
+    "tslib": "^2.3.1",
+    "typescript": "^4.6.2",
+    "vite": "^2.8.6"
+  },
+  "dependencies": {
+    "@smui-extra/accordion": "6.0.0-beta.16",
+    "@smui/button": "6.0.0-beta.16",
+    "gridjs": "^5.0.2",
+    "gridjs-svelte": "^2.1.0",
+    "short-unique-id": "^4.4.4",
+    "svelte-i18n": "^3.4.0",
+    "svelte-spa-router": "^3.2.0"
+  }
+}

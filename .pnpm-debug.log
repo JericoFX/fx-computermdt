@@ -1,0 +1,14 @@
+{
+  "0 debug pnpm:scope": {
+    "selected": 1
+  },
+  "1 error pnpm": {
+    "code": "ERR_PNPM_NO_IMPORTER_MANIFEST_FOUND",
+    "err": {
+      "name": "pnpm",
+      "message": "No package.json (or package.yaml, or package.json5) was found in \"E:\\txData\\QBCoreFramework_new\\resources\\[jerico]\\fx-algo\".",
+      "code": "ERR_PNPM_NO_IMPORTER_MANIFEST_FOUND",
+      "stack": "pnpm: No package.json (or package.yaml, or package.json5) was found in \"E:\\txData\\QBCoreFramework_new\\resources\\[jerico]\\fx-algo\".\n    at readProjectManifest (C:\\Users\\eduar\\AppData\\Roaming\\npm\\node_modules\\pnpm\\dist\\pnpm.cjs:19655:13)\n    at async Object.readProjectManifestOnly (C:\\Users\\eduar\\AppData\\Roaming\\npm\\node_modules\\pnpm\\dist\\pnpm.cjs:19659:28)\n    at async readProjectManifestOnly (C:\\Users\\eduar\\AppData\\Roaming\\npm\\node_modules\\pnpm\\dist\\pnpm.cjs:43649:24)\n    at async Object.handler (C:\\Users\\eduar\\AppData\\Roaming\\npm\\node_modules\\pnpm\\dist\\pnpm.cjs:171314:24)\n    at async C:\\Users\\eduar\\AppData\\Roaming\\npm\\node_modules\\pnpm\\dist\\pnpm.cjs:175770:21\n    at async run (C:\\Users\\eduar\\AppData\\Roaming\\npm\\node_modules\\pnpm\\dist\\pnpm.cjs:175744:34)\n    at async runPnpm (C:\\Users\\eduar\\AppData\\Roaming\\npm\\node_modules\\pnpm\\dist\\pnpm.cjs:175962:5)\n    at async C:\\Users\\eduar\\AppData\\Roaming\\npm\\node_modules\\pnpm\\dist\\pnpm.cjs:175954:7"
+    }
+  }
+}

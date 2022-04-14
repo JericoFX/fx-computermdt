@@ -1,0 +1,389 @@
+<script lang="ts">
+	import {_, setupI18n} from '../../../utils/i18n';
+	import {fetchNui} from '../../../utils/fetchNui';
+	import PoliceList from './Modals/PoliceList.svelte';
+	import {fade} from 'svelte/transition';
+	import {push} from 'svelte-spa-router';
+	import About from '../About/About.svelte';
+	import ShortUniqueId from 'short-unique-id';
+	import Search from './Modals/Search.svelte';
+	import Polices from './Tables/Polices.svelte';
+	import {PoliceEvidence, PoliceFines, PoliceLists, Reports} from '../../../store/store';
+	import Evidences from './Tables/Evidences.svelte';
+	import {isEnvBrowser} from '../../../utils/misc';
+	import Acepted from './Modals/Acepted.svelte';
+	import {onMount, setContext} from 'svelte';
+	import SearchReports from './SearchReports.svelte';
+	import Fines from './Tables/Fines.svelte';
+	import {Tables} from '../../../utils/misc';
+	let uid = new ShortUniqueId({length: 5});
+	onMount(() => {
+		Tables();
+	});
+	let bolo = false,
+		warrant = false;
+	let grid;
+
+	let reportData = {
+		id: uid(),
+		name: '',
+		lastname: '',
+		rank: '',
+		citizenid: '',
+		location: '',
+		coords: '',
+		observations: 'No observations',
+		title: '',
+		type: 'basic',
+		data: {
+			evidences: [],
+			polices: [],
+			fines: [],
+		},
+	};
+
+	reportData.data.evidences = $PoliceEvidence;
+	reportData.data.polices = $PoliceLists;
+	reportData.data.fines = $PoliceFines;
+	$: disabled = false;
+	$: disableLocale = false;
+	let jerico = 0;
+
+	const newLocal = setTimeout(() => {
+		jerico = Math.random() * 100;
+	}, 5000);
+
+	function openAbout() {
+		let open = true;
+		let m = new About({
+			target: document.getElementById('id'),
+			props: {
+				open: open,
+			},
+		});
+		m.$on('closeAbout', () => (open = false));
+		return m;
+	}
+	/*
+*Param Type:String
+this param represent the type of the search, by name, by citizenid etc etc..
+*/
+	function openSearch(type: string): Search {
+		let open = true;
+		let m = new Search({
+			target: document.getElementById('id'),
+			props: {
+				open: open,
+				type: type,
+			},
+		});
+		m.$on('closeSearch', (cb) => {
+			//Getting the data from another svelte document
+			const Data = cb.detail;
+			reportData.citizenid = Data[0]?.citizenid || Data.citizenid;
+			reportData.name = Data[0]?.Name || Data.Name;
+			reportData.lastname = Data[0]?.LastName || Data.LastName;
+			disabled = true;
+		});
+		m.$on('closeModal', (cb) => (open = false));
+		return m;
+	}
+
+	async function openPolices() {
+		let open = true;
+
+		await fetchNui('getAllPolices').then((cb) => {
+			let m = new Polices({
+				target: document.getElementById('id'),
+				props: {
+					open: open,
+					polices: cb,
+				},
+			});
+			m.$on('closeAbout', () => (open = false));
+		});
+	}
+	async function openEvidence(view: boolean): Promise<void> {
+		let open = true;
+		if (!isEnvBrowser()) {
+			await fetchNui('getEvidence').then((cb) => {
+				if (cb) {
+					let m = new Evidences({
+						target: document.getElementById('id'),
+						props: {
+							open: open,
+							Evidence: view === true ? $PoliceEvidence : cb,
+
+							viewEvidence: view,
+						},
+					});
+					m.$on('closeAbout', () => (open = false));
+				}
+			});
+		} else {
+			let m = new Evidences({
+				target: document.getElementById('id'),
+				props: {
+					open: open,
+					Evidence: $PoliceEvidence,
+
+					viewEvidence: view,
+				},
+			});
+			m.$on('closeAbout', () => (open = false));
+		}
+	}
+	async function getCurrentLocation(): Promise<void> {
+		await fetchNui('getCurrentLocation').then((cb) => (reportData.location = cb));
+		disableLocale = true;
+	}
+	function openPoliceList(): PoliceList {
+		let open = true;
+		let m = new PoliceList({
+			target: document.getElementById('id'),
+			props: {
+				open: open,
+			},
+		});
+		m.$on('closeAbout', () => (open = false));
+		return m;
+	}
+
+	async function sendReport() {
+		let open = true;
+		if (!isEnvBrowser()) {
+			await fetchNui('sendNewReport', {report: reportData, bolo: bolo}).then(async (cb) => {
+				if (cb.type) {
+					let m = new Acepted({
+						target: document.getElementById('id'),
+						props: {
+							open: open,
+							message: `Report created with the id ${reportData.id}`,
+						},
+					});
+					reportData.id = uid();
+					m.$on('closeModal', () => (open = false));
+					if (bolo) {
+						await grid
+							.updateConfig({
+								data: $Reports,
+							})
+							.forceRender();
+					}
+				} else {
+					let m = new Acepted({
+						target: document.getElementById('id'),
+						props: {
+							open: open,
+							message: `Error creating the report`,
+						},
+					});
+					m.$on('closeModal', () => (open = false));
+				}
+			});
+		} else {
+			let m = new Acepted({
+				target: document.getElementById('id'),
+				props: {
+					open: open,
+					message: `Report created with the id ${reportData.id}`,
+				},
+			});
+			reportData.id = uid();
+			m.$on('closeModal', () => (open = false));
+		}
+	}
+	function openFines(show: boolean) {
+		let open = true;
+		let m = new Fines({
+			target: document.getElementById('id'),
+			props: {
+				open: open,
+				show: show,
+			},
+		});
+		m.$on('closeModal', () => (open = false));
+	}
+</script>
+
+<div transition:fade={{duration: 100}} class="absolute-center">
+	<div class="window" style="max-width: 200vh;width:102vh">
+		<div class="title-bar">
+			<div class="title-bar-text">{$_('page.report.title')}</div>
+			<div class="title-bar-controls">
+				<button aria-label="Close" on:click={() => push('/')} />
+			</div>
+		</div>
+		<ul role="menubar" class="can-hover">
+			<li role="menuitem" tabindex="0" aria-haspopup="true">
+				{$_('page.report.menu.add')}
+				<ul role="menu">
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<li role="menuitem" class="has-divider">
+						<a on:click={() => console.log('Player Data')}> {$_('page.report.menu.addmenu.close')}</a>
+					</li>
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<li role="menuitem">
+						<a on:click={getCurrentLocation}>{$_('page.report.menu.addmenu.street')}</a>
+					</li>
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<li role="menuitem">
+						<a on:click={openPolices}>{$_('page.report.menu.addmenu.police')}</a>
+					</li>
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<li role="menuitem">
+						<a on:click={() => openEvidence(false)}>{$_('page.report.menu.addmenu.evidence')}</a>
+					</li>
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<li role="menuitem">
+						<a on:click={() => openFines(false)}>{$_('page.report.menu.addmenu.fine')}</a>
+					</li>
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<li role="menuitem"><a>Add Images</a></li>
+				</ul>
+			</li>
+			<li role="menuitem" tabindex="0" aria-haspopup="true">
+				{$_('page.report.menu.search')}
+				<ul role="menu">
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<li role="menuitem">
+						<a on:click={() => openSearch('name')}>{$_('page.report.menu.searchmenu.name')}</a>
+					</li>
+					<!-- svelte-ignore a11y-missing-attribute -->
+				</ul>
+			</li>
+			<li role="menuitem" tabindex="0" aria-haspopup="true">
+				{$_('page.report.menu.view')}
+				<ul role="menu">
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<li role="menuitem">
+						<a on:click={openPoliceList}> {$_('page.report.menu.viewmenu.vpolice')}</a>
+					</li>
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<li role="menuitem">
+						<a on:click={() => openEvidence(true)}>{$_('page.report.menu.viewmenu.vevidence')}</a>
+					</li>
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<li role="menuitem">
+						<a on:click={() => openFines(true)}>{$_('page.report.menu.viewmenu.vfines')}</a>
+					</li>
+				</ul>
+			</li>
+
+			<li role="menuitem" tabindex="0" aria-haspopup="true">
+				Help
+				<ul role="menu">
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<li role="menuitem"><a>View Help</a></li>
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<li role="menuitem"><a on:click={openAbout}>About</a></li>
+				</ul>
+			</li>
+		</ul>
+		<div class="window-body " style="height:47vh">
+			<section class="tabs relative-position full-width" style="max-width: 200vh">
+				<menu role="tablist" aria-label="Tabsitos">
+					<button role="tab" aria-selected="true" aria-controls="reports-tab">{$_('page.report.rcreate')}</button>
+					<button role="tab" aria-controls="search-reports-tab">{$_('page.report.rsearch')}</button>
+				</menu>
+
+				<article role="tabpanel" id="reports-tab">
+					<div class="jerico relative-position full-width">
+						<fieldset>
+							<fieldset class="float-left">
+								<legend>{$_('page.report.rbody.rinfo')}</legend>
+								<div class="infoUser">
+									<div class="field-row">
+										<span>
+											<label class="nameField" for="User"> {$_('page.report.rbody.rtitle')} </label>
+											<input bind:value={reportData.title} type="text" class="inputField" name="Something" id="Title" />
+										</span>
+									</div>
+									<div class="field-row">
+										<span>
+											<label class="nameField" for="User"> {$_('page.report.rbody.rname')} </label>
+											<input {disabled} bind:value={reportData.name} type="text" class="inputField" name="Something" id="User" />
+										</span>
+									</div>
+									<div class="field-row ">
+										<span>
+											<label class="nameField" for="LName"> {$_('page.report.rbody.rlname')}</label>
+											<input {disabled} bind:value={reportData.lastname} class="inputField" type="text" name="LName" id="LName" />
+										</span>
+									</div>
+									<div class="field-row ">
+										<span>
+											<label class="nameField" for="CID"> {$_('page.report.rbody.rcid')} </label>
+											<input {disabled} bind:value={reportData.citizenid} class="inputField" type="text" name="CID" id="CID" />
+										</span>
+									</div>
+									<div class="field-row ">
+										<span>
+											<label class="nameField" for="Local"> {$_('page.report.rbody.rlocation')} </label>
+											<input disabled={disableLocale} bind:value={reportData.location} class="inputField" type="text" name="Local" id="Local" />
+										</span>
+									</div>
+								</div>
+							</fieldset>
+
+							<fieldset class="float-left q-ml-md" style:max-width="629px">
+								<legend class="text-center">{$_('page.report.rbody.robs')}</legend>
+								<div class="infoUser">
+									<div class="field-row-stacked">
+										<textarea bind:value={reportData.observations} name="Observations" class="text-h6" id="jere" cols="8" rows="8" style="width:32.760416666666664vw;height:24.24557752341311vh;max-width:32.760416666666664vw;;min-width:15.625vw;max-height:24.24557752341311vh;min-height: 24.24557752341311vh;" />
+									</div>
+								</div>
+							</fieldset>
+							<fieldset class="float-left full-width">
+								<div class="field-row" style="justify-content: space-between">
+									<input type="checkbox" id="warrant" name="type" bind:checked={warrant} />
+									<label for="warrant">Add Warrant</label>
+									<input bind:checked={bolo} type="checkbox" id="bolo" name="type" />
+									<label for="bolo">Add Bolo</label>
+								</div>
+							</fieldset>
+						</fieldset>
+
+						<section class="field-row" style="justify-content: space-around">
+							<button>{$_('page.report.rbuttons.rcancel')}</button>
+							<button disabled={reportData.title.length < 3} on:click={sendReport}>{$_('page.report.rbuttons.radd')}</button>
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+						</section>
+					</div>
+				</article>
+
+				<!-- SEARCH TABS -->
+				<article role="tabpanel" id="search-reports-tab" style="display:none;">
+					<div class="jerico relative-position full-width">
+						<SearchReports data={'trigger'} />
+					</div>
+				</article>
+			</section>
+		</div>
+		<div class="status-bar">
+			<p class="status-bar-field">Report ID: {reportData.id}</p>
+			<p class="status-bar-field">Report Tool</p>
+			<p class="status-bar-field">CPU Usage: {newLocal.toFixed(0)}%</p>
+		</div>
+	</div>
+</div>
+<div id="id" />
+
+<style>
+	#search-reports-tab {
+		height: 40vh;
+	}
+	.nameField {
+		display: inline-block;
+		width: 4.16vw;
+		text-align: left;
+		padding: 14px 10px 0 0;
+		margin: 0 0 7px 0;
+	}
+	.inputField {
+		display: inline-block;
+		width: 6.77vw;
+		margin: 0;
+		margin: 0 0 7px 0;
+	}
+</style>
