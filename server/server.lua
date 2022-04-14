@@ -32,24 +32,24 @@ local contain = {
 	end,
 	localization = function(data)
 		return MySQL.query.await(
-			"SELECT * FROM fx_reports WHERE JSON_UNQUOTE(JSON_EXTRACT(fx_reports.localization,'$.location')) LIKE ?",
+			"SELECT id,title,name,lastname,citizenid,location,coords,observations,data,amount,type FROM fx_reports WHERE JSON_UNQUOTE(JSON_EXTRACT(fx_reports.localization,'$.location')) LIKE ?",
 			{ string.lower("%" .. data .. "%") }
 		)
 	end,
 	citizenid = function(data)
-		return MySQL.query.await("SELECT * FROM fx_reports WHERE citizenid = ?", { data })
+		return MySQL.query.await("SELECT id,title,name,lastname,citizenid,location,coords,observations,data,amount,type FROM fx_reports WHERE citizenid = ?", { data })
 	end,
 	id = function(data)
-		return MySQL.query.await("SELECT * FROM fx_reports WHERE id LIKE ? ", { string.lower("%" .. data .. "%") })
+		return MySQL.query.await("SELECT id,title,name,lastname,citizenid,location,coords,observations,data,amount,type FROM fx_reports WHERE id LIKE ? ", { string.lower("%" .. data .. "%") })
 	end,
 	data = function(data)
 		return MySQL.query.await(
-			"SELECT * FROM fx_reports WHERE JSON_UNQUOTE(JSON_EXTRACT(fx_reports.`data`,'$.polices[*]')) LIKE ?",
+			"SELECT id,title,name,lastname,citizenid,location,coords,observations,data,amount,type FROM fx_reports WHERE JSON_UNQUOTE(JSON_EXTRACT(fx_reports.`data`,'$.polices[*]')) LIKE ?",
 			{ string.lower("%" .. data .. "%") }
 		)
 	end,
 	all = function(data)
-		return MySQL.query.await("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant' OR  fx_reports.type = 'report' ")
+		return MySQL.query.await("SELECT id,title,name,lastname,citizenid,location,coords,observations,data,amount,type FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant' OR  fx_reports.type = 'report' ")
 	end,
 	searchUser = function(data)
 		local query =
