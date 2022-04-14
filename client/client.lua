@@ -156,9 +156,9 @@ RegisterNetEvent("fx-mdt:client:setReport", function(data)
     local x, y, z in Coords
     local StreetHash = GetStreetNameAtCoord(x, y, z)
     local StreetName = GetStreetNameFromHashKey(StreetHash)
-    --local citizenid,charinfo in QBCore.Functions.GetPlayerData()
+    local citizenid, charinfo in QBCore.Functions.GetPlayerData()
     local dialog = exports["qb-input"]:ShowInput({
-        header = "menu",
+        header = "Report Menu",
         submitText = "Add Message",
         inputs = {
             {

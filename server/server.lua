@@ -85,7 +85,7 @@ local contain = {
 }
 
 function GetVehicleByData(citizenid)
-    print(citizenid)
+
     local veh = contain["getVehicleInfo"]("citizenid", citizenid)
     local p = promise.new()
     local vehInfo = {} -- DONT LIKE THIS, NEED TO MAKE IT BETTER
@@ -110,50 +110,52 @@ QBCore.Functions.CreateCallback("fx-mdt:server:searchForPlayer", function(source
     local Data = {}
     local Charinfo = contain["searchUser"](tostring(name))
     local Reports = {}
-    if app == "search" then
-        print("104")
-        if Charinfo then
-            for k, v in ipairs(Charinfo) do
-                local el = Charinfo[k]
-                if contain["citizenid"](el.citizenid) then
-                    for k, v in ipairs(contain["citizenid"](el.citizenid)) do
-                        local el = contain["citizenid"](el.citizenid)[k]
-                        Reports[#Reports + 1] = {
-                            title = el.title,
-                            name = el.name,
-                            id = el.id,
-                            data = json.decode(el.data),
-                            location = el.location,
-                            coords = el.coords,
-                        }
+    if IsPolice(src) then
+        if app == "search" then
+            print("104")
+            if Charinfo then
+                for k, v in ipairs(Charinfo) do
+                    local el = Charinfo[k]
+                    if contain["citizenid"](el.citizenid) then
+                        for k, v in ipairs(contain["citizenid"](el.citizenid)) do
+                            local el = contain["citizenid"](el.citizenid)[k]
+                            Reports[#Reports + 1] = {
+                                title = el.title,
+                                name = el.name,
+                                id = el.id,
+                                data = json.decode(el.data),
+                                location = el.location,
+                                coords = el.coords,
+                            }
+                        end
                     end
+                    print("121")
+                    Data[#Data + 1] = {
+                        Name = el.firstname,
+                        LastName = el.lastname,
+                        CitizenID = el.citizenid,
+                        Rank = el.rank,
+                        JobName = el.jobname,
+                        Vehicles = GetVehicleByData(el.citizenid),
+                        Reports = Reports,
+                        Bolo = el.bolo,
+                    }
                 end
-                print("121")
-                Data[#Data + 1] = {
-                    Name = el.firstname,
-                    LastName = el.lastname,
-                    CitizenID = el.citizenid,
-                    Rank = el.rank,
-                    JobName = el.jobname,
-                    Vehicles = GetVehicleByData(el.citizenid),
-                    Reports = Reports,
-                    Bolo = el.bolo,
-                }
+            end
+        elseif app == "report" then -- if the app is "report" we dont need the vehicle info or reports
+            if Charinfo then
+                for k, v in ipairs(Charinfo) do
+                    local el = Charinfo[k]
+                    Data[#Data + 1] = {
+                        Name = el.firstname,
+                        LastName = el.lastname,
+                        CitizenID = el.citizenid,
+                    }
+                end
             end
         end
-    elseif app == "report" then -- if the app is "report" we dont need the vehicle info or reports
-        if Charinfo then
-            for k, v in ipairs(Charinfo) do
-                local el = Charinfo[k]
-                Data[#Data + 1] = {
-                    Name = el.firstname,
-                    LastName = el.lastname,
-                    CitizenID = el.citizenid,
-                }
-            end
-        end
+        cb(Data)
     end
-    cb(Data)
 end)
 
 QBCore.Functions.CreateCallback("fx-mdt:server:GetEvidence", function(source, cb)
@@ -217,13 +219,16 @@ end)
 
 QBCore.Functions.CreateCallback("fx-mdt:server:GetAllPolices", function(source, cb)
     -- ADD CHECK IF THE PLAYER IS A POLICE
-    local polices = GetAllPolices()
+    if IsPolice(source) then
+        local polices = GetAllPolices()
 
-    cb(polices)
+        cb(polices)
+    end
 end)
 
 QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, cb, data)
     local coords = GetEntityCoords(GetPlayerPed(source))
+
     if data.report then
         if data.report.type == "basic" then
             TriggerEvent("qb-phone:server:sendNewMailToOffline", data.report.citizenid, {sender = "Police Depto", subject = " Fine situation", message = "A fine has been created the amount to pay is $"..data.report.amount.." if you need more information, please go to the police station and give this code "..data.report.id.." to the officer."})
@@ -304,75 +309,84 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
     end)
 
     QBCore.Functions.CreateCallback("fx-mdt:server:deleteReport", function(source, cb, id)
-        local result = MySQL.query.await("DELETE FROM fx_reports WHERE id = ?", {id.id})
-        local deleteassignament = MySQL.query.await("DELETE FROM fx_assignment WHERE caseid = ?", {id.id})
-        -- GetMyCalls SEND AN UPDATE VERSION OF THE CALLSIGN
-        TriggerClientEvent("fx-mdt:client:sendUpdateCalls", -1, GetMyCalls(id.callsign))
-        cb(result.affectedRows > 0 and true or false)
-        TriggerEvent("fx-mdt:server:UpdateReports")
+        if IsPolice(source) then
+            local result = MySQL.query.await("DELETE FROM fx_reports WHERE id = ?", {id.id})
+            local deleteassignament = MySQL.query.await("DELETE FROM fx_assignment WHERE caseid = ?", {id.id})
+            -- GetMyCalls SEND AN UPDATE VERSION OF THE CALLSIGN
+            TriggerClientEvent("fx-mdt:client:sendUpdateCalls", -1, GetMyCalls(id.callsign))
+            cb(result.affectedRows > 0 and true or false)
+            TriggerEvent("fx-mdt:server:UpdateReports")
+        end
     end)
 
-    RegisterServerEvent("fx-apartment:server:CheckTicket", function()
-        local src = source
-        local Data = QBCore.Functions.GetPlayer(src)
-        local item = Data.Functions.GetItemByName("gold_ticket_app")
-        if not item then
-            TriggerClientEvent("QBCore:Notify", source, "No Ticket")
-            return
-        end
-        if not Data.PlayerData.citizenid == item.info.citizenid then
-            TriggerClientEvent("QBCore:Notify", source, "This ticket isnt yours")
-            return
-        end
-        TriggerClientEvent("fx-apartment:client:ChangeTicket", src, Data.PlayerData.citizenid)
-    end)
+    -- RegisterServerEvent("fx-apartment:server:CheckTicket", function()
+    --     local src = source
+    --     local Data = QBCore.Functions.GetPlayer(src)
+    --     local item = Data.Functions.GetItemByName("gold_ticket_app")
+    --     if not item then
+    --         TriggerClientEvent("QBCore:Notify", src, "No Ticket")
+    --         return
+    --     end
+    --     if not Data.PlayerData.citizenid == item.info.citizenid then
+    --         TriggerClientEvent("QBCore:Notify", src, "This ticket isnt yours")
+    --         return
+    --     end
+    --     TriggerClientEvent("fx-apartment:client:ChangeTicket", src, Data.PlayerData.citizenid)
+    -- end)
 
     QBCore.Functions.CreateCallback("fx-mdt:server:getVehicleByPlate", function(source, cb, plate)
         local src = source
         local Data = {}
-        -- Add check for police and if is in the tablet and in the same position
-        if contain["getVehicleInfo"]("plate", plate) then
-            local vi = contain["getVehicleInfo"]("plate", plate)
-            Data = {
-                name = vi.model,
-                plate = vi.plate,
-                color = vi.color,
-                category = QBCore.Shared.Vehicles[vi.model].category,
-                bolo = vi.bolo,
-                citizenid = vi.citizenid,
-                firstname = vi.firstname,
-                lastname = vi.lastname,
-            }
-            cb(Data)
+        if IsPolice(source) then
+            -- Add check for police and if is in the tablet and in the same position
+            if contain["getVehicleInfo"]("plate", plate) then
+                local vi = contain["getVehicleInfo"]("plate", plate)
+                Data = {
+                    name = vi.model,
+                    plate = vi.plate,
+                    color = vi.color,
+                    category = QBCore.Shared.Vehicles[vi.model].category,
+                    bolo = vi.bolo,
+                    citizenid = vi.citizenid,
+                    firstname = vi.firstname,
+                    lastname = vi.lastname,
+                }
+                cb(Data)
+            end
         end
     end)
 
     RegisterServerEvent("fx-mdt:server:UpdateReports", function()
         Wait(200)
-        MySQL.query("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant'", function(res)
-            TriggerClientEvent("fx-mdt:client:UpdateReports", -1, res)
-        end)
+        if IsPolice(source) then
+            MySQL.query("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant'", function(res)
+                TriggerClientEvent("fx-mdt:client:UpdateReports", -1, res)
+            end)
+        end
     end)
     ----
     QBCore.Functions.CreateCallback("fx-mdt:server:updateReport", function(source, cb, id, data)
         local src = source
-        --
-        MySQL.query("UPDATE fx_reports SET taked = 1,callsign = ? WHERE id = ?", {data.callsign, id.id}, function(res)
-            if res then
-                MySQL.insert(
-                    "INSERT INTO fx_assignment (caseid,localization,coordinates,citizenid,name,callsign) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE caseid = ? ",
-                {id.id, id.location, id.coords, id.citizenid, id.name, data.callsign, id.id})
-                cb(true)
-                TriggerEvent("fx-mdt:server:UpdateReports")
-            end
-        end)
-        cb(false)
+        if IsPolice(src) then
+            MySQL.query("UPDATE fx_reports SET taked = 1,callsign = ? WHERE id = ?", {data.callsign, id.id}, function(res)
+                if res then
+                    MySQL.insert(
+                        "INSERT INTO fx_assignment (caseid,localization,coordinates,citizenid,name,callsign) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE caseid = ? ",
+                    {id.id, id.location, id.coords, id.citizenid, id.name, data.callsign, id.id})
+                    cb(true)
+                    TriggerEvent("fx-mdt:server:UpdateReports")
+                end
+            end)
+            cb(false)
+        end
     end)
     QBCore.Functions.CreateCallback("fx-mdt:server:getMyCalls", function(source, cb, id)
         local src = source
         local send = {}
-        local Data = GetMyCalls(id)
-        cb(Data)
+        if IsPolice(src) then
+            local Data = GetMyCalls(id)
+            cb(Data)
+        end
         --add a check if is a police
     end)
 
@@ -399,11 +413,13 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
 
     end
     QBCore.Functions.CreateCallback("fx-mdt:server:deleteCall", function(source, cb, id)
-        local Data = MySQL.query.await("DELETE FROM fx_assignment  WHERE caseid = ?", {id})
-        local Update = MySQL.query("UPDATE fx_reports SET taked = 0,callsign = 'none' WHERE id = ?", {id})
+        if IsPolice(source) then
+            local Data = MySQL.query.await("DELETE FROM fx_assignment  WHERE caseid = ?", {id})
+            local Update = MySQL.query("UPDATE fx_reports SET taked = 0,callsign = 'none' WHERE id = ?", {id})
 
-        TriggerEvent("fx-mdt:server:UpdateReports")
-        cb(true)
+            TriggerEvent("fx-mdt:server:UpdateReports")
+            cb(true)
+        end
     end)
 
     RegisterServerEvent("fx-mdt:server:newReportFromCommand", function(data)
