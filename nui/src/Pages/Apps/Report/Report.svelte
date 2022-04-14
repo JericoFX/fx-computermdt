@@ -16,12 +16,14 @@
 	import SearchReports from './SearchReports.svelte';
 	import Fines from './Tables/Fines.svelte';
 	import {Tables} from '../../../utils/misc';
+	import Accordion from '@smui-extra/accordion/src/Accordion.svelte';
 	let uid = new ShortUniqueId({length: 5});
 	onMount(() => {
 		Tables();
 	});
-	let bolo = false,
-		warrant = false;
+
+	const Values = ['bolo', 'basic', 'warrant'];
+	let select = Values[1];
 	let grid;
 
 	let reportData = {
@@ -34,7 +36,8 @@
 		coords: '',
 		observations: 'No observations',
 		title: '',
-		type: 'basic',
+		type: select,
+		amount: 0,
 		data: {
 			evidences: [],
 			polices: [],
@@ -45,10 +48,10 @@
 	reportData.data.evidences = $PoliceEvidence;
 	reportData.data.polices = $PoliceLists;
 	reportData.data.fines = $PoliceFines;
+	reportData.amount = $PoliceFines.reduce((n, {amount}) => n + amount, 0);
 	$: disabled = false;
 	$: disableLocale = false;
-	let jerico = 0;
-
+	let jerico;
 	const newLocal = setTimeout(() => {
 		jerico = Math.random() * 100;
 	}, 5000);
@@ -152,7 +155,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 	async function sendReport() {
 		let open = true;
 		if (!isEnvBrowser()) {
-			await fetchNui('sendNewReport', {report: reportData, bolo: bolo}).then(async (cb) => {
+			await fetchNui('sendNewReport', {report: reportData}).then((cb) => {
 				if (cb.type) {
 					let m = new Acepted({
 						target: document.getElementById('id'),
@@ -163,13 +166,12 @@ this param represent the type of the search, by name, by citizenid etc etc..
 					});
 					reportData.id = uid();
 					m.$on('closeModal', () => (open = false));
-					if (bolo) {
-						await grid
-							.updateConfig({
-								data: $Reports,
-							})
-							.forceRender();
-					}
+
+					// await grid
+					// 	.updateConfig({
+					// 		data: $Reports,
+					// 	})
+					// 	.forceRender();
 				} else {
 					let m = new Acepted({
 						target: document.getElementById('id'),
@@ -336,10 +338,15 @@ this param represent the type of the search, by name, by citizenid etc etc..
 							</fieldset>
 							<fieldset class="float-left full-width">
 								<div class="field-row" style="justify-content: space-between">
-									<input type="checkbox" id="warrant" name="type" bind:checked={warrant} />
+									<!-- <input type="checkbox" id="warrant" name="type" bind:checked={warrant} />
 									<label for="warrant">Add Warrant</label>
 									<input bind:checked={bolo} type="checkbox" id="bolo" name="type" />
-									<label for="bolo">Add Bolo</label>
+									<label for="bolo">Add Bolo</label> -->
+									<select bind:value={select}>
+										{#each Values as val}
+											<option value={val}>{val}</option>
+										{/each}
+									</select>
 								</div>
 							</fieldset>
 						</fieldset>

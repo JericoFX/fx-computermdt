@@ -21,7 +21,6 @@
 		'Label',
 		{
 			name: 'Amount',
-			formatter: (cell: any) => `$${cell}`,
 		},
 		'Jailtime',
 		show

@@ -1,4 +1,5 @@
 import {onMount} from 'svelte';
+import {fetchNui} from './fetchNui';
 
 export const isEnvBrowser = (): boolean => !(window as any).invokeNative;
 
