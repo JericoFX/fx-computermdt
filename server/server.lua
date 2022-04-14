@@ -297,7 +297,7 @@ end)
 --
 QBCore.Functions.CreateCallback("fx-mdt:server:updateReport", function(source, cb, id, data)
 	local src = source
-
+--
 	MySQL.query("UPDATE fx_reports SET taked = 1,callsign = ? WHERE id = ?", { data.callsign, id.id }, function(res)
 		if res then
 			MySQL.insert(
