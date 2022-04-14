@@ -15,6 +15,7 @@
 			});
 		}
 	}
+
 </script>
 
 <div class="modal-overlay" transition:fade={{duration: 100}}>
