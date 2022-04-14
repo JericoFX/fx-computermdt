@@ -204,21 +204,21 @@ QBCore.Functions.CreateCallback("fx-mdt:server:payFine", function(source, cb, am
     local Player = QBCore.Functions.GetPlayer(src)
     -- Get All Players
     if Player.PlayerData.citizenid then
-        ifPlayer.Functions.RemoveMoney("cash", amount, "Pago la fianza con la id "..id) then
-        exports["qb-management"]:AddMoney("police", amount)
-        local result = MySQL.query.await("DELETE FROM fx_reports WHERE id = ?", {id})
-        cb(true)
-    else
-        cb(false)
+        if Player.Functions.RemoveMoney("cash", amount, "Pago la fianza con la id "..id) then
+            exports["qb-management"]:AddMoney("police", amount)
+            local result = MySQL.query.await("DELETE FROM fx_reports WHERE id = ?", {id})
+            cb(true)
+        else
+            cb(false)
+        end
     end
-end
 
 end)
 
 QBCore.Functions.CreateCallback("fx-mdt:server:GetAllPolices", function(source, cb)
     -- ADD CHECK IF THE PLAYER IS A POLICE
     local polices = GetAllPolices()
-    SaveResourceFile(GetCurrentResourceName(), "data.json", json.encode(polices), -1)
+
     cb(polices)
 end)
 
