@@ -11,11 +11,11 @@
 	let duty = false;
 	export let params = {};
 	$: if (params.reload) {
-		fetchNui('getMycalls', {cs: $UserInfo.callsign}).then(async (cb) => {
+		fetchNui('getMycalls', {cs: $UserInfo.callsign}).then((cb) => {
 			$currentAsignament = cb;
-			await grid
+			grid
 				.updateConfig({
-					data: $currentAsignament,
+					data: $currentAsignament ?? [],
 				})
 				.forceRender();
 		});
@@ -114,7 +114,7 @@
 				</div>
 				<div class="field-row" style="justify-content:center">
 					<fieldset>
-						<Grid bind:instance={grid} {columns} data={$currentAsignament} />
+						<Grid bind:instance={grid} {columns} data={$currentAsignament || []} />
 					</fieldset>
 				</div>
 			</fieldset>

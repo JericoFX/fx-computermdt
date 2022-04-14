@@ -16,7 +16,7 @@
 	import SearchReports from './SearchReports.svelte';
 	import Fines from './Tables/Fines.svelte';
 	import {Tables} from '../../../utils/misc';
-	import Accordion from '@smui-extra/accordion/src/Accordion.svelte';
+	let container;
 	let uid = new ShortUniqueId({length: 5});
 	onMount(() => {
 		Tables();
@@ -28,10 +28,6 @@
 		{id: 'basic', text: 'Basic'},
 	];
 	$: select = 0;
-	let grid;
-	$: console.log(select);
-	{
-	}
 	let reportData = {
 		id: uid(),
 		name: '',
@@ -49,24 +45,41 @@
 			polices: [],
 			fines: [],
 		},
+		reset: () => {
+			(this.name = ''),
+				(this.lastname = ''),
+				(this.rank = ''),
+				(this.citizenid = ''),
+				(this.location = ''),
+				(this.coords = ''),
+				(this.observations = 'No observations'),
+				(this.title = ''),
+				(this.type = Values[2].id),
+				(this.amount = 0),
+				(this.data = {
+					evidences: [],
+					polices: [],
+					fines: [],
+				});
+		},
 	};
 
 	reportData.data.evidences = $PoliceEvidence;
 	reportData.data.polices = $PoliceLists;
 	reportData.data.fines = $PoliceFines;
-	reportData.amount = $PoliceFines.reduce((n, {amount}) => n + amount, 0);
 
+	$: amountFines = $PoliceFines.reduce((n, {amount}) => n + amount, 0);
 	$: disabled = false;
 	$: disableLocale = false;
-	let jerico;
-	const newLocal = setTimeout(() => {
+	let jerico = 0;
+	setInterval(() => {
 		jerico = Math.random() * 100;
 	}, 5000);
 
 	function openAbout() {
 		let open = true;
 		let m = new About({
-			target: document.getElementById('id'),
+			target: container,
 			props: {
 				open: open,
 			},
@@ -81,7 +94,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 	function openSearch(type: string): Search {
 		let open = true;
 		let m = new Search({
-			target: document.getElementById('id'),
+			target: container,
 			props: {
 				open: open,
 				type: type,
@@ -104,7 +117,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 
 		await fetchNui('getAllPolices').then((cb) => {
 			let m = new Polices({
-				target: document.getElementById('id'),
+				target: container,
 				props: {
 					open: open,
 					polices: cb,
@@ -119,7 +132,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 			await fetchNui('getEvidence').then((cb) => {
 				if (cb) {
 					let m = new Evidences({
-						target: document.getElementById('id'),
+						target: container,
 						props: {
 							open: open,
 							Evidence: view === true ? $PoliceEvidence : cb,
@@ -132,7 +145,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 			});
 		} else {
 			let m = new Evidences({
-				target: document.getElementById('id'),
+				target: container,
 				props: {
 					open: open,
 					Evidence: $PoliceEvidence,
@@ -150,7 +163,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 	function openPoliceList(): PoliceList {
 		let open = true;
 		let m = new PoliceList({
-			target: document.getElementById('id'),
+			target: container,
 			props: {
 				open: open,
 			},
@@ -161,17 +174,19 @@ this param represent the type of the search, by name, by citizenid etc etc..
 
 	async function sendReport() {
 		let open = true;
+		reportData.amount = amountFines;
 		if (!isEnvBrowser()) {
 			await fetchNui('sendNewReport', {report: reportData}).then((cb) => {
 				if (cb.type) {
 					let m = new Acepted({
-						target: document.getElementById('id'),
+						target: container,
 						props: {
 							open: open,
 							message: `Report created with the id ${reportData.id}`,
 						},
 					});
 					reportData.id = uid();
+					reportData.reset();
 					m.$on('closeModal', () => (open = false));
 
 					// await grid
@@ -181,7 +196,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 					// 	.forceRender();
 				} else {
 					let m = new Acepted({
-						target: document.getElementById('id'),
+						target: container,
 						props: {
 							open: open,
 							message: `Error creating the report`,
@@ -192,7 +207,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 			});
 		} else {
 			let m = new Acepted({
-				target: document.getElementById('id'),
+				target: container,
 				props: {
 					open: open,
 					message: `Report created with the id ${reportData.id}`,
@@ -205,7 +220,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 	function openFines(show: boolean) {
 		let open = true;
 		let m = new Fines({
-			target: document.getElementById('id'),
+			target: container,
 			props: {
 				open: open,
 				show: show,
@@ -377,11 +392,11 @@ this param represent the type of the search, by name, by citizenid etc etc..
 		<div class="status-bar">
 			<p class="status-bar-field">Report ID: {reportData.id}</p>
 			<p class="status-bar-field">Report Tool</p>
-			<p class="status-bar-field">CPU Usage: {newLocal.toFixed(0)}%</p>
+			<p class="status-bar-field">CPU Usage: {jerico.toFixed(0)}%</p>
 		</div>
 	</div>
 </div>
-<div id="id" />
+<div bind:this={container} />
 
 <style>
 	#search-reports-tab {

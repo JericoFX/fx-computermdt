@@ -49,7 +49,7 @@ local contain = {
 		)
 	end,
 	all = function(data)
-		return MySQL.query.await("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant'")
+		return MySQL.query.await("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant' OR  fx_reports.type = 'report' ")
 	end,
 	searchUser = function(data)
 		local query =
@@ -200,7 +200,7 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
 
 		Wait(100)
 		MySQL.query(
-			"INSERT INTO fx_reports (id,title,name,lastname,citizenid,location,coords,observations,data,type) VALUES (?,?,?,?,?,?,?,?,?,?)",
+			"INSERT INTO fx_reports (id,title,name,lastname,citizenid,location,coords,observations,data,amount,type) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
 			{
 				tostring(data.report.id),
 				tostring(data.report.title),
@@ -210,7 +210,9 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
 				data.report.location,
 				json.encode(coords),
 				tostring(data.report.observations),
+		
 				json.encode(data.report.data),
+				data.report.amount,
 				data.report.type or "basic",
 			}
 		)
@@ -241,7 +243,8 @@ QBCore.Functions.CreateCallback("fx-mdt:server:getReportData", function(source, 
 				type = el.type,
 				taked = el.taked,
 				observations = el.observations,
-				callsign = el.callsign
+				callsign = el.callsign,
+				amount = el.amount
 			}
 		end
 		if tostring(data.type) == "all" then
@@ -259,7 +262,8 @@ QBCore.Functions.CreateCallback("fx-mdt:server:getReportData", function(source, 
 				type = el.type,
 				observations = el.observations,
 				taked = el.taked,
-				callsign = el.callsign
+				callsign = el.callsign,
+				amount = el.amount
 			}
 		end
 		TriggerClientEvent("fx-mdt:client:UpdateReports", -1,Data )
@@ -383,7 +387,7 @@ RegisterServerEvent("fx-mdt:server:newReportFromCommand", function(data)
 			local streetName, coords,name,lastname,citizenid,phone,message in data
 		local Data = { location = streetName, coords = coords }
 		MySQL.query(
-			"INSERT INTO fx_reports (id,title,name,lastname,citizenid,location,coords,observations,data,type) VALUES (?,?,?,?,?,?,?,?,?,?)",
+			"INSERT INTO fx_reports (id,title,name,lastname,citizenid,location,coords,observations,data,amount,type) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
 			{
 				tostring(id),
 				tostring(Title),
@@ -394,9 +398,11 @@ RegisterServerEvent("fx-mdt:server:newReportFromCommand", function(data)
 				json.encode(Data.coords),
 				tostring(message),
 				json.encode({ evidences = {}, polices = {}, fines = {} }),
-				"Civil",
+				data.report.amount,
+				"report",
 			}
 		)
+		Wait(200)
 		TriggerEvent("fx-mdt:server:UpdateReports")
 	end
 end)
