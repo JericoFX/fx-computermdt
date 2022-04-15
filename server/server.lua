@@ -3,6 +3,8 @@ local Return = {}
 local encode = json.encode
 local decode = json.decode
 local CC = QBCore.Functions.CreateCallback
+local Reportes = {}
+local CurrentInfo = {}
 -----------------------------------------------
 local function deepcompare(t1, t2, ignore_mt)
     local ty1 = type(t1)
@@ -33,6 +35,7 @@ local function deepcompare(t1, t2, ignore_mt)
     end
     return true
 end
+
 ------------------------------------------------
 
 function string.fromhex(str)
@@ -76,6 +79,11 @@ function GetAllPolices()
     return Citizen.Await(p)
 end
 
+CreateThread(function()
+    Wait(200)
+    Reportes = MySQL.query.await("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant' OR  fx_reports.type = 'report'")
+
+end)
 -----------------------------------------------
 -- THIS VARIABLE HANDLE A KEY = NAME OF THE FUNCTION AND A
 local contain = {
@@ -124,6 +132,13 @@ local contain = {
         return ret
     end,
 }
+
+RegisterCommand("tabla", function(source, args)
+    local d = contain["all"]("")
+    Reportes = contain["name"]("Jerico")
+
+    print(deepcompare(d, Reportes))
+end)
 
 function GetVehicleByData(citizenid)
 
@@ -306,10 +321,7 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
             if data.report.bolo and data.report.isvehicle then
                 MySQL.query("UPDATE player_vehicles SET bolo = 1 WHERE plate = ?", {tostring(data.report.plate)})
             end
-            for i = 1, #data1 do
-                local el = data1[i]
-                TriggerClientEvent("fx-mdt:client:UpdateReports", el.src, contain["all"](""))
-            end
+            sendToPolicesOnly(contain["all"](""))
 
             cb({type = true, reports = {}})
         end
@@ -357,10 +369,7 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
                         amount = el.amount
                     }
                 end
-                for i = 1, #data1 do
-                    local el = data1[i]
-                    TriggerClientEvent("fx-mdt:client:UpdateReports", el.src, Data)
-                end
+                sendToPolicesOnly(Data)
             end
 
             cb(Data)
@@ -413,16 +422,43 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
             end
         end
     end)
-
+    function sendToPolicesOnly(t)
+        local data = GetAllPolices()
+        for i = 1, #data do
+            local el = data[i]
+            TriggerClientEvent("fx-mdt:client:UpdateReports", el.src, t)
+        end
+    end
     RegisterServerEvent("fx-mdt:server:UpdateReports", function()
         Wait(200)
-        local data = GetAllPolices()
-        MySQL.query("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant' OR  fx_reports.type = 'report'", function(res)
-            for i = 1, #data do
-                local el = data[i]
-                TriggerClientEvent("fx-mdt:client:UpdateReports", el.src, res)
-            end
-        end)
+
+        -- WHAT IM TRYING TO DO HERE IS, IF THE TABLE REPORTES HAS THE SAME INFO AS CURRENTINFO, JUST DONT CHECK THE DB JUST SEND WHAT WE HAVE, ELSE DO A QUERY AND GET ALL INFO AGAIN
+        if deepcompare(Reportes, CurrentInfo, true) then
+            sendToPolicesOnly(Reportes)
+            print("same table my friend")
+        else
+            local r = MySQL.query.await("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant' OR  fx_reports.type = 'report'")
+            CurrentInfo = r
+            Reportes = CurrentInfo
+            print("different one!")
+            sendToPolicesOnly(Reportes)
+        end
+
+        -- MySQL.query("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant' OR  fx_reports.type = 'report'", function(res)
+        --     if deepcompare(Reportes, res) then -- if Reportes is == to res, just send the Reportes
+        --         for i = 1, #data do
+        --             local el = data[i]
+        --             TriggerClientEvent("fx-mdt:client:UpdateReports", el.src, Reportes)
+        --         end
+        --     else
+
+        --         for i = 1, #data do
+        --             local el = data[i]
+        --             TriggerClientEvent("fx-mdt:client:UpdateReports", el.src, res)
+        --         end
+        --     end
+
+        -- end)
 
     end)
     ----
@@ -480,11 +516,14 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
 
     end
     CC("fx-mdt:server:deleteCall", function(source, cb, id)
-
+        local data1 = GetAllPolices()
         if IsPolice(source) then
             local Data = MySQL.query.await("DELETE FROM fx_assignment  WHERE caseid = ?", {id})
             local Update = MySQL.query("UPDATE fx_reports SET taked = 0,callsign = 'none' WHERE id = ?", {id})
-
+            for i = 1, #data1 do
+                local el = data1[i]
+                TriggerClientEvent("QBCore:Notify", el.src, "The report ID: "..id.." Was deleted")
+            end
             TriggerEvent("fx-mdt:server:UpdateReports")
             cb(true)
         end
