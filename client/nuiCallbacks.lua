@@ -72,34 +72,33 @@ end)
 
 function addBlip(coords, text, cb)
     local blips = {}
-
-    local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
-    SetBlipSprite(blip, 535)
-    SetBlipColour(blip, 1)
-    SetBlipDisplay(blip, 4)
-    SetBlipAlpha(blip, 250)
-    SetBlipScale(blip, 0.8)
-    SetBlipAsShortRange(blip, false)
-    PulseBlip(blip)
-    BeginTextCommandSetBlipName('STRING')
-    AddTextComponentString("CASE ID: "..blip)
-    EndTextCommandSetBlipName(blip)
-    blips[#blips + 1] = {id = blip}
-    if coords == nil and text == nil then
+    if coords ~= nil and text ~= nil and not cb then
+        local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
+        SetBlipSprite(blip, 535)
+        SetBlipColour(blip, 1)
+        SetBlipDisplay(blip, 4)
+        SetBlipAlpha(blip, 250)
+        SetBlipScale(blip, 0.8)
+        SetBlipAsShortRange(blip, false)
+        PulseBlip(blip)
+        BeginTextCommandSetBlipName('STRING')
+        AddTextComponentString("CASE ID: "..blip)
+        EndTextCommandSetBlipName(blip)
+        blips[#blips + 1] = {id = text, bid = blip}
+    else
         cb(blips)
+
     end
+
 end
 RegisterNUICallback("updateReport", function(data, cb)
     local ID = data.caseinfo
     local Data = data.userData
-    QBCore.Debug(ID)
-    local coords = json.decode(data.caseinfo.coords)
+    local coords = json.decode(ID.coords)
     QBCore.Functions.TriggerCallback("fx-mdt:server:updateReport", function(cb1)
         addBlip(coords, ID.id)
-        QBCore.Functions.Notify("Coordinates marked in the map")
         cb(cb1)
     end, ID, Data)
-
 end)
 RegisterNUICallback("getMycalls", function(data, cb)
     local CID = data.cs
@@ -110,7 +109,6 @@ end)
 
 RegisterNUICallback("deleteAssignment", function(data, cb)
     local ID = data.id
-    print(ID)
     QBCore.Functions.TriggerCallback("fx-mdt:server:deleteCall", function(cb1)
         cb(cb1)
     end, ID)

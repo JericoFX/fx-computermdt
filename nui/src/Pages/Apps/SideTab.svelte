@@ -7,8 +7,9 @@
 	import InfoAssigment from './InfoAssigment.svelte';
 	$: value = false;
 	// {id: string; title: string; name: string; lastname: string; citizenid: string; localization: string; data: []; type: string; assigned: []}
-	async function onAsign(data: {lastname?: string; id?: string; title?: string; citizenid?: string; name?: string; algo?: number; location: string; coords: {}; observations?: string; callsign?: string; taked: any; data?: string; type?: string}) {
+	async function onAsign(data): Promise<void> {
 		data.taked = true;
+
 		await fetchNui('updateReport', {caseinfo: {...data}, userData: {...$UserInfo}}).then((cb) => {
 			if (cb) {
 			}

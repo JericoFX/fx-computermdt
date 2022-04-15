@@ -28,10 +28,16 @@ end
 
 function GetAllPolices()
     local p = promise.new()
-    local PolicesAmount = MySQL.query.await(
-        "SELECT citizenid,JSON_UNQUOTE(JSON_EXTRACT(players.charinfo,'$.firstname')) AS name,JSON_UNQUOTE(JSON_EXTRACT(players.charinfo,'$.lastname')) AS lastname, JSON_UNQUOTE(JSON_EXTRACT(players.job,'$.grade.name')) AS rank,JSON_UNQUOTE(JSON_EXTRACT(players.job,'$.name')) AS jobname, JSON_UNQUOTE(JSON_EXTRACT(players.job,'$.onduty')) AS onduty FROM `players` WHERE `job` LIKE '%police%'"
-    )
-    p:resolve(PolicesAmount)
+    --     -- local PolicesAmount = MySQL.query.await(
+    --     --     "SELECT citizenid,JSON_UNQUOTE(JSON_EXTRACT(players.charinfo,'$.firstname')) AS name,JSON_UNQUOTE(JSON_EXTRACT(players.charinfo,'$.lastname')) AS lastname, JSON_UNQUOTE(JSON_EXTRACT(players.job,'$.grade.name')) AS rank,JSON_UNQUOTE(JSON_EXTRACT(players.job,'$.name')) AS jobname, JSON_UNQUOTE(JSON_EXTRACT(players.job,'$.onduty')) AS onduty FROM `players` WHERE `job` LIKE '%police%'"
+    --     -- )
+    local Data = {}
+    for _, Player in pairs(QBCore.Functions.GetQBPlayers()) do
+        if Player.PlayerData.job.name == "police" then
+            Data[#Data + 1] = {src = Player.PlayerData.source}
+        end
+    end
+    p:resolve(Data)
     return Citizen.Await(p)
 end
 
@@ -228,7 +234,7 @@ end)
 
 QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, cb, data)
     local coords = GetEntityCoords(GetPlayerPed(source))
-
+    local data = GetAllPolices()
     if data.report then
         if data.report.type == "basic" then
             TriggerEvent("qb-phone:server:sendNewMailToOffline", data.report.citizenid, {sender = "Police Depto", subject = " Fine situation", message = "A fine has been created the amount to pay is $"..data.report.amount.." if you need more information, please go to the police station and give this code "..data.report.id.." to the officer."})
@@ -255,13 +261,18 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
             if data.report.bolo and data.report.isvehicle then
                 MySQL.query("UPDATE player_vehicles SET bolo = 1 WHERE plate = ?", {tostring(data.report.plate)})
             end
-            TriggerClientEvent("fx-mdt:client:UpdateReports", -1, contain["all"](""))
+            for i = 1, #data do
+                local el = data[i]
+                TriggerClientEvent("fx-mdt:client:UpdateReports", el.src, contain["all"](""))
+            end
+
             cb({type = true, reports = {}})
         end
     end)
 
     QBCore.Functions.CreateCallback("fx-mdt:server:getReportData", function(source, cb, data)
         local Data = {}
+        local data = GetAllPolices()
 
         if contain[tostring(data.type)] then
             local DataReturn = contain[tostring(data.type)](data.value)
@@ -301,7 +312,10 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
                         amount = el.amount
                     }
                 end
-                TriggerClientEvent("fx-mdt:client:UpdateReports", -1, Data)
+                for i = 1, #data do
+                    local el = data[i]
+                    TriggerClientEvent("fx-mdt:client:UpdateReports", el.src, Data)
+                end
             end
 
             cb(Data)
@@ -358,9 +372,13 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
 
     RegisterServerEvent("fx-mdt:server:UpdateReports", function()
         Wait(200)
+        local data = GetAllPolices()
 
         MySQL.query("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant' OR  fx_reports.type = 'report'", function(res)
-            TriggerClientEvent("fx-mdt:client:UpdateReports", -1, res)
+            for i = 1, #data do
+                local el = data[i]
+                TriggerClientEvent("fx-mdt:client:UpdateReports", el.src, res)
+            end
         end)
 
     end)
@@ -368,11 +386,18 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
     QBCore.Functions.CreateCallback("fx-mdt:server:updateReport", function(source, cb, id, data)
         local src = source
         if IsPolice(src) then
+            local data = GetAllPolices()
+
             MySQL.query("UPDATE fx_reports SET taked = 1,callsign = ? WHERE id = ?", {data.callsign, id.id}, function(res)
                 if res then
                     MySQL.insert(
                         "INSERT INTO fx_assignment (caseid,localization,coordinates,citizenid,name,callsign) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE caseid = ? ",
                     {id.id, id.location, id.coords, id.citizenid, id.name, data.callsign, id.id})
+                    for i = 1, #data do
+                        local el = data[i]
+                        TriggerClientEvent("QBCore:Notify", el.src, "Unit: "..data.callsign.." has taken the report ID: "..id.id)
+                    end
+
                     cb(true)
                     TriggerEvent("fx-mdt:server:UpdateReports")
                 end
@@ -458,5 +483,10 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
             end
             TriggerEvent("fx-mdt:server:UpdateReports")
         end, "admin")
+
+        RegisterCommand("test", function(source, args)
+            -- body
+
+        end)
 
        
