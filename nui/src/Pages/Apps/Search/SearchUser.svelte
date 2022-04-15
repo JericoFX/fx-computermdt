@@ -27,6 +27,7 @@
 		jobName: '',
 		vehicles: [],
 		reports: [],
+		observations:"",
 		reset: function () {
 			this.name = '';
 			this.lastName = '';
@@ -36,6 +37,7 @@
 			this.vehicles = [];
 			this.reports = [];
 			this.bolo = false;
+			this.observations = ""
 		},
 	};
 	$: datas = [];
@@ -117,7 +119,6 @@
 					SearchData.bolo = cb[0].bolo;
 					datas = cb[0].Vehicles;
 					datas = datas;
-					console.log(JSON.stringify(cb[0].Vehicles));
 					grid
 						.updateConfig({
 							data: datas,
@@ -135,7 +136,7 @@
 		if (!isEnvBrowser()) {
 			let m = new ActiveBolos({
 				target: content,
-				props: {open: open, data: SearchData.reports},
+				props: {open: open, data:  SearchData.reports},
 			});
 			m.$on('closeModal', () => (open = false));
 			return m;

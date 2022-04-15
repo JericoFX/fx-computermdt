@@ -118,7 +118,7 @@ QBCore.Functions.CreateCallback("fx-mdt:server:searchForPlayer", function(source
     local Reports = {}
     if IsPolice(src) then
         if app == "search" then
-            print("104")
+
             if Charinfo then
                 for k, v in ipairs(Charinfo) do
                     local el = Charinfo[k]
@@ -132,10 +132,11 @@ QBCore.Functions.CreateCallback("fx-mdt:server:searchForPlayer", function(source
                                 data = json.decode(el.data),
                                 location = el.location,
                                 coords = el.coords,
+                                observations = el.observations
                             }
                         end
                     end
-                    print("121")
+
                     Data[#Data + 1] = {
                         Name = el.firstname,
                         LastName = el.lastname,
