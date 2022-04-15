@@ -110,12 +110,12 @@
 
 	async function viewActiveBolo() {
 		let open = true;
-		console.log("Creo que clicke algo!")
+
 		try {
 			await fetchNui("getDataByPlate", { plate: Data.plate }).then(
 				(cb) => {
 					if (cb) {
-						console.log(JSON.stringify(cb))
+						
 						let m = new ObservationsModal({
 							target: content,
 							props: {

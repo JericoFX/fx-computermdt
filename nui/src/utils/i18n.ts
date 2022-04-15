@@ -19,7 +19,7 @@ async function setupI18n(options: {withLocale: any}) {
 		isDownloading.set(true);
 		// ...
 		const messages = await loadJson(messagesFileUrl);
-		console.log(messages);
+		
 		_activeLocale = locale_;
 		addMessages(locale_, messages);
 		locale.set(locale_);

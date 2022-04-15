@@ -92,9 +92,9 @@
 		<div
 			class:light-dimmed={$OnDuty === false ? true : false}
 			class="window absolute-right "
-			style="width:320px;max-width:71vh"
+			style="width:320px;max-height:71vh"
 		>
-			<div class="window-body  hide-scrollbar scroll" style="max-width:70vh">
+			<div class="window-body  hide-scrollbar scroll" style="height:70vh">
 				<Accordion>
 					{#each $Reports as data}
 						<div class="accordion-container q-mt-sm">
