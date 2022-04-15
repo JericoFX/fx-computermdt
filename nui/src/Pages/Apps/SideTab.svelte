@@ -126,7 +126,7 @@
 								</Content>
 							</Panel>
 							<div
-								class="field-row"
+								class="field-row q-mt-sm"
 								style="align-items: center;justify-content: space-around;"
 							>
 								{#if !data.taked}
@@ -146,7 +146,6 @@
 									<button on:click={() => deAssign(data)}
 										>Unassign</button
 									>
-								{:else if !data.taked && $IsBoss}
 									<button
 										on:click={() =>
 											detelteAssignament(data)}
