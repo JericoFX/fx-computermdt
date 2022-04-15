@@ -25,7 +25,7 @@
 				<fieldset>
 					{#each data as d}
 						<div class="field-row" style="">
-							<p class="text-bold text-subtitle1">{d.callsign === '' ? 'NO ASSIGNAMENT' : `Taked By: ${d.callsign}`}</p>
+							<p class="text-bold text-subtitle1">{d.callsign === '' || d.callsign === undefined  ? 'Not Taked' : `Taked By: ${d.callsign}`}</p>
 						</div>
 						<div class="field-row" style="">
 							<p class="text-bold text-subtitle1">Street: {d.location}</p>
