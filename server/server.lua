@@ -160,38 +160,38 @@ end)
 
 QBCore.Functions.CreateCallback("fx-mdt:server:GetEvidence", function(source, cb)
     local src = source
-    -- if IsPolice(src) then
+    if IsPolice(src) then
 
-    local Blood = {}
-    local Player = QBCore.Functions.GetPlayer(src)
-    local Item = Player.Functions.GetItemsByName("filled_evidence_bag")
-    if Item then
-        for k, v in ipairs(Item) do
-            local element = Item[k]
-            if element.info.type == "blood" then
-                --local spl = string.fromhex(element.info.dnalabel)
-                Blood[#Blood + 1] = {
-                    id = uuid(),
-                    type = element.info.type,
-                    street = element.info.street,
-                    bloodtype = element.info.bloodtype,
-                    label = element.info.dnalabel,
-                }
-            else
-                if element.info.type == "casing" then
+        local Blood = {}
+        local Player = QBCore.Functions.GetPlayer(src)
+        local Item = Player.Functions.GetItemsByName("filled_evidence_bag")
+        if Item then
+            for k, v in ipairs(Item) do
+                local element = Item[k]
+                if element.info.type == "blood" then
+                    --local spl = string.fromhex(element.info.dnalabel)
                     Blood[#Blood + 1] = {
                         id = uuid(),
                         type = element.info.type,
                         street = element.info.street,
-                        ammotype = element.info.ammotype,
-                        label = element.info.ammolabel,
+                        bloodtype = element.info.bloodtype,
+                        label = element.info.dnalabel,
                     }
+                else
+                    if element.info.type == "casing" then
+                        Blood[#Blood + 1] = {
+                            id = uuid(),
+                            type = element.info.type,
+                            street = element.info.street,
+                            ammotype = element.info.ammotype,
+                            label = element.info.ammolabel,
+                        }
+                    end
                 end
             end
         end
+        cb(Blood)
     end
-    cb(Blood)
-    -- end
 end)
 QBCore.Functions.CreateCallback("fx-mdt:server:getFines", function(source, cb, id)
     local src = source
@@ -358,11 +358,11 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
 
     RegisterServerEvent("fx-mdt:server:UpdateReports", function()
         Wait(200)
-        if IsPolice(source) then
-            MySQL.query("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant'", function(res)
-                TriggerClientEvent("fx-mdt:client:UpdateReports", -1, res)
-            end)
-        end
+
+        MySQL.query("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant' OR  fx_reports.type = 'report'", function(res)
+            TriggerClientEvent("fx-mdt:client:UpdateReports", -1, res)
+        end)
+
     end)
     ----
     QBCore.Functions.CreateCallback("fx-mdt:server:updateReport", function(source, cb, id, data)
@@ -429,7 +429,6 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
 
         if type(data) == "table" then
             local streetName, coords, name, lastname, citizenid, phone, message in data
-            local Data = {location = streetName, coords = coords}
             MySQL.query(
                 "INSERT INTO fx_reports (id,title,name,lastname,citizenid,location,coords,observations,data,amount,type) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                 {
@@ -438,14 +437,26 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
                     tostring(name),
                     tostring(lastname),
                     tostring(citizenid),
-                    Data.location,
-                    json.encode(Data.coords),
+                    streetName,
+                    json.encode(coords),
                     tostring(message),
                     json.encode({evidences = {}, polices = {}, fines = {}}),
-                    data.report.amount,
+                    0,
                     "report",
                 })
                 Wait(200)
                 TriggerEvent("fx-mdt:server:UpdateReports")
             end
         end)
+        QBCore.Commands.Add("fxr", "Update a report", {name = "id", help = "ID of the report"}, false, function(source, args)
+            local id = tostring(args[1])
+            local rep = MySQL.query.await("UPDATE fx_reports SET callsign = '' , taked = 0 WHERE id = ?", {id})
+            local Res = MySQL.query.await("SELECT EXISTS(SELECT 1 FROM fx_assignment WHERE caseid = ? LIMIT 1) AS EX", {id})[1]
+            if Res.EX == 1 then
+                local Data = MySQL.query.await("DELETE FROM fx_assignment  WHERE caseid = ?", {id})
+
+            end
+            TriggerEvent("fx-mdt:server:UpdateReports")
+        end, "admin")
+
+       

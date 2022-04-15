@@ -80,7 +80,9 @@ RegisterNetEvent("fx-client:payFine", function(data)
     end, Amount, ID)
 
 end)
-RegisterCommand("-openfinesPay", function() end, false)
+RegisterCommand("-openfinesPay", function()
+
+end)
 RegisterKeyMapping("+openfinesPay", "Open Fines", "keyboard", "e")
 
 RegisterNetEvent("QBCore:Client:OnPlayerLoaded", function()

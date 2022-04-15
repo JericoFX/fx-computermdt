@@ -212,7 +212,7 @@
 			</div>
 		</fieldset>
 	</fieldset>
-	<Grid bind:instance={grid} pagination={{enabled: true, limit: 4}} autoWidth data={$Reports} {columns} />
+	<Grid bind:instance={grid} pagination={{enabled: true, limit: 4}} autoWidth data={Reportes} {columns} />
 	<!-- <div id="gridID" class="hide-scrollbar relative-position full-height" style="overflow:scroll;" /> -->
 </div>
 <div id="gridID" />
