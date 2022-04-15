@@ -59,10 +59,11 @@ export {_, setupI18n, isLocaleLoaded, locale};
 // 		isDownloading.set(false);
 // 	}
 // }
-async function loadJson(url: RequestInfo | URL) {
+async function loadJson(url: RequestInfo): Promise<any> {
 	const response = await fetch(url);
 	return await response.json();
 }
+
 // function language(locale: string) {
 // 	// console.log(locale.replace('_', '-').split('-')[0]);
 

@@ -1,15 +1,15 @@
 <script lang="ts">
 	import Grid from 'gridjs-svelte';
-	import {getContext, onMount} from 'svelte';
+	import {onMount} from 'svelte';
 	import {Reports} from '../../../store/store';
-	let grid;
+	let grid:any;
 
 	const columns = ['name', 'lastname', 'citizenid', 'message'];
 	onMount(() => {
 		grid.forceRender();
 	});
 	$: $Reports, run();
-	function run() {
+	function run(): void {
 		if ($Reports === undefined) {
 			$Reports = [];
 			grid.forceRender();
