@@ -1,45 +1,48 @@
 <script lang="ts">
-	import Grid from 'gridjs-svelte';
-	import {h} from 'gridjs';
-	import {PoliceLists} from '../../../../store/store';
-	import {createEventDispatcher} from 'svelte';
+	import Grid from "gridjs-svelte";
+	import { h } from "gridjs";
+	import { PoliceLists } from "../../../../store/store";
+	import { createEventDispatcher } from "svelte";
 	export let open = false;
 
 	const dispatch = createEventDispatcher();
 	let grid;
 	const columns = [
-		'ID',
-		'Name',
-		'Last Name',
-		'Rank',
+		"ID",
+		"Name",
+		"Last Name",
+		"Rank",
 		{
-			name: 'Action',
+			name: "Action",
 			formatter: (cell, row) => {
 				return h(
-					'button',
+					"button",
 					{
 						onClick: () => {
 							//alert(`Editing "${row.cells[0].data}" "${row.cells[1].data}"`);
 							deleteData(row.cells[0].data);
 						},
 					},
-					'Delete'
+					"Delete"
 				);
 			},
 		},
 	];
-	function deleteData(data1: string) {
+	async function deleteData(data1: string) {
 		$PoliceLists.splice(
 			$PoliceLists.findIndex((e) => e.id === data1),
 			1
 		);
-		// $PoliceLists.filter((data) => data.id !== data1);
 		$PoliceLists = $PoliceLists;
-		grid.forceRender();
+		try {
+			await grid.forceRender();
+		} catch (err) {
+			console.log(`PoliceList ${err}`);
+		}
 	}
 	function closeModal() {
 		open = false;
-		dispatch('closeModal', {});
+		dispatch("closeModal", {});
 	}
 </script>
 
@@ -52,7 +55,13 @@
 			</div>
 		</div>
 		<div class="window-body">
-			<Grid bind:instance={grid} data={$PoliceLists} {columns} height="30vh" fixedHeader />
+			<Grid
+				bind:instance={grid}
+				data={$PoliceLists || []}
+				{columns}
+				height="30vh"
+				fixedHeader
+			/>
 			<section class="field-row" style="justify-content: flex-end">
 				<button on:click={closeModal}>Close</button>
 			</section>

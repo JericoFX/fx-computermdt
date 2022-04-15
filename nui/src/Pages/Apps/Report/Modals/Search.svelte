@@ -1,42 +1,54 @@
 <script lang="ts">
-	import {fetchNui} from '../../../../utils/fetchNui';
-
-	import {createEventDispatcher} from 'svelte';
-	import UserList from './UserList.svelte';
+	import { fetchNui } from "../../../../utils/fetchNui";
+	import Searching from "./Searching.svelte";
+	import { createEventDispatcher } from "svelte";
+	import UserList from "./UserList.svelte";
 	export let open = false;
-	export let type = '';
-	$: searchName = '';
+	export let type = "";
+	$: searchName = "";
 	const dispatch = createEventDispatcher();
 	const closeModal = () => {
 		open = false;
-		dispatch('closeModal', false);
+		dispatch("closeModal", false);
 	};
-	async function OpenSearchMenu(name: string) {
+	let zearch = false;
+	async function OpenSearchMenu(): Promise<void> {
 		let open = true;
+		try {
+			await fetchNui("searchPlayer", {
+				name: searchName,
+				app: "report",
+				type: type
+			}).then((cb) => {
+				if (cb) {
+					let m = new UserList({
+						target: document.getElementById("id"),
+						props: {
+							open: open,
+							data: cb,
+						},
+					});
+					m.$on("sendData", (cb) => {
+						const Data = cb.detail;
+						const send = {
+							Name: String,
+							LastName: String,
+							citizenid: String,
+						};
+						send.Name = Data.Name;
+						send.LastName = Data.LastName;
+						send.citizenid = Data.citizenid;
+						dispatch("closeSearch", send);
 
-		await fetchNui('searchPlayer', {name: searchName, app: 'report'}).then((cb) => {
-			if (cb) {
-				let m = new UserList({
-					target: document.getElementById('id'),
-					props: {
-						open: open,
-						data: cb,
-					},
-				});
-				m.$on('sendData', (cb) => {
-					const Data = cb.detail;
-					const send = {Name: String, LastName: String, citizenid: String};
-					send.Name = Data.Name;
-					send.LastName = Data.LastName;
-					send.citizenid = Data.citizenid;
-					dispatch('closeSearch', send);
-
-					dispatch('closeModal', false);
-				});
-				open = false;
-				return m;
-			}
-		});
+						dispatch("closeModal", false);
+					});
+					open = false;
+					return m;
+				}
+			});
+		} catch (err) {
+			console.log(`Search ${err}`);
+		}
 	}
 </script>
 
@@ -51,9 +63,17 @@
 			</div>
 			<div class="window-body">
 				<label for="Search" label="Search">
-					<input bind:value={searchName} type="text" name="Search" id="Search" />
+					<input
+						bind:value={searchName}
+						type="text"
+						name="Search"
+						id="Search"
+					/>
 				</label>
-				<button disabled={searchName.length < 3} on:click={() => OpenSearchMenu(searchName)}>Search</button>
+				<button
+					disabled={searchName.length < 3}
+					on:click={() => OpenSearchMenu()}>Search</button
+				>
 			</div>
 		</div>
 	</div>

@@ -8,11 +8,6 @@
 		open = false;
 		dispatch('closeBar', false);
 	};
-	$: if (open) {
-		setTimeout(() => {
-			closeModal();
-		}, 1000);
-	}
 </script>
 
 {#if open}
@@ -36,7 +31,5 @@
 {/if}
 
 <style>
-	.something {
-		max-width: 100vh;
-	}
+
 </style>

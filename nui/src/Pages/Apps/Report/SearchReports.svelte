@@ -25,9 +25,9 @@
 	$: if (data === "trigger") {
 		useNuiEvent("updateReports", ({ reports }) => {
 			$Reports = reports;
-				grid.updateConfig({
-			data: $Reports,
-		}).forceRender();
+			grid.updateConfig({
+				data: $Reports,
+			}).forceRender();
 		});
 	}
 
@@ -133,34 +133,32 @@
 		m.$on("closeModal", () => (open = false));
 		return m;
 	}
-
-	// useNuiEvent("getMycalls", async ({ calls }) => {
-	// 	Reportes = await calls;
-	// 	Reportes = Reportes;
-	// 	 grid.forceRender();
-	// });
 	async function deleteReport(id: string) {
 		if (!isEnvBrowser()) {
-			await fetchNui("deleteReport", {
-				id: id,
-				callsign: $Callsign,
-			}).then((cb) => {
-				if (cb) {
-					Reportes.splice(
-						Reportes.findIndex((e) => e.id === id),
-						1
-					);
-					$currentAsignament.splice(
-						$currentAsignament.findIndex((e) => e.id === id),
-						1
-					);
-					$currentAsignament = $currentAsignament;
-					$Reports = $Reports;
-					grid.updateConfig({
-						data: $Reports,
-					}).forceRender();
-				}
-			});
+			try {
+				await fetchNui("deleteReport", {
+					id: id,
+					callsign: $Callsign,
+				}).then((cb) => {
+					if (cb) {
+						Reportes.splice(
+							Reportes.findIndex((e) => e.id === id),
+							1
+						);
+						$currentAsignament.splice(
+							$currentAsignament.findIndex((e) => e.id === id),
+							1
+						);
+						$currentAsignament = $currentAsignament;
+						$Reports = $Reports;
+						grid.updateConfig({
+							data: $Reports,
+						}).forceRender();
+					}
+				});
+			} catch (err) {
+				console.log(`SearchReports ${err}`);
+			}
 		}
 	}
 	function openDataContainer(id: any, data: any): Searched {
@@ -179,86 +177,36 @@
 		}
 	}
 	async function SearchBy(): Promise<void> {
-		 await grid
-		 	.updateConfig({
+		await grid
+			.updateConfig({
 				data: $Reports,
-		 	})
+			})
 			.forceRender();
 
 		if (!isEnvBrowser()) {
-			await fetchNui("getReportData", {
-				type: selection,
-				value: values,
-			}).then(async (cb) => {
-				if (cb) {
-					await grid
-						.updateConfig({
-							data: cb,
-						})
-						.forceRender();
-				}
-			});
+			try {
+				await fetchNui("getReportData", {
+					type: selection,
+					value: values,
+				}).then(async (cb) => {
+					if (cb) {
+						await grid
+							.updateConfig({
+								data: cb,
+							})
+							.forceRender();
+					}
+				});
+			} catch (err) {
+				console.log(`SearchReports ${err}`);
+			}
 		}
 	}
-	function ReloadData(){
-		 grid
-						.updateConfig({
-							data: $Reports,
-						})
-						.forceRender();
+	function ReloadData() {
+		grid.updateConfig({
+			data: $Reports,
+		}).forceRender();
 	}
-	// (async () => {
-	// 	await fetchNui("getReportData", { type: "all", value: values }).then(
-	// 		async (cb) => {
-	// 			if (cb) {
-	// 				Reportes = cb;
-	// 				Reportes = Reportes;
-	// 				await grid
-	// 					.updateConfig({
-	// 						data: Reportes,
-	// 					})
-	// 					.forceRender();
-	// 			}
-	// 		}
-	// 	);
-	// })();
-
-	// async function ReloadData() {
-	// 	grid.updateConfig({
-	// 		data: [],
-	// 	}).forceRender();
-	// 	await fetchNui("getReportData", { type: "all", value: values }).then(
-	// 		async (cb) => {
-	// 			if (cb) {
-	// 				$Reports = await cb;
-	// 				$Reports = $Reports;
-	// 				grid.updateConfig({
-	// 					data: $Reports,
-	// 				}).forceRender();
-	// 			}
-	// 		}
-	// 	);
-	// }
-	// 	useNuiEvent("updateReports", async ({ reports }) => {
-	//  grid
-	// 			.updateConfig({
-	// 				data: [],
-	// 			})
-	// 			.forceRender();
-
-	// returnIfNot(reports)
-
-	// 	});
-
-	// 	async function returnIfNot(reports:[]): Promise<void>{
-	// 		Reportes =  reports
-	// 		await grid
-	// 			.updateConfig({
-	// 				data: Reportes,
-	// 			})
-	// 			.forceRender();
-
-	// 	}
 	const menu = [
 		{ name: $_("page.rsapp.rsmenu.rname"), value: "name" },
 		{ name: $_("page.rsapp.rsmenu.rcid"), value: "citizenid" },

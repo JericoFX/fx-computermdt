@@ -51,7 +51,7 @@ let container
 	];
 		function openInformation(obs: string): ObservationsModal {
 		let open = true;
-		console.log(obs)
+	
 		let m = new ObservationsModal({
 			target: container,
 			props: { open: open, obs: obs },

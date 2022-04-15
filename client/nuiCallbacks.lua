@@ -14,10 +14,10 @@ end)
 RegisterNUICallback("searchPlayer", function(data, cb)
     local Name = tostring(data.name)
     local App = tostring(data.app)
-    print(Name, App)
+    local type = tostring(data?.type)
     QBCore.Functions.TriggerCallback("fx-mdt:server:searchForPlayer", function(DataReturning)
         cb(DataReturning)
-    end, Name, App)
+    end, Name, App, type)
 end)
 
 RegisterNUICallback("getEvidence", function(data, cb)
@@ -29,7 +29,6 @@ RegisterNUICallback("getEvidence", function(data, cb)
 end)
 RegisterNUICallback("sendNewReport", function(data, cb)
     local Info = data
-
     QBCore.Functions.TriggerCallback("fx-mdt:server:setNewReport", function(isok)
         cb({type = isok.type, reports = Reports})
         TriggerServerEvent("fx-mdt:server:UpdateReports")
@@ -137,7 +136,6 @@ end)
 RegisterNUICallback("setDestination", function(data, cb)
     local coords = json.decode(data.coords)
     SetNewWaypoint(coords.x, coords.y)
-
     cb({})
 end)
 
@@ -145,6 +143,15 @@ RegisterCommand("rfs", function(source, args)
     TriggerServerEvent("QBCore:Server:SetMetaData", "callsign", "NO CALLSIGN")
 
 end)
+
+RegisterNUICallback("getDataByPlate", function(data, cb)
+    local Plate = data.plate
+
+    QBCore.Functions.TriggerCallback("fx-mdt:server:getDataByPlate", function(obs)
+        cb(obs)
+    end, Plate)
+end)
+
 -- AddEventHandler("onResourceStop", function(name)
 -- if name == GetCurrentResourceName() then
 -- addBlip(nil,nil,function(cb)
