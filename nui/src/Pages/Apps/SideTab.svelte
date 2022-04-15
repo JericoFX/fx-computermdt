@@ -5,9 +5,8 @@
 	import {_} from '../../utils/i18n';
 	let container: HTMLDivElement;
 	import InfoAssigment from './InfoAssigment.svelte';
-	$: value = false;
 	// {id: string; title: string; name: string; lastname: string; citizenid: string; localization: string; data: []; type: string; assigned: []}
-	async function onAsign(data): Promise<void> {
+	async function onAsign(data:any): Promise<void> {
 		data.taked = true;
 
 		await fetchNui('updateReport', {caseinfo: {...data}, userData: {...$UserInfo}}).then((cb) => {

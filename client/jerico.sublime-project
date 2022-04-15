@@ -40,6 +40,8 @@
 						"EndTextCommandSetBlipName",
 						"AddTextComponentString",
 						"GetPlayerPed",
+						"RegisterKeyMapping",
+						"vector3",
 					],
 					"Lua.diagnostics.disable":
 					[

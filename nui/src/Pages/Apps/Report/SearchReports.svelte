@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {h} from 'gridjs';
+	import { h} from 'gridjs';
 	import {_} from 'svelte-i18n';
 	import {fade} from 'svelte/transition';
 	import Grid from 'gridjs-svelte';
@@ -8,10 +8,9 @@
 	import Searched from './Tables/Searched.svelte';
 	import {Callsign, currentAsignament, IsBoss, Reports} from '../../../store/store';
 	import {useNuiEvent} from '../../../utils/useNuiEvent';
-	import About from '../About/About.svelte';
 
-	let grid;
-	let container;
+	let grid:any
+	let container: HTMLDivElement;
 	$: selection = [0];
 	$: values = '';
 	$: Reportes = [];
@@ -191,7 +190,7 @@
 	];
 </script>
 
-<div bind:this={container} class="grid full-width full-height scroll hide-scrollbar">
+<div transition:fade bind:this={container} class="grid full-width full-height scroll hide-scrollbar">
 	<fieldset>
 		<div class="text-center">
 			<label for="asd">{$_('page.rsapp.rsbuttons.rsbsearch')}</label>
