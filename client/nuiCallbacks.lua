@@ -109,9 +109,10 @@ end)
 
 RegisterNUICallback("deleteAssignment", function(data, cb)
     local ID = data.id
+    local Callsign = data?.callsign
     QBCore.Functions.TriggerCallback("fx-mdt:server:deleteCall", function(cb1)
         cb(cb1)
-    end, ID)
+    end, ID, Callsign)
 end)
 
 RegisterNUICallback("modifyCallsign", function(data, cb)

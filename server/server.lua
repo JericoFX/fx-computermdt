@@ -327,7 +327,6 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
             local result = MySQL.query.await("DELETE FROM fx_reports WHERE id = ?", {id.id})
             local deleteassignament = MySQL.query.await("DELETE FROM fx_assignment WHERE caseid = ?", {id.id})
             -- GetMyCalls SEND AN UPDATE VERSION OF THE CALLSIGN
-            TriggerClientEvent("fx-mdt:client:sendUpdateCalls", -1, GetMyCalls(id.callsign))
             cb(result.affectedRows > 0 and true or false)
             TriggerEvent("fx-mdt:server:UpdateReports")
         end
@@ -437,6 +436,7 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
 
     end
     QBCore.Functions.CreateCallback("fx-mdt:server:deleteCall", function(source, cb, id)
+
         if IsPolice(source) then
             local Data = MySQL.query.await("DELETE FROM fx_assignment  WHERE caseid = ?", {id})
             local Update = MySQL.query("UPDATE fx_reports SET taked = 0,callsign = 'none' WHERE id = ?", {id})
@@ -487,3 +487,5 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
             -- body
 
         end)
+
+       

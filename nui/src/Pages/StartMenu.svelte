@@ -2,29 +2,25 @@
 	import {createEventDispatcher} from 'svelte';
 	import {fade} from 'svelte/transition';
 	import {push} from 'svelte-spa-router';
+	import {_} from "../utils/i18n"
 	const dispatch = createEventDispatcher();
 	export let open = false;
 	const Data: {name: string; icon: string; path: string}[] = [
 		{
-			name: 'Report Tool',
+			name: "report",
 			icon: 'iconos/agreement.png',
 			path: '/reportTool',
 		},
 		{
-			name: 'User Search',
+			name: 'user',
 			icon: 'iconos/search.png',
 			path: '/Search',
 		},
-		{
-			name: 'General Tools',
-			icon: 'iconos/police.png',
-			path: `/General/${true}`,
-		},
 
 		{
-			name: 'My Tool',
+			name: 'mytool',
 			icon: 'iconos/user.png',
-			path: '/My',
+			path: `/My/${true}`,
 		},
 	];
 	async function changeApp(path: string) {
@@ -39,7 +35,7 @@
 		<ul id="programs">
 			{#each Data as apps}
 				<!-- svelte-ignore a11y-missing-attribute -->
-				<li on:click={() => changeApp(apps.path)}><a><img src={apps.icon} alt="" />{apps.name}</a></li>
+				<li on:click={() => changeApp(apps.path)}><a><img src={apps.icon} alt="" />{$_(`page.home.app.${apps.name}`)}</a></li>
 			{/each}
 		</ul>
 		<ul id="links" class="" />
@@ -47,22 +43,6 @@
 </div>
 
 <style>
-	#meta {
-		position: absolute;
-		top: 70px;
-		right: 20px;
-	}
-	#meta div {
-		padding: 20px;
-		color: #000;
-		margin: 0 0 20px;
-		-moz-border-radius: 5px;
-		-webkit-border-radius: 5px;
-		background: rgba(255, 255, 255, 0.5);
-	}
-	#meta a {
-		color: #005aff;
-	}
 	#meta a img {
 		margin: 0 10px 0 0;
 		border: solid 1px #000;
@@ -75,6 +55,7 @@
 		margin: 60px 0 5px 5px;
 		-moz-border-radius: 5px;
 		-webkit-border-radius: 5px;
+		border-radius: 5px;
 		position: relative;
 		box-shadow: inset 0 0 1px #fff;
 		-moz-box-shadow: inset 0 0 1px #fff;
@@ -99,6 +80,7 @@
 		-webkit-box-shadow: 0 0 1px #fff;
 		-moz-border-radius: 3px;
 		-webkit-border-radius: 3px;
+			border-radius: 3px;
 	}
 	#programs a {
 		border: solid 1px transparent;
@@ -113,6 +95,7 @@
 		border: solid 1px #7da2ce;
 		-moz-border-radius: 3px;
 		-webkit-border-radius: 3px;
+			border-radius: 3px;
 		box-shadow: inset 0 0 1px #fff;
 		-moz-box-shadow: inset 0 0 1px #fff;
 		-webkit-box-shadow: inset 0 0 1px #fff;
@@ -128,36 +111,5 @@
 	#links {
 		margin: 7px;
 		margin-top: -30px;
-	}
-	#links li.icon {
-		text-align: center;
-	}
-	#links a {
-		border: solid 1px transparent;
-		display: block;
-		margin: 5px 0;
-		position: relative;
-		color: #fff;
-		text-decoration: none;
-		min-width: 120px;
-	}
-	#links a:hover {
-		border: solid 1px #000;
-		-moz-border-radius: 3px;
-		-webkit-border-radius: 3px;
-		box-shadow: 0 0 1px #fff;
-		-moz-box-shadow: inset 0 0 1px #fff;
-		-webkit-box-shadow: inset 0 0 1px #fff;
-		background-color: #658da0;
-		background: -moz-linear-gradient(center left, rgba(81, 115, 132, 0.55), rgba(121, 163, 184, 0.55) 50%, rgba(81, 115, 132, 0.55));
-		background: -webkit-gradient(linear, 0% 100%, 100% 100%, from(#517384), color-stop(50%, #79a3b8), to(#517384));
-	}
-	#links a span {
-		padding: 5px;
-		display: block;
-	}
-	#links a:hover span {
-		background: -moz-linear-gradient(center top, transparent, transparent 49%, rgba(2, 37, 58, 0.5) 50%, rgba(63, 111, 135, 0.5));
-		background: -webkit-gradient(linear, center top, center bottom, from(transparent), color-stop(49%, transparent), color-stop(50%, rgba(2, 37, 58, 0.5)), to(rgba(63, 111, 135, 0.5)));
 	}
 </style>

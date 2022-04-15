@@ -24,6 +24,7 @@
 		$Callsign = userdata.callsign;
 		defaultLangs = defaultLang;
 		$OnDuty = onduty;
+	
 	});
 	onMount(() => {
 		setupI18n({withLocale: defaultLangs});

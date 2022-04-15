@@ -39,17 +39,5 @@
 {/if}
 
 <style>
-	.label {
-		display: flex;
-		flex-direction: row;
-		justify-content: flex-start;
-		text-align: left;
-		width: 120px;
-		line-height: 26px;
-		margin-bottom: 10px;
-	}
-	.input {
-		flex: 0 0 200px;
-		margin-left: 1px;
-	}
+
 </style>

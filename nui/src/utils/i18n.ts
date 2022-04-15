@@ -1,8 +1,8 @@
-import {addMessages, dictionary, init, locale, locales, _} from 'svelte-i18n';
+import {addMessages, dictionary, init, locale, _} from 'svelte-i18n';
 import {get, derived, writable} from 'svelte/store';
 // ...
 const MESSAGE_FILE_URL_TEMPLATE = 'locales/{locale}.json';
-let _activeLocale;
+let _activeLocale: string | number;
 // Internal store for tracking network
 // loading state
 const isDownloading = writable(false);

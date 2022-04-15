@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {fetchNui} from '../../utils/fetchNui';
 	import Accordion, {Panel, Header, Content} from '@smui-extra/accordion';
-	import {OnDuty, Reports, UserInfo} from '../../store/store';
+	import {OnDuty, Reports, UserInfo,IsBoss,currentAsignament,Callsign} from '../../store/store';
 	import {_} from '../../utils/i18n';
 	let container: HTMLDivElement;
 	import InfoAssigment from './InfoAssigment.svelte';
@@ -14,7 +14,17 @@
 			}
 		});
 	}
-
+	async function deAssign({id,callsign}){
+		await fetchNui('deleteAssignment', {id: id,callsign:callsign}).then(async (cb) => {
+			if (cb) {
+				$currentAsignament.splice(
+					$currentAsignament.findIndex((e) => e.id === id),
+					1
+				);
+				$currentAsignament = $currentAsignament;
+			}
+		});
+	}
 	function openInfo({observations, coords, location, id, callsign}): InfoAssigment {
 		let open = true;
 		console.log(observations, coords, location, id, callsign);
@@ -28,6 +38,23 @@
 		});
 		m.$on('Close', () => (open = false));
 		return m;
+	}
+	async function detelteAssignament({id}){
+		await fetchNui('deleteReport', {id: id}).then((cb) => {
+				if (cb) {
+					$Reports.splice(
+						$Reports.findIndex((e) => e.id === id),
+						1
+					);
+					$currentAsignament.splice(
+						$currentAsignament.findIndex((e) => e.id === id),
+						1
+					);
+					$currentAsignament = $currentAsignament;
+					$Reports = $Reports;
+	
+				}
+			});
 	}
 </script>
 
@@ -58,6 +85,13 @@
 							<div class="field-row" style="align-items: center;justify-content: space-around;">
 								{#if !data.taked}
 									<button on:click={() => onAsign(data)}>Assign</button>
+									{:else if data.taked && $IsBoss}
+									<button on:click={() => detelteAssignament(data)}>Delete</button>
+									<button on:click={() => deAssign(data)}>Unassign</button>
+									{:else if data.callsign === $UserInfo.callsign}
+									<button on:click={() => deAssign(data)}>Unassign</button>
+									{:else if !data.taked && $IsBoss}
+									<button on:click={() => detelteAssignament(data)}>Delete</button>
 								{/if}
 								<button on:click={() => openInfo(data)}>Information</button>
 							</div>
@@ -70,25 +104,5 @@
 </main>
 
 <style>
-	.jericotext {
-		font-family: 'Poppins';
-		font-style: normal;
-		font-weight: 600;
-		font-size: 12px;
-		writing-mode: vertical-rl;
-		text-orientation: upright;
-		/* identical< to box height */
-
-		text-align: center;
-
-		color: #000000;
-	}
-	.buttonnsito {
-		width: 85px;
-		height: 22px;
-		background: #483b3b;
-	}
-	.buttonnsito:hover {
-		background: #302727;
-	}
+	
 </style>

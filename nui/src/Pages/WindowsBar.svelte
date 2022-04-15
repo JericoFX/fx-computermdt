@@ -6,7 +6,7 @@
 	let container;
 	$: active = false;
 	let openmenu = false;
-	function closeMenu(_bools) {
+	function closeMenu(_bools: any) {
 		openmenu = false;
 	}
 	function changeLang(index: any) {
@@ -56,29 +56,7 @@
 		box-shadow: inset 0 1px 0px rgba(255, 255, 255, 0.4);
 	}
 
-	.notis {
-		width: 48px;
-		height: 41px;
-		left: 97.5%;
-		background: -webkit-linear-gradient(65deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.9));
-		background: -moz-linear-gradient(65deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.9));
-		background: -ms-linear-gradient(65deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.9));
-		background: -o-linear-gradient(65deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.9));
-		background: linear-gradient(65deg, rgba(0, 0, 0, 0.267), rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.9));
-		border-top: 1px solid rgba(0, 0, 0, 0.5);
-		-webkit-box-shadow: inset 0 1px 0px rgba(255, 255, 255, 0.4);
-		-moz-box-shadow: inset 0 1px 0px rgba(255, 255, 255, 0.4);
-		box-shadow: inset 0 1px 0px rgba(255, 255, 255, 0.4);
-	}
-	.notis:hover {
-		background: linear-gradient(65deg, rgba(83, 83, 83, 0.267), rgba(83, 83, 83, 0.267), rgba(83, 83, 83, 0.267), rgba(83, 83, 83, 0.267));
-	}
-	.notibox {
-		width: 10%;
-		height: 10%;
-		background: white;
-		bottom: 5%;
-	}
+	
 	#start {
 		width: 40px;
 		height: 40px;

@@ -70,7 +70,6 @@
 	}
 
 	function deleteAssign(id: string) {
-		console.log(id);
 
 		fetchNui('deleteAssignment', {id: id}).then(async (cb) => {
 			if (cb) {
