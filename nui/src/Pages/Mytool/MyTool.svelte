@@ -9,6 +9,19 @@
 	let content: HTMLDivElement;
 	let grid;
 	let duty = false;
+	const style = {
+		table: {
+			width: '100%',
+		},
+		header: {
+			display: 'flex',
+			alignItems: 'center',
+			flexDirection: 'row-reverse',
+		},
+		footer: {
+			width: '100%',
+		},
+	};
 	export let params = {};
 	$: if (params.reload) {
 		fetchNui('getMycalls', {cs: $UserInfo.callsign}).then((cb) => {
@@ -25,14 +38,17 @@
 		{
 			id: 'casid',
 			name: 'Case ID',
+			width:"10%"
 		},
 		{
 			id: 'name',
 			name: 'Citizen Name',
+				width:"10%"
 		},
 		{
 			id: 'citizenid',
 			name: 'Citizenid',
+				width:"10%"
 		},
 		{
 			id: 'coordinates',
@@ -48,6 +64,7 @@
 					'Set'
 				);
 			},
+				width:"10%"
 		},
 		{
 			id: 'delete',
@@ -63,6 +80,7 @@
 					'Delete'
 				);
 			},
+				width:"10%"
 		},
 	];
 	async function setDestination(coords: any): Promise<void> {
@@ -113,7 +131,7 @@
 				</div>
 				<div class="field-row" style="justify-content:center">
 					<fieldset>
-						<Grid bind:instance={grid} {columns} data={$currentAsignament || []} />
+						<Grid bind:instance={grid} {style} {columns} data={$currentAsignament || []} />
 					</fieldset>
 				</div>
 			</fieldset>

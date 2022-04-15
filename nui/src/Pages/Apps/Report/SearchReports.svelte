@@ -1,96 +1,150 @@
 <script lang="ts">
-	import { h} from 'gridjs';
-	import {_} from 'svelte-i18n';
-	import {fade} from 'svelte/transition';
-	import Grid from 'gridjs-svelte';
-	import {isEnvBrowser} from '../../../utils/misc';
-	import {fetchNui} from '../../../utils/fetchNui';
-	import Searched from './Tables/Searched.svelte';
-	import {Callsign, currentAsignament, IsBoss, Reports} from '../../../store/store';
-	import {useNuiEvent} from '../../../utils/useNuiEvent';
+	import { h } from "gridjs";
+	import { _ } from "svelte-i18n";
+	import { fade } from "svelte/transition";
+	import Grid from "gridjs-svelte";
+	import { isEnvBrowser } from "../../../utils/misc";
+	import { fetchNui } from "../../../utils/fetchNui";
+	import Searched from "./Tables/Searched.svelte";
+	import {
+		Callsign,
+		currentAsignament,
+		IsBoss,
+		Reports,
+	} from "../../../store/store";
+	import { useNuiEvent } from "../../../utils/useNuiEvent";
+	import ObservationsModal from "./Modals/ObservationsModal.svelte";
+	import { onMount } from "svelte";
 
-	let grid:any
+	let grid: any;
 	let container: HTMLDivElement;
 	$: selection = [0];
-	$: values = '';
+	$: values = "";
 	$: Reportes = [];
-	export let data = '';
-	if (data === 'trigger') {
-		newFunction();
+	export let data = "";
+	$: if (data === "trigger") {
+		useNuiEvent("updateReports", ({ reports }) => {
+			$Reports = reports;
+				grid.updateConfig({
+			data: $Reports,
+		}).forceRender();
+		});
 	}
+
+	onMount(() => {
+		grid.forceRender();
+	});
+	const style = {
+		table: {
+			width: "100%",
+		},
+		header: {
+			display: "flex",
+			alignItems: "center",
+			flexDirection: "row-reverse",
+		},
+		footer: {
+			width: "100%",
+		},
+	};
 	const columns = [
 		{
-			id: 'id',
-			name: 'ID',
-		},
-		'Title',
-		'Name',
-		{
-			id: 'lastname',
-			name: 'Last Name',
-		},
-		{id: 'citizenid', name: 'Citizenid'},
-		{
-			id: 'location',
-			name: 'Location',
+			id: "id",
+			name: "ID",
 		},
 		{
-			id: 'data',
-			name: 'Data',
-			formatter: (_: any, row: {cells: {data: any}[]}) => {
+			id: "title",
+			name: "Title",
+		},
+		"Name",
+		{
+			id: "lastname",
+			name: "Last Name",
+		},
+		{ id: "citizenid", name: "Citizenid" },
+		{
+			id: "location",
+			name: "Location",
+		},
+		{
+			id: "data",
+			name: "Data",
+			formatter: (_: any, row: { cells: { data: any }[] }) => {
 				return h(
-					'button',
+					"button",
 					{
 						onClick: () => {
-							openDataContainer(row.cells[0].data, row.cells[6].data);
+							openDataContainer(
+								row.cells[0].data,
+								row.cells[6].data
+							);
 						},
 					},
-					'Open'
+					"Open"
+				);
+			},
+		},
+		{
+			id: "observations",
+			name: "Observations",
+			formatter: (_cell: any, row: { cells: { data: string }[] }) => {
+				return h(
+					"button",
+					{
+						onClick: () => {
+							openInformation(row.cells[7].data);
+						},
+					},
+					"Open"
 				);
 			},
 		},
 		$IsBoss
 			? {
-					id: 'delete',
-					name: 'Delete Report',
-					formatter: (_cell: any, row: {cells: {data: string}[]}) => {
+					id: "delete",
+					name: "Delete Report",
+					formatter: (
+						_cell: any,
+						row: { cells: { data: string }[] }
+					) => {
 						return h(
-							'button',
+							"button",
 							{
 								onClick: () => {
 									deleteReport(row.cells[0].data);
 								},
 							},
-							'Delete'
+							"Delete"
 						);
 					},
 			  }
 			: {
-					id: 'delete',
+					id: "delete",
 					name: "Can't Delete",
 			  },
 	];
 
-	async function newFunction() {
-		fetchNui('getReportData', {type: 'all', value: values}).then((cb) => {
-			if (cb) {
-				Reportes = cb;
-				grid
-					.updateConfig({
-						data: Reportes,
-					})
-					.forceRender();
-			}
+	function openInformation(obs: string): ObservationsModal {
+		let open = true;
+		let m = new ObservationsModal({
+			target: container,
+			props: { open: open, obs: obs },
 		});
+		m.$on("closeModal", () => (open = false));
+		return m;
 	}
-	useNuiEvent('getMycalls', ({calls}) => {
-		Reportes = calls;
-		Reportes = Reportes;
-		grid.forceRender();
-	});
+
+	// useNuiEvent("getMycalls", async ({ calls }) => {
+	// 	Reportes = await calls;
+	// 	Reportes = Reportes;
+	// 	 grid.forceRender();
+	// });
 	async function deleteReport(id: string) {
 		if (!isEnvBrowser()) {
-			await fetchNui('deleteReport', {id: id, callsign: $Callsign}).then((cb) => {
+			await fetchNui("deleteReport", {
+				id: id,
+				callsign: $Callsign,
+			}).then((cb) => {
 				if (cb) {
 					Reportes.splice(
 						Reportes.findIndex((e) => e.id === id),
@@ -101,12 +155,10 @@
 						1
 					);
 					$currentAsignament = $currentAsignament;
-					Reportes = Reportes;
-					grid
-						.updateConfig({
-							data: Reportes,
-						})
-						.forceRender();
+					$Reports = $Reports;
+					grid.updateConfig({
+						data: $Reports,
+					}).forceRender();
 				}
 			});
 		}
@@ -122,19 +174,22 @@
 					caseID: id,
 				},
 			});
-			m.$on('closeModal1', () => (open = false));
+			m.$on("closeModal1", () => (open = false));
 			return m;
 		}
 	}
 	async function SearchBy(): Promise<void> {
-		await grid
-			.updateConfig({
+		 await grid
+		 	.updateConfig({
 				data: $Reports,
-			})
+		 	})
 			.forceRender();
 
 		if (!isEnvBrowser()) {
-			await fetchNui('getReportData', {type: selection, value: values}).then(async (cb) => {
+			await fetchNui("getReportData", {
+				type: selection,
+				value: values,
+			}).then(async (cb) => {
 				if (cb) {
 					await grid
 						.updateConfig({
@@ -145,58 +200,89 @@
 			});
 		}
 	}
-	(async () => {
-		await fetchNui('getReportData', {type: 'all', value: values}).then(async (cb) => {
-			if (cb) {
-				Reportes = cb;
-				Reportes = Reportes;
-				await grid
-					.updateConfig({
-						data: Reportes,
-					})
-					.forceRender();
-			}
-		});
-	})();
-
-	async function ReloadData() {
-		await fetchNui('getReportData', {type: 'all', value: values}).then((cb) => {
-			if (cb) {
-				Reportes = cb;
-				Reportes = Reportes;
-				grid
-					.updateConfig({
-						data: Reportes,
-					})
-					.forceRender();
-			}
-		});
+	function ReloadData(){
+		 grid
+						.updateConfig({
+							data: $Reports,
+						})
+						.forceRender();
 	}
-	useNuiEvent('updateReports', async ({reports}) => {
-		Reportes = reports;
+	// (async () => {
+	// 	await fetchNui("getReportData", { type: "all", value: values }).then(
+	// 		async (cb) => {
+	// 			if (cb) {
+	// 				Reportes = cb;
+	// 				Reportes = Reportes;
+	// 				await grid
+	// 					.updateConfig({
+	// 						data: Reportes,
+	// 					})
+	// 					.forceRender();
+	// 			}
+	// 		}
+	// 	);
+	// })();
 
-		await grid
-			.updateConfig({
-				data: Reportes,
-			})
-			.forceRender();
-	});
+	// async function ReloadData() {
+	// 	grid.updateConfig({
+	// 		data: [],
+	// 	}).forceRender();
+	// 	await fetchNui("getReportData", { type: "all", value: values }).then(
+	// 		async (cb) => {
+	// 			if (cb) {
+	// 				$Reports = await cb;
+	// 				$Reports = $Reports;
+	// 				grid.updateConfig({
+	// 					data: $Reports,
+	// 				}).forceRender();
+	// 			}
+	// 		}
+	// 	);
+	// }
+	// 	useNuiEvent("updateReports", async ({ reports }) => {
+	//  grid
+	// 			.updateConfig({
+	// 				data: [],
+	// 			})
+	// 			.forceRender();
+
+	// returnIfNot(reports)
+
+	// 	});
+
+	// 	async function returnIfNot(reports:[]): Promise<void>{
+	// 		Reportes =  reports
+	// 		await grid
+	// 			.updateConfig({
+	// 				data: Reportes,
+	// 			})
+	// 			.forceRender();
+
+	// 	}
 	const menu = [
-		{name: $_('page.rsapp.rsmenu.rname'), value: 'name'},
-		{name: $_('page.rsapp.rsmenu.rcid'), value: 'citizenid'},
-		{name: $_('page.rsapp.rsmenu.rlocation'), value: 'localization'},
-		{name: $_('page.rsapp.rsmenu.rsid'), value: 'id'},
-		{name: $_('page.rsapp.rsmenu.rspolice'), value: 'data'},
+		{ name: $_("page.rsapp.rsmenu.rname"), value: "name" },
+		{ name: $_("page.rsapp.rsmenu.rcid"), value: "citizenid" },
+		{ name: $_("page.rsapp.rsmenu.rlocation"), value: "localization" },
+		{ name: $_("page.rsapp.rsmenu.rsid"), value: "id" },
+		{ name: $_("page.rsapp.rsmenu.rspolice"), value: "data" },
 	];
 </script>
 
-<div transition:fade bind:this={container} class="grid full-width full-height scroll hide-scrollbar">
+<div
+	transition:fade
+	bind:this={container}
+	class="grid full-width full-height scroll hide-scrollbar"
+>
 	<fieldset>
 		<div class="text-center">
-			<label for="asd">{$_('page.rsapp.rsbuttons.rsbsearch')}</label>
+			<label for="asd">{$_("page.rsapp.rsbuttons.rsbsearch")}</label>
 			<input bind:value={values} type="text" name="asd" id="ss" />
-			<button on:click|preventDefault={SearchBy}>{$_('page.rsapp.rsbuttons.rsbsearch')}</button>
-			<button on:click|preventDefault={ReloadData}>{$_('page.rsapp.rsbuttons.rsbreload')}</button>
+			<button on:click|preventDefault={SearchBy}
+				>{$_("page.rsapp.rsbuttons.rsbsearch")}</button
+			>
+			<button on:click|preventDefault={ReloadData}
+				>{$_("page.rsapp.rsbuttons.rsbreload")}</button
+			>
 			<!-- <button class="no-padding"> <img src="iconos/info.png" alt="" style:width="16px" /></button> -->
 		</div>
 		<fieldset>
@@ -204,14 +290,28 @@
 			<div class="field-row" style="justify-content:space-between;">
 				{#each menu as data}
 					<div class="field-row">
-						<input checked bind:group={selection} type="radio" id={data.name} name="box" value={data.value} />
+						<input
+							checked
+							bind:group={selection}
+							type="radio"
+							id={data.name}
+							name="box"
+							value={data.value}
+						/>
 						<label for={data.name}>{data.name}</label>
 					</div>
 				{/each}
 			</div>
 		</fieldset>
 	</fieldset>
-	<Grid bind:instance={grid} pagination={{enabled: true, limit: 4}} autoWidth data={Reportes} {columns} />
+	<Grid
+		bind:instance={grid}
+		{style}
+		pagination={{ enabled: true, limit: 4 }}
+		autoWidth
+		data={$Reports}
+		{columns}
+	/>
 	<!-- <div id="gridID" class="hide-scrollbar relative-position full-height" style="overflow:scroll;" /> -->
 </div>
 <div id="gridID" />

@@ -26,6 +26,7 @@
 		{id: 'bolo', text: 'Bolo'},
 		{id: 'warrant', text: 'Warrant'},
 		{id: 'basic', text: 'Basic'},
+		{id: 'report', text: 'Report'},
 	];
 	$: select = 0;
 	let reportData = {
@@ -38,7 +39,7 @@
 		coords: '',
 		observations: 'No observations',
 		title: '',
-		type: Values[2].id,
+		type: Values[3].id,
 		amount: 0,
 		data: {
 			evidences: [],
