@@ -42,6 +42,7 @@
 						"GetPlayerPed",
 						"RegisterKeyMapping",
 						"vector3",
+						"sendToPolicesOnly",
 					],
 					"Lua.diagnostics.disable":
 					[

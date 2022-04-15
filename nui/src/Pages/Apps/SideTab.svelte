@@ -91,10 +91,10 @@
 	<div bind:this={container} class="calls full-height" style="z-index:801">
 		<div
 			class:light-dimmed={$OnDuty === false ? true : false}
-			class="window absolute-right full-height"
-			style="width:320px"
+			class="window absolute-right "
+			style="width:320px;max-width:71vh"
 		>
-			<div class="window-body  full-height hide-scrollbar scroll">
+			<div class="window-body  hide-scrollbar scroll" style="max-width:70vh">
 				<Accordion>
 					{#each $Reports as data}
 						<div class="accordion-container q-mt-sm">

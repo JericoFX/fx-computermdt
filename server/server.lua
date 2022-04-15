@@ -432,29 +432,29 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
     RegisterServerEvent("fx-mdt:server:UpdateReports", function()
         Wait(200)
 
+        local r = MySQL.query.await("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant' OR  fx_reports.type = 'report'")
+        CurrentInfo = r
         -- WHAT IM TRYING TO DO HERE IS, IF THE TABLE REPORTES HAS THE SAME INFO AS CURRENTINFO, JUST DONT CHECK THE DB JUST SEND WHAT WE HAVE, ELSE DO A QUERY AND GET ALL INFO AGAIN
         if deepcompare(Reportes, CurrentInfo, true) then
             sendToPolicesOnly(Reportes)
-            print("same table my friend")
+            print("same table my friend ", deepcompare(Reportes, CurrentInfo, true))
         else
-            local r = MySQL.query.await("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant' OR  fx_reports.type = 'report'")
-            CurrentInfo = r
             Reportes = CurrentInfo
-            print("different one!")
-            sendToPolicesOnly(Reportes)
+            print("different one! ", deepcompare(Reportes, CurrentInfo, true))
+            sendToPolicesOnly(CurrentInfo)
         end
 
-        -- MySQL.query("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant' OR  fx_reports.type = 'report'", function(res)
+        -- MySQL.query("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR fx_reports.type = 'warrant' OR fx_reports.type = 'report'", function(res)
         --     if deepcompare(Reportes, res) then -- if Reportes is == to res, just send the Reportes
         --         for i = 1, #data do
         --             local el = data[i]
-        --             TriggerClientEvent("fx-mdt:client:UpdateReports", el.src, Reportes)
+        --             TriggerClientEvent("fx - mdt:client:UpdateReports", el.src, Reportes)
         --         end
         --     else
 
         --         for i = 1, #data do
         --             local el = data[i]
-        --             TriggerClientEvent("fx-mdt:client:UpdateReports", el.src, res)
+        --             TriggerClientEvent("fx - mdt:client:UpdateReports", el.src, res)
         --         end
         --     end
 
@@ -467,9 +467,9 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
         if IsPolice(src) then
             local data1 = GetAllPolices()
 
-            MySQL.query("UPDATE fx_reports SET taked = 1,callsign = ? WHERE id = ?", {data.callsign, id.id}, function(res)
+            MySQL.query("UPDATE fx_reports SET taked = 1, callsign = ? WHERE id = ?", {data.callsign, id.id}, function(res)
                 if res then
-                    MySQL.insert("INSERT INTO fx_assignment (caseid,localization,coordinates,citizenid,name,callsign) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE caseid = ? ",
+                    MySQL.insert("INSERT INTO fx_assignment (caseid, localization, coordinates, citizenid, name, callsign) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE caseid = ? ",
                     {id.id, id.location, id.coords, id.citizenid, id.name, data.callsign, id.id})
                     for i = 1, #data1 do
                         local el = data1[i]
@@ -498,7 +498,7 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
         local send = {}
         local p = promise.new()
         local Data = MySQL.query.await(
-            "SELECT caseid,localization,coordinates,citizenid,name,callsign FROM fx_assignment WHERE callsign = ?",
+            "SELECT caseid, localization, coordinates, citizenid, name, callsign FROM fx_assignment WHERE callsign = ?",
         {id})
         for k, v in each(Data) do
             local el = Data[k]
@@ -518,8 +518,8 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
     CC("fx-mdt:server:deleteCall", function(source, cb, id)
         local data1 = GetAllPolices()
         if IsPolice(source) then
-            local Data = MySQL.query.await("DELETE FROM fx_assignment  WHERE caseid = ?", {id})
-            local Update = MySQL.query("UPDATE fx_reports SET taked = 0,callsign = 'none' WHERE id = ?", {id})
+            local Data = MySQL.query.await("DELETE FROM fx_assignment WHERE caseid = ?", {id})
+            local Update = MySQL.query("UPDATE fx_reports SET taked = 0, callsign = 'none' WHERE id = ?", {id})
             for i = 1, #data1 do
                 local el = data1[i]
                 TriggerClientEvent("QBCore:Notify", el.src, "The report ID: "..id.." Was deleted")
@@ -537,7 +537,7 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
         if type(data) == "table" then
             local streetName, coords, name, lastname, citizenid, phone, message in data
             MySQL.query(
-                "INSERT INTO fx_reports (id,title,name,lastname,citizenid,plate,location,coords,observations,data,amount,type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+                "INSERT INTO fx_reports (id, title, name, lastname, citizenid, plate, location, coords, observations, data, amount, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 {
                     tostring(id),
                     tostring(Title),
@@ -559,10 +559,10 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
 
         QBCore.Commands.Add("fxr", "Update a report", {name = "id", help = "ID of the report"}, false, function(source, args)
             local id = tostring(args[1])
-            local rep = MySQL.query.await("UPDATE fx_reports SET callsign = '' , taked = 0 WHERE id = ?", {id})
+            local rep = MySQL.query.await("UPDATE fx_reports SET callsign = '', taked = 0 WHERE id = ?", {id})
             local Res = MySQL.query.await("SELECT EXISTS(SELECT 1 FROM fx_assignment WHERE caseid = ? LIMIT 1) AS EX", {id})[1]
             if Res.EX == 1 then
-                local Data = MySQL.query.await("DELETE FROM fx_assignment  WHERE caseid = ?", {id})
+                local Data = MySQL.query.await("DELETE FROM fx_assignment WHERE caseid = ?", {id})
             end
             TriggerEvent("fx-mdt:server:UpdateReports")
         end, "admin")
@@ -575,4 +575,5 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
                 cb(Obs)
             end
         end)
-        
+
+       
