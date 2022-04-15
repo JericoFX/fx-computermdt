@@ -234,7 +234,7 @@ end)
 
 QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, cb, data)
     local coords = GetEntityCoords(GetPlayerPed(source))
-    local data = GetAllPolices()
+    local data1 = GetAllPolices()
     if data.report then
         if data.report.type == "basic" then
             TriggerEvent("qb-phone:server:sendNewMailToOffline", data.report.citizenid, {sender = "Police Depto", subject = " Fine situation", message = "A fine has been created the amount to pay is $"..data.report.amount.." if you need more information, please go to the police station and give this code "..data.report.id.." to the officer."})
@@ -261,8 +261,8 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
             if data.report.bolo and data.report.isvehicle then
                 MySQL.query("UPDATE player_vehicles SET bolo = 1 WHERE plate = ?", {tostring(data.report.plate)})
             end
-            for i = 1, #data do
-                local el = data[i]
+            for i = 1, #data1 do
+                local el = data1[i]
                 TriggerClientEvent("fx-mdt:client:UpdateReports", el.src, contain["all"](""))
             end
 
@@ -272,7 +272,7 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
 
     QBCore.Functions.CreateCallback("fx-mdt:server:getReportData", function(source, cb, data)
         local Data = {}
-        local data = GetAllPolices()
+        local data1 = GetAllPolices()
 
         if contain[tostring(data.type)] then
             local DataReturn = contain[tostring(data.type)](data.value)
@@ -312,8 +312,8 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
                         amount = el.amount
                     }
                 end
-                for i = 1, #data do
-                    local el = data[i]
+                for i = 1, #data1 do
+                    local el = data1[i]
                     TriggerClientEvent("fx-mdt:client:UpdateReports", el.src, Data)
                 end
             end
@@ -386,15 +386,14 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
     QBCore.Functions.CreateCallback("fx-mdt:server:updateReport", function(source, cb, id, data)
         local src = source
         if IsPolice(src) then
-            local data = GetAllPolices()
+            local data1 = GetAllPolices()
 
             MySQL.query("UPDATE fx_reports SET taked = 1,callsign = ? WHERE id = ?", {data.callsign, id.id}, function(res)
                 if res then
-                    MySQL.insert(
-                        "INSERT INTO fx_assignment (caseid,localization,coordinates,citizenid,name,callsign) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE caseid = ? ",
+                    MySQL.insert("INSERT INTO fx_assignment (caseid,localization,coordinates,citizenid,name,callsign) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE caseid = ? ",
                     {id.id, id.location, id.coords, id.citizenid, id.name, data.callsign, id.id})
-                    for i = 1, #data do
-                        local el = data[i]
+                    for i = 1, #data1 do
+                        local el = data1[i]
                         TriggerClientEvent("QBCore:Notify", el.src, "Unit: "..data.callsign.." has taken the report ID: "..id.id)
                     end
 
@@ -488,5 +487,3 @@ QBCore.Functions.CreateCallback("fx-mdt:server:setNewReport", function(source, c
             -- body
 
         end)
-
-       
