@@ -96,5 +96,10 @@
   "owner": "Name",
   "error-creating-the-bolo": "Error creating the B.O.L.O",
   "b-o-l-o-created-with-the-id-data-id": "B.O.L.O created with the id {0}",
-  "vehiclemodel": "Vehicle model {0} with the plate {1} has been reported missing, Color {2}"
+  "vehiclemodel": "Vehicle model {0} with the plate {1} has been reported missing, Color {2}",
+  "a-window-with-contents": "Help",
+  "helptest": "Report Tool",
+  "bolocreated": "B.O.L.O Created with the ID: {0}",
+  "add-bolo": "Add B.O.L.O",
+  "view-bolo": "View B.O.L.O"
 }

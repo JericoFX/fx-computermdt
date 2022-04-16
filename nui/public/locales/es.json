@@ -96,5 +96,10 @@
   "last-name": "Apellido",
   "error-creating-the-bolo": "Error al crear el B.O.L.O",
   "b-o-l-o-created-with-the-id-data-id": "B.O.L.O creado con el id {0}",
-  "vehiclemodel": "El vehiculo modelo {0} con la placa {1} fue reportado perdido, Color {2}"
+  "vehiclemodel": "El vehiculo modelo {0} con la placa {1} fue reportado perdido, Color {2}",
+  "a-window-with-contents": "Ayuda",
+  "helptest": "Herramienta de reporte",
+  "bolocreated": "B.O.L.O Creado con el ID: {0}",
+  "view-bolo": "Ver B.O.L.O",
+  "add-bolo": "Agregar B.O.L.O"
 }

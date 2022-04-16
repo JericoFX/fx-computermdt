@@ -9,6 +9,7 @@
 		currentAsignament,
 		Callsign,
 	} from "../../store/store";
+	import { slide } from "svelte/transition";
 	import { _ } from "../../utils/i18n";
 	let container: HTMLDivElement;
 	import InfoAssigment from "./InfoAssigment.svelte";
@@ -97,9 +98,9 @@
 			<div class="window-body  hide-scrollbar scroll" style="height:70vh">
 				<Accordion>
 					{#each $Reports as data}
-						<div class="accordion-container q-mt-sm">
+						<div transition:slide class="accordion-container q-mt-sm ">
 							<Panel
-								color={data.taked === 0
+					color={data.taked === 0
 									? "primary"
 									: "secondary"}
 							>
