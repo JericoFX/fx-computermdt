@@ -90,14 +90,14 @@ end
 
 CreateThread(function()
     Wait(200)
-    Reportes = MySQL.query.await("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant' OR  fx_reports.type = 'report'")
+    Reportes = MySQL.query.await("SELECT id,title,name,lastname,citizenid,location,coords,observations,data,amount,type  FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant' OR  fx_reports.type = 'report' AND `date` > NOW() - INTERVAL 12 hour")
 
 end)
 -----------------------------------------------
 -- THIS VARIABLE HANDLE A KEY = NAME OF THE FUNCTION AND A
 local contain = {
     name = function(data)
-        return MySQL.query.await("SELECT * FROM fx_reports WHERE name = ?", {data})
+        return MySQL.query.await("SELECT id,title,name,lastname,citizenid,location,coords,observations,data,amount,type  FROM fx_reports WHERE name = ?", {data})
     end,
     localization = function(data)
         return MySQL.query.await(
@@ -116,7 +116,7 @@ local contain = {
         {string.lower("%" .. data .. "%")})
     end,
     all = function(data)
-        return MySQL.query.await("SELECT id,title,name,lastname,citizenid,location,coords,observations,data,amount,type FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant' OR  fx_reports.type = 'report' ")
+        return MySQL.query.await("SELECT id,title,name,lastname,citizenid,location,coords,observations,data,amount,type FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant' OR  fx_reports.type = 'report' AND `date` > NOW() - INTERVAL 12 hour ")
     end,
     searchUser = function(data)
         local query =

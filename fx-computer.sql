@@ -32,25 +32,33 @@ CREATE TABLE IF NOT EXISTS `fx_assignment` (
 -- La exportación de datos fue deseleccionada.
 
 -- Volcando estructura para tabla qbcorevue.fx_reports
-CREATE TABLE IF NOT EXISTS `fx_reports` (
-  `algo` int(11) NOT NULL AUTO_INCREMENT,
-  `id` varchar(255) NOT NULL DEFAULT '',
-  `title` varchar(20) DEFAULT NULL,
-  `name` varchar(20) DEFAULT NULL,
-  `lastname` varchar(20) DEFAULT NULL,
-  `citizenid` varchar(50) DEFAULT NULL,
-  `location` varchar(50) DEFAULT NULL,
-  `coords` text DEFAULT NULL,
-  `observations` text DEFAULT NULL,
-  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '{"polices":[],"fines":[],"evidences":[]}',
-  `amount` smallint(6) DEFAULT 0,
-  `type` varchar(20) NOT NULL DEFAULT 'basic',
-  `taked` int(1) DEFAULT 0,
-  `callsign` varchar(50) DEFAULT '""',
-  PRIMARY KEY (`algo`),
-  KEY `id` (`id`),
-  KEY `citizenid` (`citizenid`)
-) ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8;
+CREATE TABLE if NOT EXISTS`fx_reports` (
+  `algo` INT(11) NOT NULL AUTO_INCREMENT,
+  `id` VARCHAR(255) NOT NULL DEFAULT '' COLLATE 'utf8_general_ci',
+  `title` VARCHAR(20) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+  `name` VARCHAR(20) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+  `lastname` VARCHAR(20) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+  `citizenid` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+  `plate` VARCHAR(50) NULL DEFAULT '""' COLLATE 'utf8_general_ci',
+  `location` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+  `coords` TEXT NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+  `observations` TEXT NULL DEFAULT '""' COLLATE 'utf8_general_ci',
+  `data` LONGTEXT NULL DEFAULT '{"polices":[],"fines":[],"evidences":[]}' COLLATE 'utf8mb4_bin',
+  `amount` SMALLINT(6) NOT NULL DEFAULT '0',
+  `type` VARCHAR(20) NOT NULL DEFAULT 'basic' COLLATE 'utf8_general_ci',
+  `taked` INT(1) NULL DEFAULT '0',
+  `callsign` VARCHAR(50) NULL DEFAULT '""' COLLATE 'utf8_general_ci',
+  `isvehicle` TINYINT(2) NULL DEFAULT '0',
+  `date` TIMESTAMP NULL DEFAULT NULL,
+  PRIMARY KEY (`algo`) USING BTREE,
+  INDEX `id` (`id`) USING BTREE,
+  INDEX `citizenid` (`citizenid`) USING BTREE
+)
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=139
+;
+
 
 ALTER TABLE `player_vehicles`
 	ADD COLUMN `bolo` TINYINT(2) NULL DEFAULT '0';
