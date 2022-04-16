@@ -52,6 +52,8 @@ CREATE TABLE IF NOT EXISTS `fx_reports` (
   KEY `citizenid` (`citizenid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8;
 
+ALTER TABLE `player_vehicles`
+	ADD COLUMN `Columna 21` TINYINT(2) NULL DEFAULT '0';
 -- La exportación de datos fue deseleccionada.
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
