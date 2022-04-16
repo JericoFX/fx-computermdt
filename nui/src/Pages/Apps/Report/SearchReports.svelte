@@ -56,7 +56,7 @@
 			id: "title",
 			name: "Title",
 		},
-		"Name",
+		{ id: "name", name: "Name" },
 		{
 			id: "lastname",
 			name: "Last Name",
@@ -65,6 +65,10 @@
 		{
 			id: "location",
 			name: "Location",
+		},
+		{
+			id: "isvehicle",
+			name: "Vehicle Involved",
 		},
 		{
 			id: "data",
@@ -76,7 +80,7 @@
 						onClick: () => {
 							openDataContainer(
 								row.cells[0].data,
-								row.cells[6].data
+								row.cells[7].data
 							);
 						},
 					},
@@ -92,7 +96,7 @@
 					"button",
 					{
 						onClick: () => {
-							openInformation(row.cells[7].data);
+							openInformation(row.cells[8].data);
 						},
 					},
 					"Open"
@@ -111,7 +115,7 @@
 							"button",
 							{
 								onClick: () => {
-									deleteReport(row.cells[0].data);
+									deleteReport(row.cells[0].data,row.cells[6].data);
 								},
 							},
 							"Delete"
@@ -133,16 +137,17 @@
 		m.$on("closeModal", () => (open = false));
 		return m;
 	}
-	async function deleteReport(id: string) {
+	async function deleteReport(id: string,isvehicle:string) {
 		if (!isEnvBrowser()) {
 			try {
 				await fetchNui("deleteReport", {
 					id: id,
 					callsign: $Callsign,
+					isvehicle:isvehicle
 				}).then((cb) => {
 					if (cb) {
-						Reportes.splice(
-							Reportes.findIndex((e) => e.id === id),
+						$Reports.splice(
+							$Reports.findIndex((e) => e.id === id),
 							1
 						);
 						$currentAsignament.splice(

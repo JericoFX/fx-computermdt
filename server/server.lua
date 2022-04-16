@@ -5,6 +5,7 @@ local decode = json.decode
 local CC = QBCore.Functions.CreateCallback
 local Reportes = {}
 local CurrentInfo = {}
+
 -----------------------------------------------
 local function deepcompare(t1, t2, ignore_mt)
     local ty1 = type(t1)
@@ -64,15 +65,23 @@ local function uuid()
     end)
 end
 
+-- function GetPolicesOnDuty()
+--       local p = promise.new()
+--     local Data = {}
+--     for _, Player in pairs(QBCore.Functions.GetQBPlayers()) do
+--         if Player.PlayerData.job.name == "police" then
+--             Data[#Data + 1] = {src = Player.PlayerData.source}
+--         end
+--     end
+--     p:resolve(Data)
+--     return Citizen.Await(p)
+-- end
 function GetAllPolices()
     local p = promise.new()
-    --     -- local PolicesAmount = MySQL.query.await(
-    --     --     "SELECT citizenid,JSON_UNQUOTE(JSON_EXTRACT(players.charinfo,'$.firstname')) AS name,JSON_UNQUOTE(JSON_EXTRACT(players.charinfo,'$.lastname')) AS lastname, JSON_UNQUOTE(JSON_EXTRACT(players.job,'$.grade.name')) AS rank,JSON_UNQUOTE(JSON_EXTRACT(players.job,'$.name')) AS jobname, JSON_UNQUOTE(JSON_EXTRACT(players.job,'$.onduty')) AS onduty FROM `players` WHERE `job` LIKE '%police%'"
-    --     -- )
     local Data = {}
     for _, Player in pairs(QBCore.Functions.GetQBPlayers()) do
         if Player.PlayerData.job.name == "police" then
-            Data[#Data + 1] = {src = Player.PlayerData.source}
+            Data[#Data + 1] = {src = Player.PlayerData.source, name = Player.PlayerData.charinfo.firstname, lastname = Player.PlayerData.charinfo.lastname, citizenid = Player.PlayerData.citizenid, rank = Player.PlayerData.job.label}
         end
     end
     p:resolve(Data)
@@ -287,7 +296,6 @@ CC("fx-mdt:server:GetAllPolices", function(source, cb)
     -- ADD CHECK IF THE PLAYER IS A POLICE
     if IsPolice(source) then
         local polices = GetAllPolices()
-
         cb(polices)
     end
 end)
@@ -302,7 +310,7 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
         QBCore.Debug(data)
         Wait(100)
         MySQL.query(
-            "INSERT INTO fx_reports (id,title,name,lastname,citizenid,plate,location,coords,observations,data,amount,type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO fx_reports (id,title,name,lastname,citizenid,plate,location,coords,observations,data,amount,type,isvehicle) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
             {
                 tostring(data.report.id),
                 tostring(data.report.title),
@@ -316,6 +324,7 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
                 encode(data.report.data),
                 data.report.amount,
                 data.report.type or "basic",
+                data.report.isvehicle and 1 or 0
             })
 
             if data.report.bolo and data.report.isvehicle then
@@ -378,9 +387,15 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
 
     CC("fx-mdt:server:deleteReport", function(source, cb, id)
         if IsPolice(source) then
+            print(type(id.isvehicle), id.isvehicle)
+            if id.isvehicle and 1 then
+
+                local Plate = MySQL.prepare.await("SELECT plate FROM fx_reports WHERE id = ?", {id.id})
+                local UpdateVehicle = MySQL.query.await("UPDATE player_vehicles SET bolo = 0 WHERE plate = ?", {Plate})
+            end
             local result = MySQL.query.await("DELETE FROM fx_reports WHERE id = ?", {id.id})
             local deleteassignament = MySQL.query.await("DELETE FROM fx_assignment WHERE caseid = ?", {id.id})
-            -- GetMyCalls SEND AN UPDATE VERSION OF THE CALLSIGN
+
             cb(result.affectedRows > 0 and true or false)
             TriggerEvent("fx-mdt:server:UpdateReports")
         end
@@ -576,4 +591,8 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
             end
         end)
 
-       
+        QBCore.Commands.Add("prep", "Update a report", {name = "id", help = "ID of the report"}, false, function(source, args)
+            local id = tostring(args[1])
+
+            print(uniform_int(1, 99))
+        end, "admin")

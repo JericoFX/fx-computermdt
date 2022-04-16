@@ -21,6 +21,16 @@
 	import SearchReports from "./SearchReports.svelte";
 	import Fines from "./Tables/Fines.svelte";
 	import { Tables } from "../../../utils/misc";
+	export let params = {
+		name: "",
+		lastname: "",
+		citizenid: "",
+		plate: "",
+		title: "",
+		isvehicle: false,
+		observations:""
+	};
+
 	let container;
 	let uid = new ShortUniqueId({ length: 5 });
 	onMount(() => {
@@ -43,7 +53,7 @@
 		location: "",
 		coords: "",
 		plate: "",
-		bolo:false,
+		bolo: false,
 		observations: "No observations",
 		title: "",
 		type: Values[3].id,
@@ -74,7 +84,46 @@
 			this.plate = "";
 		},
 	};
+	$: if (params !== null) {
+		reportData = {
+			...params,
+			id: uid(),
+			location: "",
+			type: Values[0].id,
+			bolo: true,
+			amount: 0,
+			data: {
+				evidences: [],
+				polices: [],
+				fines: [],
+			},
+			rank: "",
+			coords: "",
+			reset: () => {
+				(this.name = ""),
+					(this.lastname = ""),
+					(this.rank = ""),
+					(this.citizenid = ""),
+					(this.location = ""),
+					(this.coords = ""),
+					(this.observations = "No observations"),
+					(this.title = ""),
+					(this.type = Values[2].id),
+					(this.amount = 0),
+					(this.data = {
+						evidences: [],
+						polices: [],
+						fines: [],
+					});
+				this.isvehicle = false;
+				this.plate = "";
+			},
+		};
 
+		// reportData.name = params.Name
+		// reportData.lastname = params.lastname
+		// reportData.
+	}
 	reportData.data.evidences = $PoliceEvidence;
 	reportData.data.polices = $PoliceLists;
 	reportData.data.fines = $PoliceFines;
@@ -206,7 +255,6 @@ this param represent the type of the search, by name, by citizenid etc etc..
 		let open = true;
 		reportData.amount = amountFines;
 		if (reportData.isvehicle && reportData.plate.length < 4) {
-
 			let m = new Acepted({
 				target: container,
 				props: {
@@ -214,12 +262,12 @@ this param represent the type of the search, by name, by citizenid etc etc..
 					message: `Please fill the plate`,
 				},
 			});
-			m.$on("closeModal",() => open = false)
+			m.$on("closeModal", () => (open = false));
 			return;
 		} else {
 			if (!isEnvBrowser()) {
 				try {
-						reportData.bolo = reportData.isvehicle
+					reportData.bolo = reportData.isvehicle;
 					await fetchNui("sendNewReport", {
 						report: reportData,
 					}).then((cb) => {

@@ -28,7 +28,7 @@
 		bolo: true,
 		hasbolo: 0,
 		amount: 0,
-		isvehicle: true,
+		isvehicle: 1,
 		data: {
 			evidences: [],
 			polices: [],
@@ -77,7 +77,7 @@
 			Data.observations = Datas;
 			open = false;
 			let opensito = true;
-			Data.title = Data.plate;
+			Data.title = "Vehicle Reported Missing";
 			try {
 				await fetchNui("sendNewReport", {
 					report: Data,
@@ -88,7 +88,7 @@
 							target: content,
 							props: {
 								open: opensito,
-								message: `{$_('b-o-l-o-created-with-the-id-data-id',{values:{0: ${Data.id} }})}`,
+								message: `{$_('bolocreated',{values:{0: ${Data.id} }})}`,
 							},
 						});
 					} else {

@@ -11,6 +11,7 @@
 	import Actions from "./Data/Actions.svelte";
 	import { _ } from "../../../utils/i18n";
 	import { waitLocale } from "svelte-i18n";
+	import addBolo from "./addBolo.svelte"
 	let content;
 	$: searchValue = "";
 	let grid;
@@ -134,7 +135,7 @@
 					const Data = cb1.detail;
 					SearchData.citizenID = Data.citizenid;
 					(SearchData.name = Data.Name),
-					(SearchData.lastName = Data.LastName);
+						(SearchData.lastName = Data.LastName);
 					SearchData.jobName = cb[0].JobName;
 					SearchData.rank = cb[0].Rank;
 					SearchData.reports = cb[0].Reports;
@@ -148,8 +149,8 @@
 								data: datas,
 							})
 							.forceRender();
-					} catch(err) {
-						console.log(`SearchUser ${err}`)
+					} catch (err) {
+						console.log(`SearchUser ${err}`);
 					}
 				});
 				m.$on("closeModal", () => {
@@ -169,18 +170,25 @@
 			return m;
 		}
 	}
-	function openActionmenu(plate: string, bolo: number): Actions {
-		let open = true;
-		let m = new Actions({
+	async function openActionmenu(plate: string, bolo: number) {
+			let open = true;
+		let m = new addBolo({
 			target: content,
 			props: {
 				open: open,
-				Plate: plate ?? "Is Null!!!",
-				activebolo: bolo,
+				message: "Add observations here"
+			
 			},
 		});
-		m.$on("closeModal1", () => (open = false));
-		return m;
+		m.$on("addObservations", async (obs) => {
+			open = false
+			const Message = obs.detail.message
+				try {
+			await push(`/reportTool/${"Vehicle Missing"}/${SearchData.name}/${SearchData.lastName}/${SearchData.citizenID}/${true}/${plate}/${Message}`);
+		} catch (err) {}
+		})
+	
+	
 	}
 </script>
 

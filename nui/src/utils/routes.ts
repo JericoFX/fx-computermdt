@@ -3,7 +3,7 @@ import Home from '../Pages/Apps/Home.svelte';
 
 export default {
 	'/': Home,
-	'/reportTool': wrap({asyncComponent: () => import('../Pages/Apps/Report/Report.svelte')}),
+	'/reportTool/:title?/:name?/:lastname?/:citizenid?/:isvehicle?/:plate?/:observations?': wrap({asyncComponent: () => import('../Pages/Apps/Report/Report.svelte')}),
 	'/about': wrap({asyncComponent: () => import('../Pages/Apps/About/About.svelte')}),
 	'/Search': wrap({asyncComponent: () => import('../Pages/Apps/Search/Search.svelte')}),
 	//'/General/:Reports?/:Warrants?/:BOLO?/:Reload': wrap({asyncComponent: () => import('../Pages/Apps/GeneralReports/General.svelte')}),
