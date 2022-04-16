@@ -54,7 +54,6 @@
 		callsign,
 	}): InfoAssigment {
 		let open = true;
-	
 
 		let m = new InfoAssigment({
 			target: container,
@@ -66,9 +65,13 @@
 		m.$on("Close", () => (open = false));
 		return m;
 	}
-	async function detelteAssignament({ id,isvehicle,plate }) {
+	async function detelteAssignament({ id, isvehicle, plate }) {
 		try {
-			await fetchNui("deleteReport", { id: id,isvehicle:isvehicle,plate:plate }).then((cb) => {
+			await fetchNui("deleteReport", {
+				id: id,
+				isvehicle: isvehicle,
+				plate: plate,
+			}).then((cb) => {
 				if (cb) {
 					$Reports.splice(
 						$Reports.findIndex((e) => e.id === id),
@@ -98,9 +101,12 @@
 			<div class="window-body  hide-scrollbar scroll" style="height:70vh">
 				<Accordion>
 					{#each $Reports as data}
-						<div transition:slide class="accordion-container q-mt-sm ">
+						<div
+							transition:slide
+							class="accordion-container q-mt-sm "
+						>
 							<Panel
-					color={data.taked === 0
+								color={data.taked === 0
 									? "primary"
 									: "secondary"}
 							>
