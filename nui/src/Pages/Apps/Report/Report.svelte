@@ -22,13 +22,13 @@
 	import Fines from "./Tables/Fines.svelte";
 	import { Tables } from "../../../utils/misc";
 	export let params = {
-		name: "",
+		name: null,
 		lastname: "",
 		citizenid: "",
 		plate: "",
-		title: "",
+		title: null,
 		isvehicle: false,
-		observations:""
+		observations: "",
 	};
 
 	let container;
@@ -84,7 +84,7 @@
 			this.plate = "";
 		},
 	};
-	$: if (params !== null) {
+	$: if (params.title !== null) {
 		reportData = {
 			...params,
 			id: uid(),
@@ -119,10 +119,8 @@
 				this.plate = "";
 			},
 		};
-
-		// reportData.name = params.Name
-		// reportData.lastname = params.lastname
-		// reportData.
+	} else {
+		
 	}
 	reportData.data.evidences = $PoliceEvidence;
 	reportData.data.polices = $PoliceLists;
