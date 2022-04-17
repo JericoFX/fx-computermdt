@@ -6,7 +6,7 @@
 	import Codes from '../../utils/codes';
 	import ShortUniqueId from 'short-unique-id';
 
-	import {Callsign, CodesPolice, Notify, UserInfo} from '../../store/store';
+	import { Notify, UserInfo} from '../../store/store';
 	import {h} from 'gridjs';
 	import {fetchNui} from '../../utils/fetchNui';
 	let uid = new ShortUniqueId({length: 5});
@@ -46,7 +46,7 @@
 		{
 			id: 'add',
 			name: 'Action',
-			formatter: (cell, row) => {
+			formatter: (_: any, row: { cells: { data: string; }[]; }) => {
 				return h(
 					'button',
 					{
@@ -54,7 +54,7 @@
 							addNotify(row.cells[0].data, row.cells[1].data);
 						},
 					},
-					'Delete'
+					'Select'
 				);
 			},
 			width: '10%',
@@ -90,10 +90,6 @@
 						</fieldset>
 					</div>
 				</fieldset>
-				<!-- <fieldset class="full-width">
-				<legend> Polices Online </legend>
-				<Grid data={[]} autoWidth search pagination={{enabled: true, page: 4}} columns={['id', 'Name', 'Last Name', 'Send Email', 'Request Help']} />
-			</fieldset> -->
 				<section class="field-row" style="justify-content: space-around;align-content:center;">
 					<button on:click={closeModal}>Close</button>
 					<!-- svelte-ignore a11y-label-has-associated-control -->

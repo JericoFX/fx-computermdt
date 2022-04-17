@@ -453,7 +453,6 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
         local src = source
         if IsPolice(src) then
             local data1 = GetAllPolices()
-
             MySQL.query("UPDATE fx_reports SET taked = 1, callsign = ? WHERE id = ?", {data.callsign, id.id}, function(res)
                 if res then
                     MySQL.insert("INSERT INTO fx_assignment (caseid, localization, coordinates, citizenid, name, callsign) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE caseid = ? ",
@@ -462,7 +461,6 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
                         local el = data1[i]
                         TriggerClientEvent("QBCore:Notify", el.src, "Unit: "..data.callsign.." has taken the report ID: "..id.id)
                     end
-
                     cb(true)
                     TriggerEvent("fx-mdt:server:UpdateReports")
                 end
@@ -502,14 +500,14 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
         end
 
     end
-    CC("fx-mdt:server:deleteCall", function(source, cb, id)
+    CC("fx-mdt:server:deleteCall", function(source, cb, id,callsign)
         local data1 = GetAllPolices()
         if IsPolice(source) then
             local Data = MySQL.query.await("DELETE FROM fx_assignment WHERE caseid = ?", {id})
             local Update = MySQL.query("UPDATE fx_reports SET taked = 0, callsign = 'none' WHERE id = ?", {id})
             for i = 1, #data1 do
                 local el = data1[i]
-                TriggerClientEvent("QBCore:Notify", el.src, "The report ID: "..id.." Was deleted")
+                TriggerClientEvent("QBCore:Notify", el.src, "The report ID: "..id.." Was deleted by "..callsign)
             end
             TriggerEvent("fx-mdt:server:UpdateReports")
             cb(true)
