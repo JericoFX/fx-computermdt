@@ -62,6 +62,25 @@ AUTO_INCREMENT=139
 
 ALTER TABLE `player_vehicles`
 	ADD COLUMN `bolo` TINYINT(2) NULL DEFAULT '0';
+
+  CREATE TABLE `fx_helprequest` (
+	`id` INT(11) NOT NULL AUTO_INCREMENT,
+	`uid` VARCHAR(10) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+	`code` VARCHAR(20) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+	`street` VARCHAR(50) NULL DEFAULT NULL COMMENT 'street string' COLLATE 'utf8_general_ci',
+	`coords` TEXT NULL DEFAULT NULL COMMENT 'Coordinates' COLLATE 'utf8_general_ci',
+	`text` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+	`taked` TINYINT(2) NULL DEFAULT '0' COMMENT '1 true 0 false',
+	`callsign` VARCHAR(10) NULL DEFAULT NULL COMMENT 'police who create the callsign' COLLATE 'utf8_general_ci',
+	`takedby` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+	UNIQUE INDEX `id` (`id`) USING BTREE
+)
+COMMENT='This will save all the requested helps'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=37
+;
+
 -- La exportación de datos fue deseleccionada.
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
