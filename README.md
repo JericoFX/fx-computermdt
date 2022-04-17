@@ -1,8 +1,7 @@
 
 # FX-COMPUTER
 
-This project is a little bit different isnt a tablet, works only in polices vehicles and in predefinied computer places
-the aim of this resource is provide a different aproach as an mdt.
+This project is a little bit different isn't a tablet, works only in police vehicles and in predefined computer places the aim of this resource is provide a different approach as an mdt.
 
 The resource is not finished yet, but i need someone to test it!
 
@@ -33,12 +32,13 @@ To use the resource simple, drop the fx-computer into the resource folder, creat
     
 ## Feedback
 
-If you have any feedback, please reach out to us at PR
+If you have any feedback, please reach out to me in the PR
 
 
 ## Optimizations
 
 As my knowledge in JS is basic, I appreciate if anyone can create PR or explain how to improve the code.
+
 ## FAQ
 
 #### ¿Is this an MDT?
@@ -60,11 +60,12 @@ Make a issue with the title "IDEA"
 #### I found a bug!
 
 make a issue, try to explain how to replicate!
+
 ## Tech Stack
 
 **Client:** Lua
 
-**NUI:** Svelte, Vite
+**NUI:** Svelte, Vite, and the awesone svelte-boilerplate from project error!
 
 **Server:** Lua
 
