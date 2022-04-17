@@ -1,0 +1,105 @@
+{
+  "page": {
+    "home": {
+      "app": {
+        "report": "Create Report",
+        "user": "Search Tool",
+        "general": "Report Tabs",
+        "warrant": "Warrant Tool",
+        "mytool": "My Tool",
+        "search": "Search",
+        "vehicle": "Vehicles",
+        "searchVehicle": {
+          "messageReport": "Vehicle {0} with the plate {1} has been reported missing, Color {2}"
+        }
+      }
+    },
+    "report": {
+      "title": "Report Tool",
+      "menu": {
+        "add": "Add Menu",
+        "addmenu": {
+          "close": "Closes Player",
+          "street": "Add Location",
+          "police": "Add Polices",
+          "evidence": "Add Evidences",
+          "fine": "Add Fines"
+        },
+        "search": "Search",
+        "searchmenu": {
+          "name": "By Name"
+        },
+        "view": "View",
+        "viewmenu": {
+          "vpolice": "Polices",
+          "vevidence": "Evidences",
+          "vfines": "Fines"
+        }
+      },
+      "rcreate": "Create Report",
+      "rsearch": "Search Report",
+      "rbody": {
+        "rinfo": "User Info",
+        "rtitle": "Title",
+        "rname": "Name",
+        "rlname": "Last Name",
+        "rcid": "CitizenID",
+        "rlocation": "Location",
+        "robs": "Observations"
+      },
+      "rbuttons": {
+        "rcancel": "Cancel",
+        "radd": "Create Report"
+      }
+    },
+    "rsapp": {
+      "title": "Search Report",
+      "rsmenu": {
+        "rname": "Name",
+        "rlname": "Last Name",
+        "rcid": "CitizenID",
+        "rlocation": "Direccion",
+        "rsid": "Reporte ID",
+        "rspolice": "Policias Involucrados"
+      },
+      "rsbuttons": {
+        "rsbsearch": "Search",
+        "rsbreload": "Reload"
+      }
+    },
+    "searchApp": {
+      "title": "Search",
+      "app": {
+        "search": "Search",
+        "bdata": "Basic Data",
+        "name": "Name",
+        "lname": "Last Name",
+        "job": "Job",
+        "rank": "Rank",
+        "reports": "Reports",
+        "close": "Close",
+        "vehicles": "Vehicles"
+      }
+    },
+    "generalApp": {
+      "title": "General Report Tool",
+      "reports": "Reports",
+      "warrant": "Warrant",
+      "bolo": "B.O.L.O",
+      "close": "Cerrar"
+    }
+  },
+  "Cerrar": "Close",
+  "category": "Category",
+  "color": "Color",
+  "last-name": "Last Name",
+  "owner": "Name",
+  "error-creating-the-bolo": "Error creating the B.O.L.O",
+  "b-o-l-o-created-with-the-id-data-id": "B.O.L.O created with the id {0}",
+  "vehiclemodel": "Vehicle model {0} with the plate {1} has been reported missing, Color {2}",
+  "a-window-with-contents": "Help",
+  "helptest": "Report Tool",
+  "bolocreated": "B.O.L.O Created with the ID: {0}",
+  "add-bolo": "Add B.O.L.O",
+  "view-bolo": "View B.O.L.O"
+}
