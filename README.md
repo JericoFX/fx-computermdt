@@ -69,3 +69,9 @@ make a issue, try to explain how to replicate!
 
 **Server:** Lua
 
+## TO DO
+
+- Change the text on "Request Backup"
+- Re check in the db for "Request Backups
+- Add the Closest Player feature
+
