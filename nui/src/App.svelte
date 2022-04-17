@@ -41,7 +41,7 @@
 			$Callsign = userdata.callsign;
 			defaultLangs = defaultLang;
 			$OnDuty = onduty;
-			console.log($Callsign);
+
 			
 		}
 	);

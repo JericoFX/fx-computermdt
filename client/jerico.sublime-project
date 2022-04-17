@@ -46,7 +46,9 @@
 					],
 					"Lua.diagnostics.disable":
 					[
-						"unused-local"
+						"unused-local",
+						"undefined-global",
+						"redefined-local",
 					],
 				},
 			},

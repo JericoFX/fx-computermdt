@@ -1,7 +1,7 @@
 QBCore = exports["qb-core"]:GetCoreObject()
 RegisterNUICallback("getCurrentLocation", function(data, cb)
     local Coords = GetEntityCoords(PlayerPedId())
-    local x, y, z in Coords
+   local x, y, z in Coords
     local StreetHash = GetStreetNameAtCoord(x, y, z)
     local StreetName = GetStreetNameFromHashKey(StreetHash)
     cb(StreetName)
@@ -29,7 +29,7 @@ RegisterNUICallback("getEvidence", function(data, cb)
 end)
 RegisterNUICallback("sendNewReport", function(data, cb)
     local Info = data
-    QBCore.Debug(data)
+
     QBCore.Functions.TriggerCallback("fx-mdt:server:setNewReport", function(isok)
         cb({type = isok.type, reports = Reports})
         TriggerServerEvent("fx-mdt:server:UpdateReports")
@@ -157,7 +157,7 @@ RegisterNUICallback("sendHelpRequest", function(data, cb)
     local uid, code, text, callsign in data
 
     local Coords = GetEntityCoords(PlayerPedId())
-    local x, y, z in Coords
+   local x, y, z in Coords
     local StreetHash = GetStreetNameAtCoord(x, y, z)
     local StreetName = GetStreetNameFromHashKey(StreetHash)
 
@@ -180,15 +180,5 @@ RegisterNetEvent("fx-mdt:client:HelpRequested", function(data)
         end, uid, callsign, type)
 
     end)
-    -- AddEventHandler("onResourceStop", function(name)
-    -- if name == GetCurrentResourceName() then
-    -- addBlip(nil,nil,function(cb)
-    -- for k,v in each(cb) do
-    -- print(k,v)
-    -- end
-
-    -- end)
-    -- end
-    -- end)
 
    

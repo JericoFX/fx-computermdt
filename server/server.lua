@@ -65,17 +65,6 @@ local function uuid()
     end)
 end
 
--- function GetPolicesOnDuty()
---       local p = promise.new()
---     local Data = {}
---     for _, Player in pairs(QBCore.Functions.GetQBPlayers()) do
---         if Player.PlayerData.job.name == "police" then
---             Data[#Data + 1] = {src = Player.PlayerData.source}
---         end
---     end
---     p:resolve(Data)
---     return Citizen.Await(p)
--- end
 function GetAllPolices()
     local p = promise.new()
     local Data = {}
@@ -458,23 +447,6 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
             print("different one! ", deepcompare(Reportes, CurrentInfo, true))
             sendToPolicesOnly(CurrentInfo)
         end
-
-        -- MySQL.query("SELECT * FROM fx_reports WHERE fx_reports.type = 'bolo' OR fx_reports.type = 'warrant' OR fx_reports.type = 'report'", function(res)
-        --     if deepcompare(Reportes, res) then -- if Reportes is == to res, just send the Reportes
-        --         for i = 1, #data do
-        --             local el = data[i]
-        --             TriggerClientEvent("fx - mdt:client:UpdateReports", el.src, Reportes)
-        --         end
-        --     else
-
-        --         for i = 1, #data do
-        --             local el = data[i]
-        --             TriggerClientEvent("fx - mdt:client:UpdateReports", el.src, res)
-        --         end
-        --     end
-
-        -- end)
-
     end)
     ----
     CC("fx-mdt:server:updateReport", function(source, cb, id, data)
@@ -550,7 +522,7 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
         local Title = "Basic Report"
 
         if type(data) == "table" then
-            local streetName, coords, name, lastname, citizenid, phone, message in data
+           local streetName, coords, name, lastname, citizenid, phone, message in data
             MySQL.query(
                 "INSERT INTO fx_reports (id, title, name, lastname, citizenid, plate, location, coords, observations, data, amount, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 {
