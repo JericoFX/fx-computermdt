@@ -28,7 +28,19 @@ The resource is not finished yet, but i need someone to test it!
 ## Installation
 
 To use the resource simple, drop the fx-computer into the resource folder, create the sql provide with the resource and start it.
+add this to the qb-radialmenu
 
+    ```
+    	{
+				id = "createReport",
+				title = "Create a Report",
+				icon = "exclamation-triangle",
+				type = "client",
+				event = "fx-mdt:client:setReport",
+				shouldClose = true,
+			},
+```
+    
     
 ## Feedback
 
