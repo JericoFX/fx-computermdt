@@ -2,13 +2,16 @@
 	import {currentAsignament, OnDuty, UserInfo} from '../../store/store';
 	import Grid from 'gridjs-svelte';
 	import {push} from 'svelte-spa-router';
+	// import Codes from "/codes/backup.json"
 
 	import {onMount} from 'svelte';
 	import {fetchNui} from '../../utils/fetchNui';
 	import {h} from 'gridjs';
+import GetCodes from './GetCodes.svelte';
 	let content: HTMLDivElement;
 	let grid;
 	let duty = false;
+
 	const style = {
 		table: {
 			width: '100%',
@@ -38,17 +41,17 @@
 		{
 			id: 'casid',
 			name: 'Case ID',
-			width:"10%"
+			width: '10%',
 		},
 		{
 			id: 'name',
 			name: 'Citizen Name',
-				width:"10%"
+			width: '10%',
 		},
 		{
 			id: 'citizenid',
 			name: 'Citizenid',
-				width:"10%"
+			width: '10%',
 		},
 		{
 			id: 'coordinates',
@@ -64,7 +67,7 @@
 					'Set'
 				);
 			},
-				width:"10%"
+			width: '10%',
 		},
 		{
 			id: 'delete',
@@ -80,7 +83,7 @@
 					'Delete'
 				);
 			},
-				width:"10%"
+			width: '10%',
 		},
 	];
 	async function setDestination(coords: any): Promise<void> {
@@ -88,7 +91,6 @@
 	}
 
 	function deleteAssign(id: string) {
-
 		fetchNui('deleteAssignment', {id: id}).then(async (cb) => {
 			if (cb) {
 				$currentAsignament.splice(
@@ -112,6 +114,15 @@
 			$OnDuty = cb;
 			console.log(cb);
 		});
+	}
+
+	function getCodes(): GetCodes{
+		let open = true
+		let m = new GetCodes({target:content,props:{
+			open: open
+		}})
+		m.$on("closeModal",() => open = false)
+		return m
 	}
 </script>
 
@@ -141,7 +152,7 @@
 			</fieldset> -->
 			<section class="field-row" style="justify-content: space-around;align-content:center;">
 				<button on:click={changeduty}>Change Duty</button>
-				<button>Request Back Up </button>
+				<button on:click={getCodes}>Request Back Up </button>
 				<!-- svelte-ignore a11y-label-has-associated-control -->
 			</section>
 		</div>

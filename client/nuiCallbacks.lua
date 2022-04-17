@@ -152,13 +152,43 @@ RegisterNUICallback("getDataByPlate", function(data, cb)
     end, Plate)
 end)
 
--- AddEventHandler("onResourceStop", function(name)
--- if name == GetCurrentResourceName() then
--- addBlip(nil,nil,function(cb)
--- for k,v in each(cb) do
--- print(k,v)
--- end
+RegisterNUICallback("sendHelpRequest", function(data, cb)
 
--- end)
--- end
--- end)
+    local uid, code, text, callsign in data
+
+    local Coords = GetEntityCoords(PlayerPedId())
+    local x, y, z in Coords
+    local StreetHash = GetStreetNameAtCoord(x, y, z)
+    local StreetName = GetStreetNameFromHashKey(StreetHash)
+
+    TriggerServerEvent("fx-mdt:server:HelpRequested", {uid = uid, callsign = callsign, coords = Coords, street = StreetName, code = code, text = text})
+    cb({})
+end)
+
+RegisterNetEvent("fx-mdt:client:HelpRequested", function(data)
+    SendNUIMessage({
+        action = "getHelpRequest",
+        data = {
+            data = data
+        }})
+    end)
+
+    RegisterNUICallback("takeHelp", function(data, cb)
+        local uid, callsign, type in data
+        QBCore.Functions.TriggerCallback("fx-mdt:takeHelp", function(dat)
+            cb(dat)
+        end, uid, callsign, type)
+
+    end)
+    -- AddEventHandler("onResourceStop", function(name)
+    -- if name == GetCurrentResourceName() then
+    -- addBlip(nil,nil,function(cb)
+    -- for k,v in each(cb) do
+    -- print(k,v)
+    -- end
+
+    -- end)
+    -- end
+    -- end)
+
+   

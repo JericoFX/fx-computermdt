@@ -5,7 +5,7 @@ local decode = json.decode
 local CC = QBCore.Functions.CreateCallback
 local Reportes = {}
 local CurrentInfo = {}
-
+local HelpRequested = {}
 -----------------------------------------------
 local function deepcompare(t1, t2, ignore_mt)
     local ty1 = type(t1)
@@ -591,8 +591,43 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
             end
         end)
 
-        QBCore.Commands.Add("prep", "Update a report", {name = "id", help = "ID of the report"}, false, function(source, args)
-            local id = tostring(args[1])
+        RegisterNetEvent("fx-mdt:server:HelpRequested", function(data)
+            local src < const > = source
+            local EX = MySQL.query.await("SELECT EXISTS(SELECT 1 FROM fx_helprequest WHERE callsign = ? AND code = ? LIMIT 1) AS EX", {data.callsign, data.code})
 
-            print(uniform_int(1, 99))
-        end, "admin")
+            if EX.EX == nil then
+                local Ins = MySQL.insert.await("INSERT INTO fx_helprequest (uid,code,street,coords,text,taked,callsign,takedby) VALUES (?,?,?,?,?,?,?,?)", {tostring(data.uid), data.code, data.street, encode(data.coords), data.text, 0, data.callsign, "none"})
+            else
+                TriggerClientEvent("QBCore:Notify", src, "No puedes crear mas")
+            end
+
+            Wait(100)
+            TriggerEvent("fx-mdt:server:SendHelpOnLogin")
+
+        end)
+
+        RegisterNetEvent("fx-mdt:server:SendHelpOnLogin", function()
+            Wait(100)
+            local p = promise.new()
+            local Data = MySQL.query.await("SELECT uid,code,street,coords,text,taked,callsign,takedby FROM fx_helprequest")
+            p:resolve(Data)
+            TriggerClientEvent("fx-mdt:client:HelpRequested", -1, Citizen.Await(p))
+        end)
+
+        QBCore.Functions.CreateCallback("fx-mdt:takeHelp", function(source, cb, uid, callsign, type)
+
+            if type == "delete" then
+                local D = MySQL.query.await("DELETE FROM fx_helprequest WHERE uid = ?", {uid})
+                cb({type = type, delete = D.affectedRows > 0 and true or false})
+                TriggerEvent("fx-mdt:server:SendHelpOnLogin")
+            elseif type == "help" then
+                print(uid, callsign)
+                local U = MySQL.query.await("UPDATE fx_helprequest SET taked = 1, takedby = :take WHERE uid = :uid", {take = callsign, uid = uid})
+                cb({type = type, delete = false})
+                TriggerEvent("fx-mdt:server:SendHelpOnLogin")
+            end
+
+            cb(false)
+        end)
+
+       

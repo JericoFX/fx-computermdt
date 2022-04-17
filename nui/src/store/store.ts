@@ -1,4 +1,4 @@
-import {writable} from 'svelte/store';
+import { writable } from 'svelte/store';
 
 export const PoliceLists = writable([]);
 export const PoliceEvidence = writable([]);
@@ -10,3 +10,5 @@ export const currentAsignament = writable([]);
 export const Callsign = writable('');
 export const Langs = writable([]);
 export const OnDuty = writable(false);
+export const CodesPolice = writable([]);
+export const Notify = writable([])

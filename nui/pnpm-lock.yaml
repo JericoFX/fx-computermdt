@@ -2,7 +2,6 @@ lockfileVersion: 5.3
 
 specifiers:
   '@smui-extra/accordion': 6.0.0-beta.16
-  '@smui/button': 6.0.0-beta.16
   '@sveltejs/vite-plugin-svelte': ^1.0.0-next.39
   '@tsconfig/svelte': ^2.0.1
   autoprefixer: ^10.4.4
@@ -21,7 +20,6 @@ specifiers:
 
 dependencies:
   '@smui-extra/accordion': 6.0.0-beta.16_svelte@3.46.4+typescript@4.6.2
-  '@smui/button': 6.0.0-beta.16_svelte@3.46.4+typescript@4.6.2
   gridjs: 5.0.2
   gridjs-svelte: 2.1.0_gridjs@5.0.2+svelte@3.46.4
   short-unique-id: 4.4.4
@@ -88,29 +86,6 @@ packages:
       tslib: 2.3.1
     dev: false
 
-  /@material/button/13.0.0:
-    resolution: {integrity: sha512-lYorht6fcEd4P+dsLVp2BGtaY5cGYNp71LMajuDe71GZX3dZPoKeVvb+Ie1S7vcB+o+WLTeaisMk9/vA4gfi8A==}
-    dependencies:
-      '@material/density': 13.0.0
-      '@material/dom': 13.0.0
-      '@material/elevation': 13.0.0
-      '@material/feature-targeting': 13.0.0
-      '@material/ripple': 13.0.0
-      '@material/rtl': 13.0.0
-      '@material/shape': 13.0.0
-      '@material/theme': 13.0.0
-      '@material/tokens': 13.0.0
-      '@material/touch-target': 13.0.0
-      '@material/typography': 13.0.0
-      tslib: 2.3.1
-    dev: false
-
-  /@material/density/13.0.0:
-    resolution: {integrity: sha512-ppJTzOsuhjQam5GvHaq/XZocZNUr+41XQ2sd5nONAmQ0wwzXgqG0FaxtF1EXqK3uZFadz+vAu6enagre9DXhTA==}
-    dependencies:
-      tslib: 2.3.1
-    dev: false
-
   /@material/dom/13.0.0:
     resolution: {integrity: sha512-M9HLAYBZtkTUvf66FL+jAEvUOdhji1HkGA1mV6oyE+HY9gkCkmso+mngvzlLd5+uaAVE9I3WQFhSb9gp0cpXnw==}
     dependencies:
@@ -170,21 +145,6 @@ packages:
       tslib: 2.3.1
     dev: false
 
-  /@material/tokens/13.0.0:
-    resolution: {integrity: sha512-t55CKVeAjABdSQCKjsvYvqrA6Z4f5varLpLloai8ZQU0giSl7qbUczV1i8y2pSOzpRTswD5JKM7a19qfsl/TCA==}
-    dependencies:
-      '@material/elevation': 13.0.0
-    dev: false
-
-  /@material/touch-target/13.0.0:
-    resolution: {integrity: sha512-2BMjj+nwKIYG7cZZGcNuRSKo53knqDu9ksv9wLidxjLgzqXBd1v9gdXsqMRQXepoOqftWGmYMaRYI0xMnxt6lA==}
-    dependencies:
-      '@material/base': 13.0.0
-      '@material/feature-targeting': 13.0.0
-      '@material/rtl': 13.0.0
-      tslib: 2.3.1
-    dev: false
-
   /@material/typography/13.0.0:
     resolution: {integrity: sha512-UfaK4vT3LmGiiySf2RVIrf7fJZa6EJadFwo4YUMJx9bvUMRlBm1oI8Vo9fYpKdLfuSTeA+2BlgbwYVObj3laFw==}
     dependencies:
@@ -233,22 +193,6 @@ packages:
       '@material/typography': 13.0.0
       '@smui/common': 6.0.0-beta.16_svelte@3.46.4+typescript@4.6.2
       '@smui/paper': 6.0.0-beta.16_svelte@3.46.4+typescript@4.6.2
-      '@smui/ripple': 6.0.0-beta.16_svelte@3.46.4+typescript@4.6.2
-      svelte2tsx: 0.5.8_svelte@3.46.4+typescript@4.6.2
-    transitivePeerDependencies:
-      - svelte
-      - typescript
-    dev: false
-
-  /@smui/button/6.0.0-beta.16_svelte@3.46.4+typescript@4.6.2:
-    resolution: {integrity: sha512-+sBnqo8PlbvV7R3sHUOu+/y2xqiDwcpjLkW7BVvbK0r3Rit87yKCb5Octa0DnnTmNh9W6bHGe162v760drcSfw==}
-    dependencies:
-      '@material/button': 13.0.0
-      '@material/elevation': 13.0.0
-      '@material/feature-targeting': 13.0.0
-      '@material/ripple': 13.0.0
-      '@material/theme': 13.0.0
-      '@smui/common': 6.0.0-beta.16_svelte@3.46.4+typescript@4.6.2
       '@smui/ripple': 6.0.0-beta.16_svelte@3.46.4+typescript@4.6.2
       svelte2tsx: 0.5.8_svelte@3.46.4+typescript@4.6.2
     transitivePeerDependencies:

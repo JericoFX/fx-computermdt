@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "@smui-extra/accordion": "6.0.0-beta.16",
-    "@smui/button": "6.0.0-beta.16",
     "gridjs": "^5.0.2",
     "gridjs-svelte": "^2.1.0",
     "short-unique-id": "^4.4.4",

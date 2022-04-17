@@ -29,6 +29,7 @@ CreateThread(function()
         },
         distance = 2.5, -- This is the distance for you to be at for the target to turn blue, this is in GTA units and has to be a float value
     })
+    TriggerServerEvent("fx-mdt:server:SendHelpOnLogin")
 end)
 local IS_IN = false
 CreateThread(function()
@@ -90,6 +91,7 @@ RegisterNetEvent("QBCore:Client:OnPlayerLoaded", function()
     if not data == "police" then
         return
     end
+    TriggerServerEvent("fx-mdt:server:SendHelpOnLogin")
     TriggerServerEvent("fx-mdt:server:UpdateReports")
 end)
 
@@ -111,6 +113,7 @@ end
 
 RegisterNetEvent("fx-mdt:client:openTablet", function()
     TriggerServerEvent("fx-mdt:server:UpdateReports")
+
     local metadata, citizenid, charinfo, job in QBCore.Functions.GetPlayerData()
     SendData("openTablet", {
         isvisible = true,
