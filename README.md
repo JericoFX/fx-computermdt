@@ -4,7 +4,7 @@
 This project is a little bit different isnt a tablet, works only in polices vehicles and in predefinied computer places
 the aim of this resource is provide a different aproach as an mdt.
 
-
+The resource is not finished yet, but i need someone to test it!
 
 ## Features
 
