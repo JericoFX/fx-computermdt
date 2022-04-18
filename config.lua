@@ -17,7 +17,7 @@ Config.AvaliablePC={
         minZ=30.40,
         maxZ=30.89,
     }}
-    Config.PayMenu={
+Config.PayMenu={
         [1]={
             position=vector3(440.8,-981.13,30.69),
             length=1.2,
@@ -26,7 +26,7 @@ Config.AvaliablePC={
             maxZ=31.69,
         }}
 
-        Config.LangAvaliable={
+Config.LangAvaliable={
             {
                 index="es",
                 lang="Español"
@@ -35,6 +35,6 @@ Config.AvaliablePC={
                 index="en",
                 lang="English"
             }}
-            Config.DefaultLang="en"
+Config.DefaultLang="en"
 
            

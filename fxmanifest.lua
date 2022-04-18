@@ -7,13 +7,13 @@ ui_page("nui/dist/index.html")
 use_fxv2_oal("yes")
 lua54("yes")
 client_scripts({
-	"@PolyZone/client.lua",
-	"@PolyZone/BoxZone.lua",
 	"config.lua",
 	"client/nuiCallbacks.lua",
 	"client/client.lua",
 })
 shared_scripts({
+	"@qb-core/shared/locale.lua",
+	"langs/en.lua",
 	"@qb-garages/config.lua",
 })
 files({

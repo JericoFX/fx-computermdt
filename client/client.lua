@@ -5,55 +5,85 @@ CreateThread(function()
     Wait(200)
     for k,v in each(Config.AvaliablePC) do
         local el=Config.AvaliablePC[k]
-        exports["qb-target"]:AddBoxZone(k.."pc",el.position,el.length,el.width,{-- The name has to be unique, the coords a vector3 as shown, the 1.5 is the length of the boxzone and the 1.6 is the width of the boxzone, the length and width have to be float values
-            name=k.."pc",-- This is the name of the zone recognized by PolyZone, this has to be unique so it doesn't mess up with other zones
-            heading=el.heading,-- The heading of the boxzone, this has to be a float value
-            debugPoly=false,-- This is for enabling/disabling the drawing of the box, it accepts only a boolean value (true or false), when true it will draw the polyzone in green
+        exports["qb-target"]:AddBoxZone(k.."pc",el.position,el.length,el.width,{
+            name=k.."pc",
+            heading=el.heading,
+            debugPoly=false,
             minZ=el.minZ,
-            maxZ=el.maxZ,-- This is the top of the boxzone, this can be different from the Z value in the coords, this has to be a float value
+            maxZ=el.maxZ,
             },{
-            options={-- This is your options table, in this table all the options will be specified for the target to accept
-                {-- This is the first table with options, you can make as many options inside the options table as you want
-                    type="client",-- This specifies the type of event the target has to trigger on click, this can be "client", "server", "command" or "qbcommand", this is OPTIONAL and will only work if the event is also specified
-                    event="fx-mdt:client:openTablet",-- This is the event it will trigger on click, this can be a client event, server event, command or qbcore registered command, NOTICE: Normal command can't have arguments passed through, QBCore registered ones can have arguments passed through
-                    icon="fas fa-desktop",-- This is the icon that will display next to this trigger option
-                    label="Open Computer",-- This is the label of this option which you would be able to click on to trigger everything, this has to be a string<i class="fa-solid fa-desktop"></i>
-                    targeticon="fas fa-desktop",-- This is the icon of the target itself, the icon changes to this when it turns blue on this specific option, this is OPTIONAL
-                    item=false,-- This is the item it has to check for, this option will only show up if the player has this item, this is OPTIONAL
+            options={
+                {
+                    type="client",
+                    event="fx-mdt:client:openTablet",
+                    icon="fas fa-desktop",
+                    label=Lang:t('computer.open_computer'),
+                    targeticon="fas fa-desktop",
+                    item=false,
                     action=false,
                     canInteract=false,
-                    job="police",-- This is the job, this option won't show up if the player doesn't have this job, this can also be done with multiple jobs and grades, if you want multiple jobs you always need a grade with it: job = {["police"] = 0, ["ambulance"] = 2},
-                    gang=false,-- This is the gang, this option won't show up if the player doesn't have this gang, this can also be done with multiple gangs and grades, if you want multiple gangs you always need a grade with it: gang = {["ballas"] = 0, ["thelostmc"] = 2},
-                    citizenid=false,-- This is the citizenid, this option won't show up if the player doesn't have this citizenid, this can also be done with multiple citizenid's, if you want multiple citizenid's there is a specific format to follow: citizenid = {["JFD98238"] = true, ["HJS29340"] = true},
+                    job="police",
+                    gang=false,
+                    citizenid=false,
                 },
             },
-            distance=2.5,-- This is the distance for you to be at for the target to turn blue, this is in GTA units and has to be a float value
+            distance=2.5,
         })
     end
+    for k,v in each(Config.PayMenu) do
+        local el=Config.PayMenu[k]
+        exports["qb-target"]:AddBoxZone(k.."menu",el.position,el.length,el.width,{
+            name=k.."menu",
+            heading=el.heading,
+            debugPoly=false,
+            minZ=el.minZ,
+            maxZ=el.maxZ,
+            },{
+            options={
+                {
+                    type="client",
+                    event="fx-mdt:client:getFinesToPay",
+                    icon="fas fa-money-bill",
+                    label=Lang:t('money.pay_fines'),
+                    targeticon="fas fa-money-bill-1-wave",
+                    item=false,
+                    action=false,
+                    canInteract=false,
+                    job="all",
+                    gang=false,
+                    citizenid=false,
+                },
+            },
+            distance=2.5,
+        })
+    end
+end)
+
+
+RegisterNetEvent("fx-client:payFine",function(data)
+    local Amount=data.amount
+    local ID=data.id
+    QBCore.Functions.TriggerCallback("fx-mdt:server:payFine",function(haspay)
+        if haspay then
+            QBCore.Functions.Notify(Lang:t('money.pay_fine'))
+        end
+
+    end,Amount,ID)
 
 end)
-IS_IN = false
-CreateThread(function() --add the pay menus here!
-    Wait(100)
-        local Pay = BoxZone:Create(vector3(440.8,-981.13,30.69),1.2,5.8,{
-            name="payfine",
-            heading=0,
-        })
-        Pay:onPointInOut(PolyZone.getPlayerPosition,function(isPointInside,point)
-            IS_IN = isPointInside
-        end)
-end)
-RegisterCommand("+openfinesPay",function()
+
+
+RegisterNetEvent("fx-mdt:client:getFinesToPay",function() 
     local Menu={}
     local Citizenid=QBCore.Functions.GetPlayerData().citizenid
-    if IS_IN then
+
         QBCore.Functions.TriggerCallback("fx-mdt:server:getFines",function(fines)
             if #fines>0 then
                 for k,v in pairs(fines) do
                     local el=fines[k]
                     Menu[#Menu+1]={
                         header=el.title,
-                        txt="ID "..el.id.."Amount "..el.amount and el.amount or 0 .." Title: ",
+                        txt="ID "..el.id.." "..Lang:t('menu.amount').." "..el.amount and el.amount or 0 .." "..Lang:t('menu.title'),
                         params={
                             event="fx-client:payFine",
                             args={
@@ -65,26 +95,12 @@ RegisterCommand("+openfinesPay",function()
                 end
                 exports["qb-menu"]:openMenu(Menu)
             else
-                QBCore.Functions.Notify("No fines to pay")
+                QBCore.Functions.Notify(Lang:t('menu.no_fines'))
             end
         end,Citizenid)
-    end
-end,false)
-RegisterNetEvent("fx-client:payFine",function(data)
-    local Amount=data.amount
-    local ID=data.id
-    QBCore.Functions.TriggerCallback("fx-mdt:server:payFine",function(haspay)
-        if haspay then
-            QBCore.Functions.Notify("Pagaste la Multa")
-        end
 
-    end,Amount,ID)
 
 end)
-RegisterCommand("-openfinesPay",function()
-
-end)
-RegisterKeyMapping("+openfinesPay","Open Fines","keyboard","e")
 
 RegisterNetEvent("QBCore:Client:OnPlayerLoaded",function()
     local data=QBCore.Functions.GetPlayerData().job.name
@@ -120,7 +136,7 @@ end
 
 RegisterNetEvent("fx-mdt:client:openTablet",function()
     TriggerServerEvent("fx-mdt:server:UpdateReports")
-
+    TriggerServerEvent("fx-mdt:server:SendHelpOnLogin")
     local metadata,citizenid,charinfo,job in QBCore.Functions.GetPlayerData()
     SendData("openTablet",{
         isvisible=true,
@@ -160,7 +176,7 @@ RegisterCommand("mdt",function(source,args)
         })
         SetNuiFocus(true,true)
     else
-        QBCore.Functions.Notify("Not in a police vehicle","error")
+        QBCore.Functions.Notify(Lang:t('error.no_in_vehicle'),"error")
     end
 end,false)
 RegisterNetEvent("fx-mdt:client:setReport",function(data)
@@ -170,20 +186,19 @@ RegisterNetEvent("fx-mdt:client:setReport",function(data)
     local StreetName=GetStreetNameFromHashKey(StreetHash)
     local citizenid,charinfo in QBCore.Functions.GetPlayerData()
     local dialog=exports["qb-input"]:ShowInput({
-        header="Report Menu",
-        submitText="Add Message",
+        header=Lang:t('menu.report_title'),
+        submitText=Lang:t('menu.report_add_message'),
         inputs={
             {
-                text="Insert Message here",-- text you want to be displayed as a place holder
-                name="message",-- name of the input should be unique otherwise it might override
-                type="text",-- type of the input
-                isRequired=true,-- Optional [accepted values: true | false] but will submit the form if no value is inputted
-                -- default = "CID-1234", -- Default text option, this is optional
+                text=Lang:t('menu.report_inser_message'),
+                name="message",
+                type="text",
+                isRequired=true,
             },
         },
     })
     if not dialog.message then
-        QBCore.Functions.Notify("Need to put a message")
+        QBCore.Functions.Notify(Lang:t('error.no_message'))
         return
     else
         TriggerServerEvent("fx-mdt:server:newReportFromCommand",{
@@ -195,7 +210,7 @@ RegisterNetEvent("fx-mdt:client:setReport",function(data)
             phone=charinfo.phone,
             message=dialog.message,
         })
-        QBCore.Functions.Notify("Report Sended")
+        QBCore.Functions.Notify(Lang:t('report.send'))
     end
 end)
 RegisterNetEvent("fx-mdt:client:sendUpdateCalls",function(calls)
