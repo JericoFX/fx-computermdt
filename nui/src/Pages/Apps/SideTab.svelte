@@ -73,20 +73,24 @@
 				plate: plate,
 			}).then((cb) => {
 				if (cb) {
-					$Reports.splice(
-						$Reports.findIndex((e) => e.id === id),
-						1
-					);
-					$currentAsignament.splice(
-						$currentAsignament.findIndex((e) => e.id === id),
-						1
-					);
-					$currentAsignament = $currentAsignament;
-					$Reports = $Reports;
+					if ($Reports.some((e) => e.id === id)) {
+						$Reports.splice(
+							$Reports.findIndex((e) => e.id === id),
+							1
+						);
+						$Reports = $Reports;
+					}
+					if ($currentAsignament.some((e) => e.id === id)) {
+						$currentAsignament.splice(
+							$currentAsignament.findIndex((e) => e.id === id),
+							1
+						);
+						$currentAsignament = $currentAsignament;
+					}
 				}
 			});
 		} catch (err) {
-			console.log(`SearchReports 85${err}`);
+			console.log(`SearchReports 85 ${err}`);
 		}
 	}
 </script>
