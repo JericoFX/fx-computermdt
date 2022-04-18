@@ -12,7 +12,7 @@ CreateThread(function()
             minZ=el.minZ,
             maxZ=el.maxZ,
             },{
-            options={
+            options={ --
                 {
                     type="client",
                     event="fx-mdt:client:openTablet",
