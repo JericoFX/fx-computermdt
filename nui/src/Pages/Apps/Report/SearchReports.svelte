@@ -115,7 +115,10 @@
 							"button",
 							{
 								onClick: () => {
-									deleteReport(row.cells[0].data,row.cells[6].data);
+									deleteReport(
+										row.cells[0].data,
+										row.cells[6].data
+									);
 								},
 							},
 							"Delete"
@@ -137,13 +140,13 @@
 		m.$on("closeModal", () => (open = false));
 		return m;
 	}
-	async function deleteReport(id: string,isvehicle:string) {
+	async function deleteReport(id: string, isvehicle: string) {
 		if (!isEnvBrowser()) {
 			try {
 				await fetchNui("deleteReport", {
 					id: id,
 					callsign: $Callsign,
-					isvehicle:isvehicle
+					isvehicle: isvehicle,
 				}).then((cb) => {
 					if (cb) {
 						$Reports.splice(
