@@ -5,9 +5,7 @@
 	import routes from "./utils/routes";
 	import WindowsBar from "./Pages/WindowsBar.svelte";
 	import { useNuiEvent } from "./utils/useNuiEvent";
-	import { isEnvBrowser } from "./utils/misc";
-	import * as Codes from "./utils/codes";
-	let open = isEnvBrowser() ? true : false;
+	import { isEnvBrowser, loadJson } from "./utils/misc";
 	import CCallsign from "./CCallsign.svelte";
 	import { fetchNui } from "./utils/fetchNui";
 	import {
@@ -17,12 +15,14 @@
 		OnDuty,
 		Reports,
 		UserInfo,
-		CodesPolice,
 		Notify,
+		CodesPolice,
+		Fines,
 	} from "./store/store";
 	import SideTab from "./Pages/Apps/SideTab.svelte";
 	import NotifyTab from "./Pages/Apps/NotifyTab.svelte";
 	import { onMount } from "svelte";
+	let open = isEnvBrowser() ?true:false;
 	useNuiEvent("getHelpRequest", ({ data }) => {
 		$Notify = data;
 		$Notify = $Notify;
@@ -41,13 +41,12 @@
 			$Callsign = userdata.callsign;
 			defaultLangs = defaultLang;
 			$OnDuty = onduty;
-
-			
 		}
 	);
 	onMount(async () => {
 		setupI18n({ withLocale: defaultLangs });
-		
+		$CodesPolice = await loadJson("utils/codes.json");
+		$Fines = await loadJson("utils/fines.json");
 	});
 
 	useNuiEvent("updateReports", ({ reports }) => {

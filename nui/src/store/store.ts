@@ -12,3 +12,4 @@ export const Langs = writable([]);
 export const OnDuty = writable(false);
 export const CodesPolice = writable([]);
 export const Notify = writable([])
+export const Fines = writable([])

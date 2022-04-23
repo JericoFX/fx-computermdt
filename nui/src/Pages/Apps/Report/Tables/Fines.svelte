@@ -1,9 +1,9 @@
 <script lang="ts">
 	import {h} from 'gridjs';
 	import Grid from 'gridjs-svelte';
-	import fines from '../../../../utils/fines';
+	// import fines from '../../../../utils/fines';
 	import {createEventDispatcher, onMount} from 'svelte';
-	import {PoliceFines} from '../../../../store/store';
+	import {PoliceFines,Fines} from '../../../../store/store';
 	// $: filteredRows = fines.filter((row) => {
 	// 	if (value.toLowerCase().trim().length === 0) return row;
 	// 	return row.label.toLowerCase().includes(value);
@@ -58,7 +58,7 @@
 	function addData(type: string, data: number): void {
 		if (type === 'add') {
 			if (!$PoliceFines.some((e) => e.id === data)) {
-				$PoliceFines.push(fines[data - 1]);
+				$PoliceFines.push($Fines[data - 1]);
 				$PoliceFines = $PoliceFines;
 			}
 		} else if (type === 'delete') {
@@ -81,7 +81,7 @@
 			</div>
 		</div>
 		<div class="window-body">
-			<Grid bind:instance={grid} data={show ? $PoliceFines : fines} sort {columns} search resizable pagination={{enabled: true, limit: 5}} />
+			<Grid bind:instance={grid} data={show ? $PoliceFines : $Fines} sort {columns} search resizable pagination={{enabled: true, limit: 5}} />
 		</div>
 	</div>
 {/if}

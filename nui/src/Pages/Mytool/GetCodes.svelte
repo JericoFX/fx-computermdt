@@ -3,15 +3,16 @@
 	import {slide} from 'svelte/transition';
 	import {push} from 'svelte-spa-router';
 	import Grid from 'gridjs-svelte';
-	import Codes from '../../utils/codes';
+	// import Codes from '../../utils/codes';
 	import ShortUniqueId from 'short-unique-id';
 
-	import { Notify, UserInfo} from '../../store/store';
+	import { Notify, UserInfo,CodesPolice} from '../../store/store';
 	import {h} from 'gridjs';
 	import {fetchNui} from '../../utils/fetchNui';
 	let uid = new ShortUniqueId({length: 5});
 	let grid;
 	let content;
+
 	const dispatch = createEventDispatcher();
 	export let open = false;
 	const style = {
@@ -33,13 +34,18 @@
 		dispatch('closeModal');
 	}
 	const columns = [
+	{
+		id:"id",
+		name:"Code ID",
+		width:"3%"
+	},
 		{
 			id: 'code',
 			name: 'Code',
 			width: '10%',
 		},
 		{
-			id: 'value',
+			id: 'desc',
 			name: 'Code Description',
 			width: '20%',
 		},
@@ -51,7 +57,7 @@
 					'button',
 					{
 						onClick: () => {
-							addNotify(row.cells[0].data, row.cells[1].data);
+							addNotify(row.cells[0].data, row.cells[2].data);
 						},
 					},
 					'Select'
@@ -86,7 +92,7 @@
 				<fieldset class="text-center">
 					<div class="field-row" style="justify-content:center">
 						<fieldset>
-							<Grid bind:instance={grid} {style} {columns} data={Codes || []} pagination={{enabled: true, limit: 6}} search />
+							<Grid bind:instance={grid} {style} {columns} data={	$CodesPolice.codes || []} pagination={{enabled: true, limit: 6}} search />
 						</fieldset>
 					</div>
 				</fieldset>

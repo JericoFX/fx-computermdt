@@ -21,3 +21,7 @@ export function Tables() {
 	});
 }
 // THIS CODE EDITS THE TABLES AND HIDE IT, IF THIS CODE ISNT PRESENT THE TABLES WILL SHOW ONE AFTER ANOTHER
+export async function loadJson(url: RequestInfo): Promise<any> {
+	const response = await fetch(url);
+	return await response.json();
+}

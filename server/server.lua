@@ -77,11 +77,11 @@ function GetAllPolices()
     return Citizen.Await(p)
 end
 
-CreateThread(function()
-    Wait(200)
-    Reportes = MySQL.query.await("SELECT id,title,name,lastname,citizenid,location,coords,observations,data,amount,type  FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant' OR  fx_reports.type = 'report' AND `date` > NOW() - INTERVAL 12 hour")
+-- CreateThread(function()
+--     Wait(200)
+--     Reportes = MySQL.query.await("SELECT id,title,name,lastname,citizenid,location,coords,observations,data,amount,type  FROM fx_reports WHERE fx_reports.type = 'bolo' OR  fx_reports.type = 'warrant' OR  fx_reports.type = 'report' AND `date` > NOW() - INTERVAL 12 hour")
 
-end)
+-- end)
 -----------------------------------------------
 -- THIS VARIABLE HANDLE A KEY = NAME OF THE FUNCTION AND A
 local contain = {
@@ -296,7 +296,6 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
         if data.report.type == "basic" then
             TriggerEvent("qb-phone:server:sendNewMailToOffline", data.report.citizenid, {sender = "Police Depto", subject = " Fine situation", message = "A fine has been created the amount to pay is $"..data.report.amount.." if you need more information, please go to the police station and give this code "..data.report.id.." to the officer."})
         end
-        QBCore.Debug(data)
         Wait(100)
         MySQL.query(
             "INSERT INTO fx_reports (id,title,name,lastname,citizenid,plate,location,coords,observations,data,amount,type,isvehicle) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
