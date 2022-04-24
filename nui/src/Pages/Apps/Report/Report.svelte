@@ -231,16 +231,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 		return m;
 	}
 	let reportOpen = true;
-	// $: if (reportData.isvehicle) {
-	// 	let m = new Acepted({
-	// 		target: container,
-	// 		props: {
-	// 			open: reportOpen,
-	// 			message: `Remember to put the Plate of the vehicle in the Title place`,
-	// 		},
-	// 	});
-	// 	m.$on("closeModal", () => (reportOpen = false));
-	// }
+
 	async function sendReport() {
 		let open = true;
 		reportData.amount = amountFines;
@@ -312,6 +303,14 @@ this param represent the type of the search, by name, by citizenid etc etc..
 		});
 		m.$on('closeModal', () => (open = false));
 	}
+
+	async function getClosestPlayerData() {
+		try {
+			await fetchNui('getClosestPlayerData', {}).then((cb) => {});
+		} catch (error) {
+			console.log(error);
+		}
+	}
 </script>
 
 <div transition:fade={{duration: 100}} class="absolute-center">
@@ -328,7 +327,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 				<ul role="menu">
 					<!-- svelte-ignore a11y-missing-attribute -->
 					<li role="menuitem" class="has-divider">
-						<a on:click={() => console.log('Player Data')}> {$_('page.report.menu.addmenu.close')}</a>
+						<a on:click={getClosestPlayerData}> {$_('page.report.menu.addmenu.close')}</a>
 					</li>
 					<!-- svelte-ignore a11y-missing-attribute -->
 					<li role="menuitem">

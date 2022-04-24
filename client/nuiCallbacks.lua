@@ -83,8 +83,6 @@ function addBlip(coords, text)
         AddTextComponentString("CASE ID: "..blip)
         EndTextCommandSetBlipName(blip)
         blips[#blips + 1] = {id = text, bid = blip}
-  
-
     end
 
 end

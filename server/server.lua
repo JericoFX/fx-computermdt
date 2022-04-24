@@ -109,7 +109,7 @@ local contain = {
     end,
     searchUser = function(data)
         local query =
-        "SELECT JSON_UNQUOTE(JSON_EXTRACT(players.charinfo,'$.firstname')) AS firstname,JSON_UNQUOTE(JSON_EXTRACT(players.charinfo,'$.lastname')) AS lastname,players.citizenid AS citizenid,players.bolo AS bolo,JSON_UNQUOTE(JSON_EXTRACT(players.job,'$.name')) AS jobname ,JSON_UNQUOTE(JSON_EXTRACT(players.job,'$.label')) AS rank FROM players where players.charinfo LIKE ?"
+        "SELECT JSON_UNQUOTE(JSON_EXTRACT(players.charinfo,'$.firstname')) AS firstname,JSON_UNQUOTE(JSON_EXTRACT(players.charinfo,'$.lastname')) AS lastname,players.citizenid AS citizenid,JSON_UNQUOTE(JSON_EXTRACT(players.job,'$.name')) AS jobname ,JSON_UNQUOTE(JSON_EXTRACT(players.job,'$.label')) AS rank FROM players where players.charinfo LIKE ?"
         return MySQL.query.await(query, {string.lower("%" .. data .. "%")})
     end,
     getVehicleInfo = function(types, data)
@@ -188,7 +188,7 @@ CC("fx-mdt:server:searchForPlayer", function(source, cb, name, app, type)
                         JobName = el.jobname,
                         Vehicles = GetVehicleByData(el.citizenid),
                         Reports = Reports,
-                        Bolo = el.bolo,
+                        Bolo = 0
                     }
                 end
             end

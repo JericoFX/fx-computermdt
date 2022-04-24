@@ -73,7 +73,7 @@ RegisterNetEvent("fx-client:payFine",function(data)
 end)
 
 
-RegisterNetEvent("fx-mdt:client:getFinesToPay",function() 
+RegisterNetEvent("fx-mdt:client:getFinesToPay",function()
     local Menu={}
     local Citizenid=QBCore.Functions.GetPlayerData().citizenid
 
@@ -216,7 +216,7 @@ end)
 RegisterNetEvent("fx-mdt:client:sendUpdateCalls",function(calls)
     SendData("getMycalls",{calls=calls})
 end)
-RegisterNetEvent("fx-mdt:client:UpdateReports",function(data) 
+RegisterNetEvent("fx-mdt:client:UpdateReports",function(data)
     print(json.encode(data))
 SendData("updateReports",{reports = data})
 end)
@@ -238,4 +238,10 @@ AddEventHandler('onResourceStart', function(resourceName)
     end
     TriggerServerEvent("fx-mdt:server:UpdateAllReports")
   end)
-  
+
+
+RegisterCommand("cls",function(source,args)
+local Close = QBCore.Functions.GetClosestPlayer(GetEntityCoords(PlayerPedId()))
+print(Close)
+
+end)

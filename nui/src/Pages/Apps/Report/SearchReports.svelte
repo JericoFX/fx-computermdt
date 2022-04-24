@@ -3,10 +3,10 @@
 	import {_} from 'svelte-i18n';
 	import {fade} from 'svelte/transition';
 	import Grid from 'gridjs-svelte';
-	import {isEnvBrowser, SendMessage} from '../../../utils/misc';
+	import {isEnvBrowser} from '../../../utils/misc';
 	import {fetchNui} from '../../../utils/fetchNui';
 	import Searched from './Tables/Searched.svelte';
-	import {Callsign, currentAsignament, IsBoss, Reports} from '../../../store/store';
+	import {Callsign, IsBoss, Reports} from '../../../store/store';
 	import ObservationsModal from './Modals/ObservationsModal.svelte';
 	import {onMount} from 'svelte';
 
@@ -14,7 +14,6 @@
 	let container: HTMLDivElement;
 	$: selection = [0];
 	$: values = '';
-	$: Reportes = [];
 
 	onMount(() => {
 		grid.forceRender();
@@ -215,7 +214,7 @@
 			</div>
 		</fieldset>
 	</fieldset>
-	<Grid bind:instance={grid} {style} pagination={{enabled: true, limit: 4}} autoWidth data={$Reports || []} {columns} />
+	<Grid bind:instance={grid} {style} pagination={{enabled: true, limit: 3}} autoWidth data={$Reports || []} {columns} />
 	<!-- <div id="gridID" class="hide-scrollbar relative-position full-height" style="overflow:scroll;" /> -->
 </div>
-<div id="gridID" />
+
