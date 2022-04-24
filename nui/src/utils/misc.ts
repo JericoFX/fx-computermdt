@@ -25,3 +25,7 @@ export async function loadJson(url: RequestInfo): Promise<any> {
 	const response = await fetch(url);
 	return await response.json();
 }
+
+export async function SendMessage(message: string) {
+	await fetchNui('sendMessage', {message: message});
+}

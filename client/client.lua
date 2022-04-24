@@ -108,20 +108,20 @@ RegisterNetEvent("QBCore:Client:OnPlayerLoaded",function()
         return
     end
     TriggerServerEvent("fx-mdt:server:SendHelpOnLogin")
-    TriggerServerEvent("fx-mdt:server:UpdateReports")
+    TriggerServerEvent("fx-mdt:server:UpdateAllReports")
 end)
 RegisterNetEvent('QBCore:Client:OnJobUpdate',function(job)
     if job.name=="police" then
         TriggerServerEvent("fx-mdt:server:SendHelpOnLogin")
-        TriggerServerEvent("fx-mdt:server:UpdateReports")
+        TriggerServerEvent("fx-mdt:server:UpdateAllReports")
     end
 
 end)
 
-RegisterNetEvent("fx-mdt:client:UpdateReports",function(Reportes)
+RegisterNetEvent("fx-mdt:client:UpdateAllReports",function(Reportes)
     Reports={}
-    Reports=Reportes
-    SendData("updateReports",{reports=Reports})
+    Reports = Reportes
+    SendData("updateAllReports",{reports= Reports})
 end)
 function SendData(action,data)
     if action and type(data)=="table" then
@@ -135,7 +135,7 @@ function SendData(action,data)
 end
 
 RegisterNetEvent("fx-mdt:client:openTablet",function()
-    TriggerServerEvent("fx-mdt:server:UpdateReports")
+    -- TriggerServerEvent("fx-mdt:server:UpdateReports")
     TriggerServerEvent("fx-mdt:server:SendHelpOnLogin")
     local metadata,citizenid,charinfo,job in QBCore.Functions.GetPlayerData()
     SendData("openTablet",{
@@ -155,7 +155,7 @@ RegisterNetEvent("fx-mdt:client:openTablet",function()
 end)
 
 RegisterCommand("mdt",function(source,args)
-    TriggerServerEvent("fx-mdt:server:UpdateReports")
+    -- TriggerServerEvent("fx-mdt:server:UpdateReports")
     local ped=PlayerPedId()
     local veh=GetEntityModel(GetVehiclePedIsIn(ped))
     local metadata,citizenid,charinfo,job in QBCore.Functions.GetPlayerData()
@@ -216,3 +216,26 @@ end)
 RegisterNetEvent("fx-mdt:client:sendUpdateCalls",function(calls)
     SendData("getMycalls",{calls=calls})
 end)
+RegisterNetEvent("fx-mdt:client:UpdateReports",function(data) 
+    print(json.encode(data))
+SendData("updateReports",{reports = data})
+end)
+RegisterNetEvent('fx-mdt:client:updateCallReport', function(id,call)
+
+SendData("updateCallReport",{id = id,call=call})
+end)
+RegisterNetEvent('fx-mdt:client:deleteCall', function(id)
+    SendData("deleteCall",{id = id})
+end)
+
+RegisterNetEvent("fx-mdt:client:deleteReport",function(id)
+    print(id)
+    SendData("delReport",{id = id})
+end)
+AddEventHandler('onResourceStart', function(resourceName)
+    if (GetCurrentResourceName() ~= resourceName) then
+      return
+    end
+    TriggerServerEvent("fx-mdt:server:UpdateAllReports")
+  end)
+  

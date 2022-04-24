@@ -31,8 +31,8 @@ RegisterNUICallback("sendNewReport", function(data, cb)
     local Info = data
 
     QBCore.Functions.TriggerCallback("fx-mdt:server:setNewReport", function(isok)
-        cb({type = isok.type, reports = Reports})
-        TriggerServerEvent("fx-mdt:server:UpdateReports")
+        cb(isok)
+        --TriggerServerEvent("fx-mdt:server:UpdateReports")
     end, Info)
 end)
 
@@ -52,7 +52,6 @@ RegisterNUICallback("deleteReport", function(data, cb)
 
     QBCore.Functions.TriggerCallback("fx-mdt:server:deleteReport", function(bol)
         cb(bol)
-        --TriggerServerEvent("fx-mdt:server:UpdateReports")
     end, ID)
 end)
 RegisterNUICallback("getReports", function(data, cb)
@@ -69,9 +68,9 @@ RegisterNUICallback("getVehicleByPlate", function(data, cb)
     end, Plate)
 end)
 
-function addBlip(coords, text, cb)
+function addBlip(coords, text)
     local blips = {}
-    if coords ~= nil and text ~= nil and not cb then
+    if coords ~= nil and text ~= nil then
         local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
         SetBlipSprite(blip, 535)
         SetBlipColour(blip, 1)
@@ -84,8 +83,7 @@ function addBlip(coords, text, cb)
         AddTextComponentString("CASE ID: "..blip)
         EndTextCommandSetBlipName(blip)
         blips[#blips + 1] = {id = text, bid = blip}
-    else
-        cb(blips)
+  
 
     end
 
@@ -108,7 +106,7 @@ end)
 
 RegisterNUICallback("deleteAssignment", function(data, cb)
     local ID = data.id
-    local Callsign = data?.callsign
+    local Callsign = data.callsign
     QBCore.Functions.TriggerCallback("fx-mdt:server:deleteCall", function(cb1)
         cb(cb1)
     end, ID, Callsign)
@@ -139,10 +137,9 @@ RegisterNUICallback("setDestination", function(data, cb)
     cb({})
 end)
 
-RegisterCommand("rfs", function(source, args)
-    TriggerServerEvent("QBCore:Server:SetMetaData", "callsign", "NO CALLSIGN")
-
-end)
+-- RegisterCommand("rfs", function(source, args)
+--     TriggerServerEvent("QBCore:Server:SetMetaData", "callsign", "NO CALLSIGN")
+-- end)
 
 RegisterNUICallback("getDataByPlate", function(data, cb)
     local Plate = data.plate
@@ -181,4 +178,9 @@ RegisterNetEvent("fx-mdt:client:HelpRequested", function(data)
 
     end)
 
-   
+   RegisterNUICallback("sendMessage",function (data,cb)
+       local msg = data.message
+       QBCore.Functions.Notify(tostring(msg))
+       cb({})
+   end)
+

@@ -7,7 +7,7 @@
 	import {onMount} from 'svelte';
 	import {fetchNui} from '../../utils/fetchNui';
 	import {h} from 'gridjs';
-import GetCodes from './GetCodes.svelte';
+	import GetCodes from './GetCodes.svelte';
 	let content: HTMLDivElement;
 	let grid;
 	let duty = false;
@@ -29,6 +29,7 @@ import GetCodes from './GetCodes.svelte';
 	$: if (params.reload) {
 		fetchNui('getMycalls', {cs: $UserInfo.callsign}).then((cb) => {
 			$currentAsignament = cb;
+
 			grid
 				.updateConfig({
 					data: $currentAsignament ?? [],
@@ -37,6 +38,9 @@ import GetCodes from './GetCodes.svelte';
 		});
 		params.reload = false;
 	}
+	onMount(() => {
+		grid.forceRender();
+	});
 	const columns = [
 		{
 			id: 'casid',
@@ -90,39 +94,49 @@ import GetCodes from './GetCodes.svelte';
 		await fetchNui('setDestination', {coords: coords});
 	}
 
-	function deleteAssign(id: string) {
-		fetchNui('deleteAssignment', {id: id}).then(async (cb) => {
-			if (cb) {
-				$currentAsignament.splice(
-					$currentAsignament.findIndex((e) => e.id === id),
-					1
-				);
-				$currentAsignament = $currentAsignament;
-				await grid
-					.updateConfig({
-						data: $currentAsignament,
-					})
-					.forceRender();
-			}
-		});
+	async function deleteAssign(id: string) {
+		try {
+			fetchNui('deleteAssignment', {id: id, callsign: $UserInfo.callsign}).then((cb) => {
+				if (cb) {
+					// if ($currentAsignament.some((e) => e.casid === id)) {
+					// 	$currentAsignament.splice(
+					// 		$currentAsignament.findIndex((e) => e.id === id),
+					// 		1
+					// 	);
+					// }
+					// $currentAsignament = $currentAsignament;
+					grid
+						.updateConfig({
+							data: $currentAsignament ?? [],
+						})
+						.forceRender();
+				}
+			});
+		} catch (error) {
+			console.log(`Error on MyTool 105 ${error}`);
+		}
 	}
 	onMount(() => {
 		grid.forceRender();
 	});
 	async function changeduty() {
-		await fetchNui('changeDuty', {user: $UserInfo.citizenid, duty: $OnDuty}).then((cb) => {
-			$OnDuty = cb;
-			console.log(cb);
-		});
+		try {
+			await fetchNui('changeDuty', {user: $UserInfo.citizenid, duty: $OnDuty}).then((cb) => {
+				$OnDuty = cb;
+			});
+		} catch (error) {}
 	}
 
-	function getCodes(): GetCodes{
-		let open = true
-		let m = new GetCodes({target:content,props:{
-			open: open
-		}})
-		m.$on("closeModal",() => open = false)
-		return m
+	function getCodes(): GetCodes {
+		let open = true;
+		let m = new GetCodes({
+			target: content,
+			props: {
+				open: open,
+			},
+		});
+		m.$on('closeModal', () => (open = false));
+		return m;
 	}
 </script>
 

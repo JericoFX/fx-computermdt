@@ -1,132 +1,108 @@
 <script lang="ts">
-	import { h } from "gridjs";
-	import { _ } from "svelte-i18n";
-	import { fade } from "svelte/transition";
-	import Grid from "gridjs-svelte";
-	import { isEnvBrowser } from "../../../utils/misc";
-	import { fetchNui } from "../../../utils/fetchNui";
-	import Searched from "./Tables/Searched.svelte";
-	import {
-		Callsign,
-		currentAsignament,
-		IsBoss,
-		Reports,
-	} from "../../../store/store";
-	import { useNuiEvent } from "../../../utils/useNuiEvent";
-	import ObservationsModal from "./Modals/ObservationsModal.svelte";
-	import { onMount } from "svelte";
+	import {h} from 'gridjs';
+	import {_} from 'svelte-i18n';
+	import {fade} from 'svelte/transition';
+	import Grid from 'gridjs-svelte';
+	import {isEnvBrowser, SendMessage} from '../../../utils/misc';
+	import {fetchNui} from '../../../utils/fetchNui';
+	import Searched from './Tables/Searched.svelte';
+	import {Callsign, currentAsignament, IsBoss, Reports} from '../../../store/store';
+	import ObservationsModal from './Modals/ObservationsModal.svelte';
+	import {onMount} from 'svelte';
 
 	let grid: any;
 	let container: HTMLDivElement;
 	$: selection = [0];
-	$: values = "";
+	$: values = '';
 	$: Reportes = [];
-	export let data = "";
-	$: if (data === "trigger") {
-		useNuiEvent("updateReports", ({ reports }) => {
-			$Reports = reports;
-			grid.updateConfig({
-				data: $Reports,
-			}).forceRender();
-		});
-	}
 
 	onMount(() => {
 		grid.forceRender();
 	});
 	const style = {
 		table: {
-			width: "100%",
+			width: '100%',
 		},
 		header: {
-			display: "flex",
-			alignItems: "center",
-			flexDirection: "row-reverse",
+			display: 'flex',
+			alignItems: 'center',
+			flexDirection: 'row-reverse',
 		},
 		footer: {
-			width: "100%",
+			width: '100%',
 		},
 	};
 	const columns = [
 		{
-			id: "id",
-			name: "ID",
+			id: 'id',
+			name: 'ID',
 		},
 		{
-			id: "title",
-			name: "Title",
+			id: 'title',
+			name: 'Title',
 		},
-		{ id: "name", name: "Name" },
+		{id: 'name', name: 'Name'},
 		{
-			id: "lastname",
-			name: "Last Name",
+			id: 'lastname',
+			name: 'Last Name',
 		},
-		{ id: "citizenid", name: "Citizenid" },
+		{id: 'citizenid', name: 'Citizenid'},
 		{
-			id: "location",
-			name: "Location",
-		},
-		{
-			id: "isvehicle",
-			name: "Vehicle Involved",
+			id: 'location',
+			name: 'Location',
 		},
 		{
-			id: "data",
-			name: "Data",
-			formatter: (_: any, row: { cells: { data: any }[] }) => {
+			id: 'isvehicle',
+			name: 'Vehicle Involved',
+		},
+		{
+			id: 'data',
+			name: 'Data',
+			formatter: (_: any, row: {cells: {data: any}[]}) => {
 				return h(
-					"button",
+					'button',
 					{
 						onClick: () => {
-							openDataContainer(
-								row.cells[0].data,
-								row.cells[7].data
-							);
+							openDataContainer(row.cells[0].data, row.cells[7].data);
 						},
 					},
-					"Open"
+					'Open'
 				);
 			},
 		},
 		{
-			id: "observations",
-			name: "Observations",
-			formatter: (_cell: any, row: { cells: { data: string }[] }) => {
+			id: 'observations',
+			name: 'Observations',
+			formatter: (_cell: any, row: {cells: {data: string}[]}) => {
 				return h(
-					"button",
+					'button',
 					{
 						onClick: () => {
 							openInformation(row.cells[8].data);
 						},
 					},
-					"Open"
+					'Open'
 				);
 			},
 		},
 		$IsBoss
 			? {
-					id: "delete",
-					name: "Delete Report",
-					formatter: (
-						_cell: any,
-						row: { cells: { data: string }[] }
-					) => {
+					id: 'delete',
+					name: 'Delete Report',
+					formatter: (_cell: any, row: {cells: {data: string}[]}) => {
 						return h(
-							"button",
+							'button',
 							{
 								onClick: () => {
-									deleteReport(
-										row.cells[0].data,
-										row.cells[6].data
-									);
+									deleteReport(row.cells[0].data, row.cells[6].data);
 								},
 							},
-							"Delete"
+							'Delete'
 						);
 					},
 			  }
 			: {
-					id: "delete",
+					id: 'delete',
 					name: "Can't Delete",
 			  },
 	];
@@ -135,33 +111,25 @@
 		let open = true;
 		let m = new ObservationsModal({
 			target: container,
-			props: { open: open, obs: obs },
+			props: {open: open, obs: obs},
 		});
-		m.$on("closeModal", () => (open = false));
+		m.$on('closeModal', () => (open = false));
 		return m;
 	}
 	async function deleteReport(id: string, isvehicle: string) {
 		if (!isEnvBrowser()) {
 			try {
-				await fetchNui("deleteReport", {
+				await fetchNui('deleteReport', {
 					id: id,
 					callsign: $Callsign,
 					isvehicle: isvehicle,
 				}).then((cb) => {
 					if (cb) {
-						$Reports.splice(
-							$Reports.findIndex((e) => e.id === id),
-							1
-						);
-						$currentAsignament.splice(
-							$currentAsignament.findIndex((e) => e.id === id),
-							1
-						);
-						$currentAsignament = $currentAsignament;
-						$Reports = $Reports;
-						grid.updateConfig({
-							data: $Reports,
-						}).forceRender();
+						grid
+							.updateConfig({
+								data: $Reports,
+							})
+							.forceRender();
 					}
 				});
 			} catch (err) {
@@ -180,7 +148,7 @@
 					caseID: id,
 				},
 			});
-			m.$on("closeModal1", () => (open = false));
+			m.$on('closeModal1', () => (open = false));
 			return m;
 		}
 	}
@@ -193,7 +161,7 @@
 
 		if (!isEnvBrowser()) {
 			try {
-				await fetchNui("getReportData", {
+				await fetchNui('getReportData', {
 					type: selection,
 					value: values,
 				}).then(async (cb) => {
@@ -211,34 +179,28 @@
 		}
 	}
 	function ReloadData() {
-		grid.updateConfig({
-			data: $Reports,
-		}).forceRender();
+		grid
+			.updateConfig({
+				data: $Reports,
+			})
+			.forceRender();
 	}
 	const menu = [
-		{ name: $_("page.rsapp.rsmenu.rname"), value: "name" },
-		{ name: $_("page.rsapp.rsmenu.rcid"), value: "citizenid" },
-		{ name: $_("page.rsapp.rsmenu.rlocation"), value: "localization" },
-		{ name: $_("page.rsapp.rsmenu.rsid"), value: "id" },
-		{ name: $_("page.rsapp.rsmenu.rspolice"), value: "data" },
+		{name: $_('page.rsapp.rsmenu.rname'), value: 'name'},
+		{name: $_('page.rsapp.rsmenu.rcid'), value: 'citizenid'},
+		{name: $_('page.rsapp.rsmenu.rlocation'), value: 'localization'},
+		{name: $_('page.rsapp.rsmenu.rsid'), value: 'id'},
+		{name: $_('page.rsapp.rsmenu.rspolice'), value: 'data'},
 	];
 </script>
 
-<div
-	transition:fade
-	bind:this={container}
-	class="grid full-width full-height scroll hide-scrollbar"
->
+<div transition:fade bind:this={container} class="grid full-width full-height scroll hide-scrollbar">
 	<fieldset>
 		<div class="text-center">
-			<label for="asd">{$_("page.rsapp.rsbuttons.rsbsearch")}</label>
+			<label for="asd">{$_('page.rsapp.rsbuttons.rsbsearch')}</label>
 			<input bind:value={values} type="text" name="asd" id="ss" />
-			<button on:click|preventDefault={SearchBy}
-				>{$_("page.rsapp.rsbuttons.rsbsearch")}</button
-			>
-			<button on:click|preventDefault={ReloadData}
-				>{$_("page.rsapp.rsbuttons.rsbreload")}</button
-			>
+			<button on:click|preventDefault={SearchBy}>{$_('page.rsapp.rsbuttons.rsbsearch')}</button>
+			<button on:click|preventDefault={ReloadData}>{$_('page.rsapp.rsbuttons.rsbreload')}</button>
 			<!-- <button class="no-padding"> <img src="iconos/info.png" alt="" style:width="16px" /></button> -->
 		</div>
 		<fieldset>
@@ -246,28 +208,14 @@
 			<div class="field-row" style="justify-content:space-between;">
 				{#each menu as data}
 					<div class="field-row">
-						<input
-							checked
-							bind:group={selection}
-							type="radio"
-							id={data.name}
-							name="box"
-							value={data.value}
-						/>
+						<input checked bind:group={selection} type="radio" id={data.name} name="box" value={data.value} />
 						<label for={data.name}>{data.name}</label>
 					</div>
 				{/each}
 			</div>
 		</fieldset>
 	</fieldset>
-	<Grid
-		bind:instance={grid}
-		{style}
-		pagination={{ enabled: true, limit: 4 }}
-		autoWidth
-		data={$Reports}
-		{columns}
-	/>
+	<Grid bind:instance={grid} {style} pagination={{enabled: true, limit: 4}} autoWidth data={$Reports || []} {columns} />
 	<!-- <div id="gridID" class="hide-scrollbar relative-position full-height" style="overflow:scroll;" /> -->
 </div>
 <div id="gridID" />

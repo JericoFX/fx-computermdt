@@ -1,4 +1,4 @@
-Config=Config or {}
+Config = Config or {}
 --Make this way, nameOfTheCar = true
 Config.AllowedCars={
     [`police`]=true,
@@ -35,6 +35,7 @@ Config.LangAvaliable={
                 index="en",
                 lang="English"
             }}
+            
 Config.DefaultLang="en"
 
            

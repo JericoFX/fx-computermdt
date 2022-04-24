@@ -19,6 +19,7 @@ shared_scripts({
 files({
 	"nui/dist/index.html",
 	"nui/dist/locales/*.json",
+	"nui/dist/utils/*.json",
 	"nui/dist/assets/*.js",
 	"nui/dist/assets/*.css",
 	"nui/dist/iconos/*.png",
