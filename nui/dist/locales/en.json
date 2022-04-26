@@ -101,5 +101,7 @@
   "helptest": "Report Tool",
   "bolocreated": "B.O.L.O Created with the ID: {0}",
   "add-bolo": "Add B.O.L.O",
-  "view-bolo": "View B.O.L.O"
+  "view-bolo": "View B.O.L.O",
+  "report-created": "Report created with the ID: {0}",
+  "please-fill-the-plate": "Please fill the plate"
 }

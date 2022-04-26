@@ -240,7 +240,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 				target: container,
 				props: {
 					open: open,
-					message: `Please fill the plate`,
+					message: $_('please-fill-the-plate'),
 				},
 			});
 			m.$on('closeModal', () => (open = false));
@@ -257,7 +257,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 								target: container,
 								props: {
 									open: open,
-									message: `Report created with the id ${reportData.id}`,
+									message: $_('report-created', {values: {0: reportData.id}}),
 								},
 							});
 							if (!$Reports.some((e) => e.id === reportData.id)) {
@@ -272,7 +272,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 								target: container,
 								props: {
 									open: open,
-									message: `Error creating the report`,
+									message: $_('error-creating-the-report'),
 								},
 							});
 							m.$on('closeModal', () => (open = false));
@@ -284,7 +284,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 					target: container,
 					props: {
 						open: open,
-						message: `Report created with the id ${reportData.id}`,
+						message: $_('report-created', {values: {0: reportData.id}}),
 					},
 				});
 				reportData.id = uid();
@@ -292,7 +292,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 			}
 		}
 	}
-	function openFines(show: boolean) {
+	function openFines(show: boolean): void {
 		let open = true;
 		let m = new Fines({
 			target: container,
@@ -304,7 +304,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 		m.$on('closeModal', () => (open = false));
 	}
 
-	async function getClosestPlayerData() {
+	async function getClosestPlayerData(): Promise<void> {
 		try {
 			await fetchNui('getClosestPlayerData', {}).then((cb) => {
 				if (cb) {
@@ -494,7 +494,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 				<!-- SEARCH TABS -->
 				<article role="tabpanel" id="search-reports-tab" style="display:none;">
 					<div class="jerico relative-position full-width">
-						<SearchReports data={'trigger'} />
+						<SearchReports />
 					</div>
 				</article>
 			</section>

@@ -101,5 +101,8 @@
   "helptest": "Herramienta de reporte",
   "bolocreated": "B.O.L.O Creado con el ID: {0}",
   "view-bolo": "Ver B.O.L.O",
-  "add-bolo": "Agregar B.O.L.O"
+  "add-bolo": "Agregar B.O.L.O",
+  "report-created": "Reporte creado con el ID:  {0}",
+  "error-creating-the-report": "Error creating the report",
+  "please-fill-the-plate": "Por favor rellene la Placa"
 }
