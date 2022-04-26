@@ -156,7 +156,6 @@ CC("fx-mdt:server:searchForPlayer", function(source, cb, name, app, type)
     local Reports = {}
     if IsPolice(src) then
         if app == "search" then
-
             if Charinfo then
                 for k, v in ipairs(Charinfo) do
                     local el = Charinfo[k]
@@ -258,7 +257,6 @@ end)
 CC("fx-mdt:server:payFine", function(source, cb, amount, id)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
-    -- Get All Players
     if Player.PlayerData.citizenid then
         if Player.Functions.RemoveMoney("cash", amount, "Pago la fianza con la id "..id) then
             exports["qb-management"]:AddMoney("police", amount)
@@ -282,40 +280,42 @@ end)
 CC("fx-mdt:server:setNewReport", function(source, cb, data)
     local coords = GetEntityCoords(GetPlayerPed(source))
     local data1 = GetAllPolices()
-    if data.report then
-        if data.report.type == "basic" then
-            TriggerEvent("qb-phone:server:sendNewMailToOffline", data.report.citizenid, {sender = "Police Depto", subject = " Fine situation", message = "A fine has been created the amount to pay is $"..data.report.amount.." if you need more information, please go to the police station and give this code "..data.report.id.." to the officer."})
-        end
-        Wait(100)
-        local Res = MySQL.query.await(
-            "INSERT INTO fx_reports (id,title,name,lastname,citizenid,plate,location,coords,observations,data,amount,type,isvehicle) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
-            {
-                tostring(data.report.id),
-                tostring(data.report.title),
-                tostring(data.report.name),
-                tostring(data.report.lastname),
-                tostring(data.report.citizenid),
-                data.report.plate,
-                data.report.location,
-                encode(coords),
-                tostring(data.report.observations),
-                encode(data.report.data),
-                data.report.amount,
-                data.report.type or "basic",
-                data.report.isvehicle and 1 or 0
-            })
+    CT(function()
+        if data.report then
+            if data.report.type == "basic" then
+                TriggerEvent("qb-phone:server:sendNewMailToOffline", data.report.citizenid, {sender = "Police Depto", subject = " Fine situation", message = "A fine has been created the amount to pay is $"..data.report.amount.." if you need more information, please go to the police station and give this code "..data.report.id.." to the officer."})
+            end
+            Wait(100)
+            local Res = MySQL.query.await(
+                "INSERT INTO fx_reports (id,title,name,lastname,citizenid,plate,location,coords,observations,data,amount,type,isvehicle) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                {
+                    tostring(data.report.id),
+                    tostring(data.report.title),
+                    tostring(data.report.name),
+                    tostring(data.report.lastname),
+                    tostring(data.report.citizenid),
+                    data.report.plate,
+                    data.report.location,
+                    encode(coords),
+                    tostring(data.report.observations),
+                    encode(data.report.data),
+                    data.report.amount,
+                    data.report.type or "basic",
+                    data.report.isvehicle and 1 or 0
+                })
 
-            if data.report.bolo and data.report.isvehicle then
-                MySQL.query("UPDATE player_vehicles SET bolo = 1 WHERE plate = ?", {tostring(data.report.plate)})
-            end
-            if Res.affectedRows > 0 then
-                CurrentReports[#CurrentReports+1] = {data.report}
-                cb(true)
-                sendToPolicesOnly(data.report,"report")
-            else
-                cb(false)
-            end
+                if data.report.bolo and data.report.isvehicle then
+                    MySQL.query("UPDATE player_vehicles SET bolo = 1 WHERE plate = ?", {tostring(data.report.plate)})
+                end
+                if Res.affectedRows > 0 then
+                    CurrentReports[#CurrentReports+1] = {data.report}
+                    cb(true)
+                    sendToPolicesOnly(data.report,"report")
+                else
+                    cb(false)
+                end
         end
+    end)
     end)
 
     CC("fx-mdt:server:getReportData", function(source, cb, data)
@@ -432,16 +432,16 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
     CC("fx-mdt:server:updateReport", function(source, cb, id, data)
         local src = source
         if IsPolice(src) then
-         
+
             local data1 = GetAllPolices()
             MySQL.query("UPDATE fx_reports SET taked = 1, callsign = ? WHERE id = ?", {data.callsign, id.id}, function(res)
-             
+
                     MySQL.insert("INSERT INTO fx_assignment (caseid, localization, coordinates, citizenid, name, callsign) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE caseid = ? ",
                     {id.id, id.location, id.coords, id.citizenid, id.name, data.callsign, id.id})
                     for i = 1, #data1 do
                         local el = data1[i]
                         TriggerClientEvent("QBCore:Notify", el.src, "Unit: "..data.callsign.." has taken the report ID: "..id.id)
-                     
+
                         TriggerClientEvent("fx-mdt:client:updateCallReport",el.src,id.id,data.callsign)
                     end
                     cb(true)
@@ -462,7 +462,7 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
     function GetMyCalls(id)
         local src = source
         local send = {}
-       
+
         local p = promise.new()
         local Data = MySQL.query.await("SELECT caseid, localization, coordinates, citizenid, name, callsign FROM fx_assignment WHERE callsign = ?",{id})
         for k, v in each(Data) do
@@ -475,8 +475,8 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
                 name = el.name,
                 callsign = el.callsign,
             }
-          
-           
+
+
         end
         p:resolve(send)
         return Citizen.Await(p)
@@ -595,3 +595,12 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
             cb(false)
         end)
 
+
+QBCore.Functions.CreateCallback("fx-mdt:client:getClosestPlayerInfo",function(source,cb,sid) 
+    local src = source
+    local serverID <const> = sid
+    local Player = QBCore.Functions.GetPlayer(sid)
+    if IsPolice(src) then
+        cb({name = Player.PlayerData.charinfo.firstname,lastname = Player.PlayerData.charinfo.lastname,citizenid = Player.PlayerData.citizenid})
+    end
+end)

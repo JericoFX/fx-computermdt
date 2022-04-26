@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {_, setupI18n} from '../../../utils/i18n';
+	import {_} from '../../../utils/i18n';
 	import {fetchNui} from '../../../utils/fetchNui';
 	import PoliceList from './Modals/PoliceList.svelte';
 	import {fade} from 'svelte/transition';
@@ -10,7 +10,7 @@
 	import Polices from './Tables/Polices.svelte';
 	import {PoliceEvidence, PoliceFines, PoliceLists, Reports} from '../../../store/store';
 	import Evidences from './Tables/Evidences.svelte';
-	import {isEnvBrowser} from '../../../utils/misc';
+	import {isEnvBrowser, SendMessage} from '../../../utils/misc';
 	import Acepted from './Modals/Acepted.svelte';
 	import {onMount} from 'svelte';
 	import SearchReports from './SearchReports.svelte';
@@ -306,7 +306,16 @@ this param represent the type of the search, by name, by citizenid etc etc..
 
 	async function getClosestPlayerData() {
 		try {
-			await fetchNui('getClosestPlayerData', {}).then((cb) => {});
+			await fetchNui('getClosestPlayerData', {}).then((cb) => {
+				if (cb) {
+					reportData.name = cb.name;
+					reportData.citizenid = cb.citizenid;
+					reportData.lastname = cb.lastname;
+					disabled = true;
+				} else {
+					SendMessage('NO PLAYER DETECTED');
+				}
+			});
 		} catch (error) {
 			console.log(error);
 		}
@@ -463,10 +472,6 @@ this param represent the type of the search, by name, by citizenid etc etc..
 							</fieldset>
 							<fieldset class="float-left full-width">
 								<div class="field-row" style="justify-content: space-between">
-									<!-- <input type="checkbox" id="warrant" name="type" bind:checked={warrant} />
-									<label for="warrant">Add Warrant</label>
-									<input bind:checked={bolo} type="checkbox" id="bolo" name="type" />
-									<label for="bolo">Add Bolo</label> -->
 									<select bind:value={reportData.type}>
 										{#each Values as val}
 											<option value={val.id}>{val.text}</option>

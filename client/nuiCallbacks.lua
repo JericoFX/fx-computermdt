@@ -182,3 +182,19 @@ RegisterNetEvent("fx-mdt:client:HelpRequested", function(data)
        cb({})
    end)
 
+RegisterNUICallback("getClosestPlayerData",function(data,cb) 
+    local Player =  PlayerPedId()
+    local Close = QBCore.Functions.GetClosestPlayer(GetEntityCoords(Player))
+    local SID = GetPlayerServerId(Close)
+    if Close then
+        QBCore.Functions.TriggerCallback("fx-mdt:client:getClosestPlayerInfo",function(pdata)
+            if pdata then
+                cb(pdata)
+            else
+                cb(false)
+            end
+        end,SID)
+    else
+        QBCore.Functions.Notify("No Player close")
+    end  
+end)

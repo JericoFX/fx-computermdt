@@ -103,7 +103,7 @@ RegisterNetEvent("fx-mdt:client:getFinesToPay",function()
 end)
 
 RegisterNetEvent("QBCore:Client:OnPlayerLoaded",function()
-    local data=QBCore.Functions.GetPlayerData().job.name
+    local data= QBCore.Functions.GetPlayerData().job.name
     if not data=="police" then
         return
     end
@@ -217,7 +217,6 @@ RegisterNetEvent("fx-mdt:client:sendUpdateCalls",function(calls)
     SendData("getMycalls",{calls=calls})
 end)
 RegisterNetEvent("fx-mdt:client:UpdateReports",function(data)
-    print(json.encode(data))
 SendData("updateReports",{reports = data})
 end)
 RegisterNetEvent('fx-mdt:client:updateCallReport', function(id,call)
@@ -229,7 +228,6 @@ RegisterNetEvent('fx-mdt:client:deleteCall', function(id)
 end)
 
 RegisterNetEvent("fx-mdt:client:deleteReport",function(id)
-    print(id)
     SendData("delReport",{id = id})
 end)
 AddEventHandler('onResourceStart', function(resourceName)
@@ -239,9 +237,3 @@ AddEventHandler('onResourceStart', function(resourceName)
     TriggerServerEvent("fx-mdt:server:UpdateAllReports")
   end)
 
-
-RegisterCommand("cls",function(source,args)
-local Close = QBCore.Functions.GetClosestPlayer(GetEntityCoords(PlayerPedId()))
-print(Close)
-
-end)
