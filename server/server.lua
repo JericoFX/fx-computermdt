@@ -289,6 +289,7 @@ end)
 CC("fx-mdt:server:setNewReport", function(source, cb, data)
     local coords = GetEntityCoords(GetPlayerPed(source))
     local data1 = GetAllPolices()
+    print(data.report.amount)
     CT(function()
         if data.report then
             if data.report.type == "basic" then
@@ -316,10 +317,12 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
                 if data.report.bolo and data.report.isvehicle then
                     MySQL.query("UPDATE player_vehicles SET bolo = 1 WHERE plate = ?", {tostring(data.report.plate)})
                 end
-                if Res.affectedRows > 0 then
+                if Res.affectedRows > 0 and data.report.type ~= "basic" then
                     CurrentReports[#CurrentReports+1] = {data.report}
                     cb(true)
                     sendToPolicesOnly(data.report,"report")
+                elseif Res.affectedRows > 0 and data.report.type == "basic" then
+                    cb(true)
                 else
                     cb(false)
                 end

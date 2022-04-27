@@ -1,13 +1,9 @@
 <script lang="ts">
 	import {h} from 'gridjs';
 	import Grid from 'gridjs-svelte';
-	// import fines from '../../../../utils/fines';
-	import {createEventDispatcher, onMount} from 'svelte';
-	import {PoliceFines,Fines} from '../../../../store/store';
-	// $: filteredRows = fines.filter((row) => {
-	// 	if (value.toLowerCase().trim().length === 0) return row;
-	// 	return row.label.toLowerCase().includes(value);
-	// });
+	import {createEventDispatcher, onDestroy} from 'svelte';
+	import {PoliceFines, Fines} from '../../../../store/store';
+
 	let grid;
 	const dispatch = createEventDispatcher();
 	function closeModal(): void {
@@ -70,6 +66,9 @@
 			grid.forceRender();
 		}
 	}
+	onDestroy(() => {
+		$PoliceFines.length = 0;
+	});
 </script>
 
 {#if open}

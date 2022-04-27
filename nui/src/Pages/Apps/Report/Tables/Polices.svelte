@@ -1,12 +1,14 @@
 <script lang="ts">
-	import {createEventDispatcher, onMount} from 'svelte';
+	import {createEventDispatcher, onDestroy, onMount} from 'svelte';
 	import Grid from 'gridjs-svelte';
 	import {h} from 'gridjs';
 	import {PoliceLists} from '../../../../store/store';
 	export let open = false;
 	export let polices = [];
 	let grid;
-
+	onDestroy(() => {
+		$PoliceLists.length = 0;
+	});
 	onMount(() => {
 		if (polices.length > 0) {
 			grid.forceRender();

@@ -265,6 +265,8 @@ this param represent the type of the search, by name, by citizenid etc etc..
 								$Reports = $Reports;
 							}
 							reportData.id = uid();
+							console.log(reportData.amount);
+							resetTables();
 							reportData.reset();
 							m.$on('closeModal', () => (open = false));
 						} else {
@@ -303,7 +305,10 @@ this param represent the type of the search, by name, by citizenid etc etc..
 		});
 		m.$on('closeModal', () => (open = false));
 	}
-
+	function resetTables() {
+		$PoliceEvidence.length = 0;
+		$PoliceFines.length = 0;
+	}
 	async function getClosestPlayerData(): Promise<void> {
 		try {
 			await fetchNui('getClosestPlayerData', {}).then((cb) => {

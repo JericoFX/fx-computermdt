@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {fetchNui} from '../../../../utils/fetchNui';
-	import {createEventDispatcher} from 'svelte';
+	import {createEventDispatcher, onDestroy} from 'svelte';
 	import {PoliceEvidence} from '../../../../store/store';
 	import Grid from 'gridjs-svelte';
 	import {h} from 'gridjs';
@@ -56,7 +56,9 @@
 			},
 		];
 	}
-
+	onDestroy(() => {
+		$PoliceEvidence.length = 0;
+	});
 	function addData(id: string, label: string, street: string, type: string): boolean {
 		//Check if the ID is already on the Array so no Duplicate Evidence
 		if (!$PoliceEvidence.some((e) => e.id === id)) {
