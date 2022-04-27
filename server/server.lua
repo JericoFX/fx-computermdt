@@ -271,7 +271,7 @@ CC("fx-mdt:server:payFine", function(source, cb, amount, id)
             local result = MySQL.query.await("DELETE FROM fx_reports WHERE id = ?", {id})
             cb(true)
      else
-        QBCore.Functions.Notify("Not enought money","error")
+        TriggerClientEvent("QBCore:Notify",source,"Not enought money")
         cb(false)
      end
     end
