@@ -326,9 +326,10 @@ this param represent the type of the search, by name, by citizenid etc etc..
 		}
 	}
 	onDestroy(() => {
-		if (reportData.name !== '') {
-			reportData.reset();
-		}
+		// if (reportData.name !== '') {
+		// 	reportData.reset();
+		// }
+
 		clearInterval(Int);
 		resetTables();
 	});
