@@ -58,6 +58,7 @@
 	}
 	onDestroy(() => {
 		$PoliceEvidence.length = 0;
+		console.log('CALLED EVIDENCE');
 	});
 	function addData(id: string, label: string, street: string, type: string): boolean {
 		//Check if the ID is already on the Array so no Duplicate Evidence

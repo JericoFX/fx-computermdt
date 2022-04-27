@@ -8,7 +8,7 @@
 	import Searched from './Tables/Searched.svelte';
 	import {Callsign, IsBoss, Reports} from '../../../store/store';
 	import ObservationsModal from './Modals/ObservationsModal.svelte';
-	import {onMount} from 'svelte';
+	import {onDestroy, onMount} from 'svelte';
 
 	let grid: any;
 	let container: HTMLDivElement;
@@ -217,4 +217,3 @@
 	<Grid bind:instance={grid} {style} pagination={{enabled: true, limit: 3}} autoWidth data={$Reports || []} {columns} />
 	<!-- <div id="gridID" class="hide-scrollbar relative-position full-height" style="overflow:scroll;" /> -->
 </div>
-

@@ -289,7 +289,7 @@ end)
 CC("fx-mdt:server:setNewReport", function(source, cb, data)
     local coords = GetEntityCoords(GetPlayerPed(source))
     local data1 = GetAllPolices()
-    print(data.report.amount)
+
     CT(function()
         if data.report then
             if data.report.type == "basic" then

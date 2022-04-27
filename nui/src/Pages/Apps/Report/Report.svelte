@@ -12,7 +12,7 @@
 	import Evidences from './Tables/Evidences.svelte';
 	import {isEnvBrowser, SendMessage} from '../../../utils/misc';
 	import Acepted from './Modals/Acepted.svelte';
-	import {onMount} from 'svelte';
+	import {onDestroy, onMount} from 'svelte';
 	import SearchReports from './SearchReports.svelte';
 	import Fines from './Tables/Fines.svelte';
 	import {Tables} from '../../../utils/misc';
@@ -260,12 +260,12 @@ this param represent the type of the search, by name, by citizenid etc etc..
 									message: $_('report-created', {values: {0: reportData.id}}),
 								},
 							});
-							if (!$Reports.some((e) => e.id === reportData.id)) {
+							if (!$Reports.some((e) => e.id === reportData.id) && reportData.type !== 'basic') {
 								$Reports.push(reportData);
 								$Reports = $Reports;
 							}
 							reportData.id = uid();
-							console.log(reportData.amount);
+
 							resetTables();
 							reportData.reset();
 							m.$on('closeModal', () => (open = false));
@@ -325,6 +325,10 @@ this param represent the type of the search, by name, by citizenid etc etc..
 			console.log(error);
 		}
 	}
+	onDestroy(() => {
+		reportData.reset();
+		resetTables();
+	});
 </script>
 
 <div transition:fade={{duration: 100}} class="absolute-center">

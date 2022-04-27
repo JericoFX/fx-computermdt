@@ -8,6 +8,7 @@
 	let grid;
 	onDestroy(() => {
 		$PoliceLists.length = 0;
+		console.log('CALLED polices');
 	});
 	onMount(() => {
 		if (polices.length > 0) {

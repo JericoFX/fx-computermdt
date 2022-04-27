@@ -68,6 +68,7 @@
 	}
 	onDestroy(() => {
 		$PoliceFines.length = 0;
+		console.log('CALLED fines');
 	});
 </script>
 

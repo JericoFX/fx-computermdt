@@ -33,7 +33,6 @@
 	}
 	function takeRow({uid, callsign}) {
 		if (callsign === $UserInfo.callsign) {
-			console.log('No no no');
 		} else {
 			fetchNui('takeHelp', {
 				uid: uid,
