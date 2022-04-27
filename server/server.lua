@@ -257,14 +257,23 @@ end)
 CC("fx-mdt:server:payFine", function(source, cb, amount, id)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
+    local PlayerCash = Player.PlayerData.money.cash > tonumber(amount)
+    local PlayerBank = Player.PlayerData.money.bank > tonumber(amount)
     if Player.PlayerData.citizenid then
-        if Player.Functions.RemoveMoney("cash", amount, "Pago la fianza con la id "..id) then
+     if PlayerCash then
+         Player.Functions.RemoveMoney("cash", amount, "Pago la fianza con la id "..id)
             exports["qb-management"]:AddMoney("police", amount)
             local result = MySQL.query.await("DELETE FROM fx_reports WHERE id = ?", {id})
             cb(true)
-        else
-            cb(false)
-        end
+     elseif PlayerBank then
+        Player.Functions.RemoveMoney("bank", amount, "Pago la fianza con la id "..id)
+            exports["qb-management"]:AddMoney("police", amount)
+            local result = MySQL.query.await("DELETE FROM fx_reports WHERE id = ?", {id})
+            cb(true)
+     else
+        QBCore.Functions.Notify("Not enought money","error")
+        cb(false)
+     end
     end
 
 end)

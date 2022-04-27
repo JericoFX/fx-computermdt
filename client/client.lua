@@ -62,7 +62,7 @@ end)
 
 RegisterNetEvent("fx-client:payFine",function(data)
     local Amount=data.amount
-    local ID=data.id
+    local ID = data.id
     QBCore.Functions.TriggerCallback("fx-mdt:server:payFine",function(haspay)
         if haspay then
             QBCore.Functions.Notify(Lang:t('money.pay_fine'))
