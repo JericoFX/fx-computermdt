@@ -124,7 +124,7 @@
 	$: disabled = false;
 	$: disableLocale = false;
 	let jerico = 0;
-	setInterval(() => {
+	let Int = setInterval(() => {
 		jerico = Math.random() * 100;
 	}, 5000);
 
@@ -326,7 +326,10 @@ this param represent the type of the search, by name, by citizenid etc etc..
 		}
 	}
 	onDestroy(() => {
-		reportData.reset();
+		if (reportData.name !== '') {
+			reportData.reset();
+		}
+		clearInterval(Int);
 		resetTables();
 	});
 </script>
