@@ -37,5 +37,5 @@ Config.LangAvaliable={
             }}
             
 Config.DefaultLang="en"
-
+Config.Debug = false -- set this to true and will load the reports on resource start
            

@@ -178,7 +178,10 @@ RegisterCommand("mdt",function(source,args)
         QBCore.Functions.Notify(Lang:t('error.no_in_vehicle'),"error")
     end
 end,false)
-RegisterNetEvent("fx-mdt:client:setReport",function(data)
+RegisterNetEvent("fx-mdt:client:setReport",function()
+    newReport()
+end)
+function newReport()
     local Coords=GetEntityCoords(PlayerPedId())
     local x,y,z in Coords
     local StreetHash=GetStreetNameAtCoord(x,y,z)
@@ -211,7 +214,10 @@ RegisterNetEvent("fx-mdt:client:setReport",function(data)
         })
         QBCore.Functions.Notify(Lang:t('report.send'))
     end
-end)
+end
+
+exports("newReport",newReport)
+
 RegisterNetEvent("fx-mdt:client:sendUpdateCalls",function(calls)
     SendData("getMycalls",{calls=calls})
 end)
@@ -229,9 +235,11 @@ end)
 RegisterNetEvent("fx-mdt:client:deleteReport",function(id)
     SendData("delReport",{id = id})
 end)
+if Config.Debug then
 AddEventHandler('onResourceStart', function(resourceName)
     if (GetCurrentResourceName() ~= resourceName) then
       return
     end
     TriggerServerEvent("fx-mdt:server:UpdateAllReports")
   end)
+end
