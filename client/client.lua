@@ -1,6 +1,5 @@
 local Reports={}
 local Polices={}
-
 CreateThread(function()
     Wait(200)
     for k,v in each(Config.AvaliablePC) do
@@ -236,4 +235,3 @@ AddEventHandler('onResourceStart', function(resourceName)
     end
     TriggerServerEvent("fx-mdt:server:UpdateAllReports")
   end)
-

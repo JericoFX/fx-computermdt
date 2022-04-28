@@ -261,17 +261,17 @@ CC("fx-mdt:server:payFine", function(source, cb, amount, id)
     local PlayerBank = Player.PlayerData.money.bank > tonumber(amount)
     if Player.PlayerData.citizenid then
      if PlayerCash then
-         Player.Functions.RemoveMoney("cash", amount, "Pago la fianza con la id "..id)
+         Player.Functions.RemoveMoney("cash", amount, Lang:t("server.pay",{id=id}))
             exports["qb-management"]:AddMoney("police", amount)
             local result = MySQL.query.await("DELETE FROM fx_reports WHERE id = ?", {id})
             cb(true)
      elseif PlayerBank then
-        Player.Functions.RemoveMoney("bank", amount, "Pago la fianza con la id "..id)
+        Player.Functions.RemoveMoney("bank", amount, Lang:t("server.pay",{id=id}))
             exports["qb-management"]:AddMoney("police", amount)
             local result = MySQL.query.await("DELETE FROM fx_reports WHERE id = ?", {id})
             cb(true)
      else
-        TriggerClientEvent("QBCore:Notify",source,"Not enought money")
+        TriggerClientEvent("QBCore:Notify",source,Lang:t("server.no_money",{amount=amount}))
         cb(false)
      end
     end
@@ -290,10 +290,13 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
     local coords = GetEntityCoords(GetPlayerPed(source))
     local data1 = GetAllPolices()
 
+
+       
+
     CT(function()
         if data.report then
             if data.report.type == "basic" then
-                TriggerEvent("qb-phone:server:sendNewMailToOffline", data.report.citizenid, {sender = "Police Depto", subject = " Fine situation", message = "A fine has been created the amount to pay is $"..data.report.amount.." if you need more information, please go to the police station and give this code "..data.report.id.." to the officer."})
+                TriggerEvent("qb-phone:server:sendNewMailToOffline", data.report.citizenid, {sender = "Police Depto", subject = Lang:t("server.fine_situation"), message = Lang:t("server.message",{amount= data.report.amount,id = data.report.id})})
             end
             Wait(100)
             local Res = MySQL.query.await(
@@ -321,6 +324,7 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
                     CurrentReports[#CurrentReports+1] = {data.report}
                     cb(true)
                     sendToPolicesOnly(data.report,"report")
+                   
                 elseif Res.affectedRows > 0 and data.report.type == "basic" then
                     cb(true)
                 else
@@ -394,6 +398,7 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
                 for i = 1, #data1 do
                     local el = data1[i]
                     TriggerClientEvent("fx-mdt:client:deleteReport",el.src,id.id)
+                    TriggerClientEvent("QBCore:Notify",el.src,Lang:t("server.delete_report",{id = id}))
                 end
         end
     end)
@@ -429,6 +434,8 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
                 TriggerClientEvent("fx-mdt:client:UpdateAllReports", el.src, t)
             else
                 TriggerClientEvent("fx-mdt:client:UpdateReports", el.src, t)
+                TriggerClientEvent("fx-mdt:client:PlaySound",el.src)
+                TriggerClientEvent("QBCore:Notify", el.src, Lang:t("server.new_report"),"primary","5000")
             end
 
         end
@@ -452,7 +459,7 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
                     {id.id, id.location, id.coords, id.citizenid, id.name, data.callsign, id.id})
                     for i = 1, #data1 do
                         local el = data1[i]
-                        TriggerClientEvent("QBCore:Notify", el.src, "Unit: "..data.callsign.." has taken the report ID: "..id.id)
+                        TriggerClientEvent("QBCore:Notify", el.src, Lang:t("server.taked_report",{call = data.callsign,id = id.id}))
 
                         TriggerClientEvent("fx-mdt:client:updateCallReport",el.src,id.id,data.callsign)
                     end
@@ -500,7 +507,8 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
             local Update = MySQL.query("UPDATE fx_reports SET taked = 0, callsign = 'none' WHERE id = ?", {id})
             for i = 1, #data1 do
                 local el = data1[i]
-                TriggerClientEvent("QBCore:Notify", el.src, "The report ID: "..id.." Was deleted by "..callsign)
+                TriggerClientEvent("QBCore:Notify", el.src,Lang:t("server.un_report",{id = id,call = callsign}) )
+                --
                 TriggerClientEvent("fx-mdt:client:deleteCall",el.src,id)
             end
             cb(true)
@@ -534,19 +542,6 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
                 Wait(200)
                 sendToPolicesOnly({title = Title,id = id,name = name,lastname = lastname,citizenid = citizenid,observations = message, data = {evidences = {}, polices = {}, fines = {}},type = "report",location = streetName,coords = coords,taked = 0,isvehicle = 0 },"report")
             end
-            -- tostring(data.report.id),
-            -- tostring(data.report.title),
-            -- tostring(data.report.name),
-            -- tostring(data.report.lastname),
-            -- tostring(data.report.citizenid),
-            -- data.report.plate,
-            -- data.report.location,
-            -- encode(coords),
-            -- tostring(data.report.observations),
-            -- encode(data.report.data),
-            -- data.report.amount,
-            -- data.report.type or "basic",
-            -- data.report.isvehicle and 1 or 0
         end)
 
         QBCore.Commands.Add("fxr", "Update a report", {name = "id", help = "ID of the report"}, false, function(source, args)
@@ -575,7 +570,7 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
             if EX.EX == nil then
                 local Ins = MySQL.insert.await("INSERT INTO fx_helprequest (uid,code,street,coords,text,taked,callsign,takedby) VALUES (?,?,?,?,?,?,?,?)", {tostring(data.uid), data.code, data.street, encode(data.coords), data.text, 0, data.callsign, "none"})
             else
-                TriggerClientEvent("QBCore:Notify", src, "No puedes crear mas")
+                TriggerClientEvent("QBCore:Notify", src, "You can´t create more ")
             end
 
             Wait(100)

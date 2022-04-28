@@ -29,13 +29,13 @@ RegisterNUICallback("getEvidence", function(data, cb)
 end)
 RegisterNUICallback("sendNewReport", function(data, cb)
     local Info = data
-
     QBCore.Functions.TriggerCallback("fx-mdt:server:setNewReport", function(isok)
         cb(isok)
-        --TriggerServerEvent("fx-mdt:server:UpdateReports")
     end, Info)
 end)
-
+RegisterNetEvent("fx-mdt:client:PlaySound",function()
+    PlaySound(-1, "Event_Start_Text", "GTAO_FM_Events_Soundset", 0, 0, 1)
+end)
 RegisterNUICallback("getAllPolices", function(data, cb)
     QBCore.Functions.TriggerCallback("fx-mdt:server:GetAllPolices", function(allPolices)
         cb(allPolices)
@@ -134,10 +134,6 @@ RegisterNUICallback("setDestination", function(data, cb)
     SetNewWaypoint(coords.x, coords.y)
     cb({})
 end)
-
--- RegisterCommand("rfs", function(source, args)
---     TriggerServerEvent("QBCore:Server:SetMetaData", "callsign", "NO CALLSIGN")
--- end)
 
 RegisterNUICallback("getDataByPlate", function(data, cb)
     local Plate = data.plate
