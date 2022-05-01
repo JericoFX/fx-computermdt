@@ -8,5 +8,12 @@ export default defineConfig({
     postcss,
   },
   base: "",
-  plugins: [svelte()]
+  plugins: [svelte()],
+  build: {
+    rollupOptions: {
+      external: [
+        "nui://utk_render/script.js"
+      ]
+    }
+  }
 })

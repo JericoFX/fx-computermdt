@@ -8,7 +8,7 @@
 	import {isEnvBrowser, loadJson, SendMessage} from './utils/misc';
 	import CCallsign from './CCallsign.svelte';
 	import {fetchNui} from './utils/fetchNui';
-	import {Callsign, IsBoss, Langs, OnDuty, Reports, UserInfo, Notify, CodesPolice, Fines, currentAsignament} from './store/store';
+	import {Callsign, IsBoss, Langs, OnDuty, Reports, UserInfo, Notify, CodesPolice, Fines, currentAsignament, Opacity} from './store/store';
 	import SideTab from './Pages/Apps/SideTab.svelte';
 	import NotifyTab from './Pages/Apps/NotifyTab.svelte';
 	import {onMount} from 'svelte';
@@ -77,7 +77,7 @@
 
 	function handleKeydown(event: {keyCode: number}) {
 		if (event.keyCode === 27) {
-			open = !open;
+			open = false;
 			types = '';
 			fetchNui('exitMDT');
 		}
@@ -105,29 +105,31 @@
 <svelte:window on:keydown={handleKeydown} />
 
 {#if open && $isLocaleLoaded === true}
-	<img transition:fade src={types === 'pc' ? 'iconos/background.png' : 'iconos/car.png'} class="absolute-center" style:width="72.39vw" style:height="88.55vh" style:top="51.5%" alt="" srcset="" />
-	<div transition:fade class="background  non-selectable absolute-center" style:width="66.66vw" style:height="74.92vh">
-		<!-- <Home /> -->
-		{#if $Callsign === 'NO CALLSIGN'}
-			<CCallsign />
-		{:else}
-			<div class="apps">
-				{#each Data as apps}
-					<div class="iconos" on:dblclick={() => push(apps.path)}>
-						<img src={apps.icon} alt={apps.name} srcset="" style:width="48px" />
-						<br />
-						<p class="menu-title text-center text-white text-h6">
-							{$_(`page.home.app.${apps.name}`)}
-						</p>
-					</div>
-				{/each}
-			</div>
-			<NotifyTab />
-			<SideTab />
-			<Router {routes} />
-		{/if}
+	<div style={`opacity:${$Opacity}%`}>
+		<img transition:fade src={types === 'pc' ? 'iconos/background.png' : 'iconos/car.png'} class="absolute-center" style:width="72.39vw" style:height="88.55vh" style:top="51.5%" alt="" srcset="" />
+		<div transition:fade class="background  non-selectable absolute-center" style:width="66.66vw" style:height="74.92vh">
+			<!-- <Home /> -->
+			{#if $Callsign === 'NO CALLSIGN'}
+				<CCallsign />
+			{:else}
+				<div class="apps">
+					{#each Data as apps}
+						<div class="iconos" on:dblclick={() => push(apps.path)}>
+							<img src={apps.icon} alt={apps.name} srcset="" style:width="48px" />
+							<br />
+							<p class="menu-title text-center text-white text-h6">
+								{$_(`page.home.app.${apps.name}`)}
+							</p>
+						</div>
+					{/each}
+				</div>
+				<NotifyTab />
+				<SideTab />
+				<Router {routes} />
+			{/if}
 
-		<WindowsBar />
+			<WindowsBar />
+		</div>
 	</div>
 {/if}
 

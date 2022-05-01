@@ -25,11 +25,11 @@ local Translations = {
 		new_report = "Nuevo reporte recibido",
 		message = "Una multa fue puesta en su nombre, el monto es $%{amount} si necesitas mas informacion por favor ve a la estacion de policia mas cercana y brindales este codigo %{id} a los oficiales de policia.",
 		fine_situation = "Fine situation",
-		no_money = "No tienes suficiente dinero, necesitas: ${amount}",
-		pay = "Pagaste la multa con la ID: {id} ",
-		taked_report = "Unidad {call} tomo el reporte con la ID: {id}",
-		un_report = "El reporte ID: {id} fue desasignado por {call}",
-		delete_report = "El reporte ID: {id} fue borrado",
+		no_money = "No tienes suficiente dinero, necesitas: $%{amount}",
+		pay = "Pagaste la multa con la ID: %{id} ",
+		taked_report = "Unidad %{call} tomo el reporte con la ID: %{id}",
+		un_report = "El reporte ID: %{id} fue desasignado por %{call}",
+		delete_report = "El reporte ID: %{id} fue borrado",
 	},
 }
 

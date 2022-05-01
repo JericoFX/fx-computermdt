@@ -1,8 +1,9 @@
 <script lang="ts">
 	import gridjsSvelte from 'gridjs-svelte';
-
+	import ImagenShow from '../Modals/ImagenShow.svelte';
 	import Grid from 'gridjs-svelte';
 	import {createEventDispatcher, onMount} from 'svelte';
+	import {h} from 'gridjs';
 	const dispatch = createEventDispatcher();
 	export let open = false;
 	export let data = [];
@@ -29,10 +30,53 @@
 		},
 		'Jailtime',
 	];
+	const ImagesColums = [
+		{id: 'id', name: 'ID'},
+		{id: 'description', name: 'Description'},
+		{
+			id: 'link',
+			name: 'Data',
+			formatter: (_: any, row: {cells: {data: any}[]}) => {
+				return h(
+					'button',
+					{
+						onClick: () => {
+							openImage(row.cells[2].data, row.cells[1].data);
+						},
+					},
+					'Open'
+				);
+			},
+		},
+	];
+	let container;
+	function openImage(link: string, description: string): ImagenShow {
+		console.log(link, description, JSON.stringify(data.images));
+
+		let o = true;
+		let m = new ImagenShow({
+			target: container,
+			props: {
+				open: o,
+				link: link,
+				description: description,
+			},
+		});
+		m.$on('closeModal', (e) => (o = false));
+		return m;
+	}
+	function tryJson(obs) {
+		try {
+			JSON.parse(obs);
+		} catch (error) {
+			return false;
+		}
+		return true;
+	}
 </script>
 
 {#if open}
-	<div class="window absolute-center" style="z-index:3" style:max-height="70vh" style:max-width="100vh">
+	<div bind:this={container} class="window absolute-center" style="z-index:3" style:max-height="70vh" style:max-width="100vh">
 		<div class="title-bar">
 			<div class="title-bar-text">Data Viewer case: {caseID}</div>
 			<div class="title-bar-controls">
@@ -57,6 +101,12 @@
 					<fieldset>
 						<legend> Fines </legend>
 						<Grid data={data.fines || []} columns={FinesColums} pagination={{enabled: true, limit: 1}} />
+					</fieldset>
+				</div>
+				<div class="q-ml-sm">
+					<fieldset>
+						<legend> Images </legend>
+						<Grid data={tryJson(data) === true ? JSON.parse(data).images : data.images} columns={ImagesColums} pagination={{enabled: true, limit: 1}} />
 					</fieldset>
 				</div>
 			</div>

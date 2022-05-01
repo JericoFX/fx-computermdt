@@ -103,5 +103,7 @@
   "add-bolo": "Add B.O.L.O",
   "view-bolo": "View B.O.L.O",
   "report-created": "Report created with the ID: {0}",
-  "please-fill-the-plate": "Please fill the plate"
+  "please-fill-the-plate": "Please fill the plate",
+  "images": "Images",
+  "add-images": "Add Images"
 }

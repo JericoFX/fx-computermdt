@@ -3,6 +3,8 @@ import { writable } from 'svelte/store';
 export const PoliceLists = writable([]);
 export const PoliceEvidence = writable([]);
 export const PoliceFines = writable([]);
+export const PoliceImages = writable([]);
+export const Opacity = writable(100);
 export const IsBoss = writable(false);
 export const Reports = writable([]);
 export const UserInfo = writable([]);

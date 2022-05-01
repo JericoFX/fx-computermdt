@@ -8,7 +8,7 @@
 	import ShortUniqueId from 'short-unique-id';
 	import Search from './Modals/Search.svelte';
 	import Polices from './Tables/Polices.svelte';
-	import {PoliceEvidence, PoliceFines, PoliceLists, Reports} from '../../../store/store';
+	import {Opacity, PoliceEvidence, PoliceFines, PoliceImages, PoliceLists, Reports} from '../../../store/store';
 	import Evidences from './Tables/Evidences.svelte';
 	import {isEnvBrowser, SendMessage} from '../../../utils/misc';
 	import Acepted from './Modals/Acepted.svelte';
@@ -16,6 +16,9 @@
 	import SearchReports from './SearchReports.svelte';
 	import Fines from './Tables/Fines.svelte';
 	import {Tables} from '../../../utils/misc';
+	import ImageDesc from './Modals/ImageDesc.svelte';
+	import Images from './Modals/Images.svelte';
+
 	export let params = {
 		name: null,
 		lastname: '',
@@ -58,6 +61,7 @@
 			evidences: [],
 			polices: [],
 			fines: [],
+			images: [],
 		},
 		reset: () => {
 			(this.name = ''),
@@ -74,6 +78,7 @@
 					evidences: [],
 					polices: [],
 					fines: [],
+					images: [],
 				});
 			this.isvehicle = false;
 			this.plate = '';
@@ -91,6 +96,7 @@
 				evidences: [],
 				polices: [],
 				fines: [],
+				images: [],
 			},
 			rank: '',
 			coords: '',
@@ -109,6 +115,7 @@
 						evidences: [],
 						polices: [],
 						fines: [],
+						images: [],
 					});
 				this.isvehicle = false;
 				this.plate = '';
@@ -119,7 +126,7 @@
 	reportData.data.evidences = $PoliceEvidence;
 	reportData.data.polices = $PoliceLists;
 	reportData.data.fines = $PoliceFines;
-
+	reportData.data.images = $PoliceImages;
 	$: amountFines = $PoliceFines.reduce((n, {amount}) => n + amount, 0);
 	$: disabled = false;
 	$: disableLocale = false;
@@ -230,7 +237,6 @@ this param represent the type of the search, by name, by citizenid etc etc..
 		m.$on('closeAbout', () => (open = false));
 		return m;
 	}
-	let reportOpen = true;
 
 	async function sendReport() {
 		let open = true;
@@ -305,9 +311,10 @@ this param represent the type of the search, by name, by citizenid etc etc..
 		});
 		m.$on('closeModal', () => (open = false));
 	}
-	function resetTables() {
+	function resetTables(): void {
 		$PoliceEvidence.length = 0;
 		$PoliceFines.length = 0;
+		$PoliceImages.length = 0;
 	}
 	async function getClosestPlayerData(): Promise<void> {
 		try {
@@ -324,6 +331,42 @@ this param represent the type of the search, by name, by citizenid etc etc..
 		} catch (error) {
 			console.log(error);
 		}
+	}
+	async function openImage() {
+		$Opacity = 0;
+		try {
+			fetchNui('requestScreenshot', {}).then((cb) => {
+				if (cb !== null) {
+					$Opacity = 100;
+					let o = true;
+					let m = new ImageDesc({
+						target: container,
+						props: {
+							open: o,
+							message: 'Add a Description of the image',
+						},
+					});
+					m.$on('closeModal', (cb1) => {
+						const DESCRIPTION = cb1.detail.description;
+						$PoliceImages.push({id: uid(), description: DESCRIPTION, link: cb});
+					});
+				}
+			});
+		} catch (error) {
+			$Opacity = 100;
+		}
+	}
+	function openImagesList() {
+		let o = true;
+
+		let m = new Images({
+			target: container,
+			props: {
+				open: o,
+			},
+		});
+		m.$on('closeModal', () => (o = false));
+		return m;
 	}
 	onDestroy(() => {
 		// if (reportData.name !== '') {
@@ -368,7 +411,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 						<a on:click={() => openFines(false)}>{$_('page.report.menu.addmenu.fine')}</a>
 					</li>
 					<!-- svelte-ignore a11y-missing-attribute -->
-					<li role="menuitem"><a>Add Images</a></li>
+					<li role="menuitem"><a on:click={openImage}>{$_('add-images')}</a></li>
 				</ul>
 			</li>
 			<li role="menuitem" tabindex="0" aria-haspopup="true">
@@ -399,6 +442,10 @@ this param represent the type of the search, by name, by citizenid etc etc..
 					<!-- svelte-ignore a11y-missing-attribute -->
 					<li role="menuitem">
 						<a on:click={() => openFines(true)}>{$_('page.report.menu.viewmenu.vfines')}</a>
+					</li>
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<li role="menuitem">
+						<a on:click={openImagesList}>{$_('images')}</a>
 					</li>
 				</ul>
 			</li>

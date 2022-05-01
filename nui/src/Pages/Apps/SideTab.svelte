@@ -1,73 +1,12 @@
 <script lang="ts">
 	import {fetchNui} from '../../utils/fetchNui';
 	import Accordion, {Panel, Header, Content} from '@smui-extra/accordion';
-	import {OnDuty, Reports, UserInfo, IsBoss, currentAsignament, Callsign} from '../../store/store';
+	import {Reports, UserInfo, IsBoss} from '../../store/store';
 	import {slide} from 'svelte/transition';
 	import {_} from '../../utils/i18n';
 	let container: HTMLDivElement;
 	import InfoAssigment from './InfoAssigment.svelte';
-	import {useNuiEvent} from '../../utils/useNuiEvent';
 	import {isEnvBrowser, SendMessage} from '../../utils/misc';
-	// {id: string; title: string; name: string; lastname: string; citizenid: string; localization: string; data: []; type: string; assigned: []}
-	// $Reports = [
-	// 	{
-	// 		algo: 152,
-	// 		id: 'ZY2Yr',
-	// 		title: 'KELLY',
-	// 		name: 'Fatima',
-	// 		lastname: 'Santurio',
-	// 		citizenid: 'UAI83724',
-	// 		plate: '',
-	// 		location: 'Atlee Street',
-	// 		coords: '{"x":442.8395690917969,"y":-977.9208984375,"z":30.6783447265625}',
-	// 		observations: 'No observations',
-	// 		data: '{"fines":[{"category":0,"id":104,"label":"Possession of Stolen Property","jailtime":3,"amount":150}],"polices":[],"evidences":[]}',
-	// 		amount: 150,
-	// 		type: 'report',
-	// 		taked: 0,
-	// 		callsign: '0',
-	// 		isvehicle: 0,
-	// 		date: null,
-	// 	},
-	// 	{
-	// 		algo: 153,
-	// 		id: 'zu9HU',
-	// 		title: 'KELLY',
-	// 		name: 'Fatima',
-	// 		lastname: 'Santurio',
-	// 		citizenid: 'UAI83724',
-	// 		plate: '',
-	// 		location: 'Atlee Street',
-	// 		coords: '{"x":442.8395690917969,"y":-977.9208984375,"z":30.6783447265625}',
-	// 		observations: 'No observations',
-	// 		data: '{"fines":[{"category":0,"id":104,"label":"Possession of Stolen Property","jailtime":3,"amount":150}],"polices":[],"evidences":[]}',
-	// 		amount: 150,
-	// 		type: 'report',
-	// 		taked: 0,
-	// 		callsign: '0',
-	// 		isvehicle: 0,
-	// 		date: null,
-	// 	},
-	// 	{
-	// 		algo: 154,
-	// 		id: 'ui6aU',
-	// 		title: 'KELLY',
-	// 		name: 'Fatima',
-	// 		lastname: 'Santurio',
-	// 		citizenid: 'UAI83724',
-	// 		plate: '',
-	// 		location: 'Atlee Street',
-	// 		coords: '{"x":442.8395690917969,"y":-977.9208984375,"z":30.6783447265625}',
-	// 		observations: 'No observations',
-	// 		data: '{"fines":[{"category":0,"id":104,"label":"Possession of Stolen Property","jailtime":3,"amount":150}],"polices":[],"evidences":[]}',
-	// 		amount: 150,
-	// 		type: 'report',
-	// 		taked: 0,
-	// 		callsign: '0',
-	// 		isvehicle: 0,
-	// 		date: null,
-	// 	},
-	// ];
 	async function onAsign(data: any): Promise<void> {
 		data.taked = true;
 		if (!isEnvBrowser()) {
@@ -103,14 +42,13 @@
 			console.log(`SideTab 107 ${err}`);
 		}
 	}
-	function openInfo({observations, coords, location, id, callsign}): InfoAssigment {
+	function openInfo({observations, coords, location, id, callsign, data}): InfoAssigment {
 		let open = true;
-
 		let m = new InfoAssigment({
 			target: container,
 			props: {
 				open: open,
-				data: [{coords, location, id, callsign, observations}],
+				data: [{coords, location, id, callsign, observations, data}],
 			},
 		});
 		m.$on('Close', () => (open = false));

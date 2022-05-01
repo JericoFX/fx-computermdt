@@ -65,22 +65,7 @@
 							openDataContainer(row.cells[0].data, row.cells[7].data);
 						},
 					},
-					'Open'
-				);
-			},
-		},
-		{
-			id: 'observations',
-			name: 'Observations',
-			formatter: (_cell: any, row: {cells: {data: string}[]}) => {
-				return h(
-					'button',
-					{
-						onClick: () => {
-							openInformation(row.cells[8].data);
-						},
-					},
-					'Open'
+					'View Data'
 				);
 			},
 		},
@@ -106,15 +91,15 @@
 			  },
 	];
 
-	function openInformation(obs: string): ObservationsModal {
-		let open = true;
-		let m = new ObservationsModal({
-			target: container,
-			props: {open: open, obs: obs},
-		});
-		m.$on('closeModal', () => (open = false));
-		return m;
-	}
+	// function openInformation(obs: string): ObservationsModal {
+	// 	let open = true;
+	// 	let m = new ObservationsModal({
+	// 		target: container,
+	// 		props: {open: open, obs: obs},
+	// 	});
+	// 	m.$on('closeModal', () => (open = false));
+	// 	return m;
+	// }
 	async function deleteReport(id: string, isvehicle: string) {
 		if (!isEnvBrowser()) {
 			try {
@@ -138,6 +123,7 @@
 	}
 	function openDataContainer(id: any, data: any): Searched {
 		let open = true;
+		console.log(JSON.stringify(data));
 		if (!isEnvBrowser()) {
 			let m = new Searched({
 				target: container,

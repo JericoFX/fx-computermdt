@@ -37,5 +37,6 @@ Config.LangAvaliable={
             }}
             
 Config.DefaultLang="en"
-Config.Debug = false -- set this to true and will load the reports on resource start
+Config.Debug = true -- set this to true and will load the reports on resource start
+Config.Type = "discord" -- This can be "discord" and in the server you need to put the webhook, or imgur client id
            

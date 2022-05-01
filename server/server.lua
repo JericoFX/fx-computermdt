@@ -7,6 +7,11 @@ local Reportes = {}
 local CurrentInfo = {}
 local HelpRequested = {}
 local CT = CreateThread
+
+local WEBHOOK_TYPE = {
+    imgur = "", -- imgur CLIENT ID
+    discord = "" --DISCORD WEBHOOK
+}
 -----------------------------------------------
 local function deepcompare(t1, t2, ignore_mt)
     local ty1 = type(t1)
@@ -289,10 +294,6 @@ end)
 CC("fx-mdt:server:setNewReport", function(source, cb, data)
     local coords = GetEntityCoords(GetPlayerPed(source))
     local data1 = GetAllPolices()
-
-
-       
-
     CT(function()
         if data.report then
             if data.report.type == "basic" then
@@ -324,7 +325,6 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
                     CurrentReports[#CurrentReports+1] = {data.report}
                     cb(true)
                     sendToPolicesOnly(data.report,"report")
-                   
                 elseif Res.affectedRows > 0 and data.report.type == "basic" then
                     cb(true)
                 else
@@ -354,7 +354,8 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
                     taked = el.taked,
                     observations = el.observations,
                     callsign = el.callsign,
-                    amount = el.amount
+                    amount = el.amount,
+                    images = decode(el.images)
                 }
             end
             if tostring(data.type) == "all" then
@@ -373,7 +374,7 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
                         observations = el.observations,
                         taked = el.taked,
                         callsign = el.callsign,
-                        amount = el.amount
+                        amount = el.amount,
                     }
                 end
                 sendToPolicesOnly(Data)
@@ -398,7 +399,7 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
                 for i = 1, #data1 do
                     local el = data1[i]
                     TriggerClientEvent("fx-mdt:client:deleteReport",el.src,id.id)
-                    TriggerClientEvent("QBCore:Notify",el.src,Lang:t("server.delete_report",{id = id}))
+                    TriggerClientEvent("QBCore:Notify",el.src,Lang:t("server.delete_report",{id = id.id}))
                 end
         end
     end)
@@ -547,7 +548,7 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
         QBCore.Commands.Add("fxr", "Update a report", {name = "id", help = "ID of the report"}, false, function(source, args)
             local id = tostring(args[1])
             local rep = MySQL.query.await("UPDATE fx_reports SET callsign = '', taked = 0 WHERE id = ?", {id})
-            local Res = MySQL.query.await("SELECT EXISTS(SELECT 1 FROM fx_assignment WHERE caseid = ? LIMIT 1) AS EX", {id})[1]
+            local Res = MySQL.Sync.fetchSingle("SELECT EXISTS(SELECT 1 FROM fx_assignment WHERE caseid = ?) AS EX", {id})[1]
             if Res.EX == 1 then
                 local Data = MySQL.query.await("DELETE FROM fx_assignment WHERE caseid = ?", {id})
             end
@@ -556,7 +557,7 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
 
         CC("fx-mdt:server:getDataByPlate", function(source, cb, plate)
             local src < const > = source
-            local Res = MySQL.query.await("SELECT EXISTS(SELECT 1 FROM fx_reports WHERE plate = ? LIMIT 1) AS EX", {plate})[1]
+            local Res = MySQL.Sync.fetchSingle("SELECT EXISTS(SELECT 1 FROM fx_reports WHERE plate = ?) AS EX", {plate})[1]
             if Res.EX == 1 then
                 local Obs = MySQL.query.await("SELECT observations FROM fx_reports WHERE plate = ?", {plate})[1]
                 cb(Obs)
@@ -565,7 +566,7 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
 
         RegisterNetEvent("fx-mdt:server:HelpRequested", function(data)
             local src < const > = source
-            local EX = MySQL.query.await("SELECT EXISTS(SELECT 1 FROM fx_helprequest WHERE callsign = ? AND code = ? LIMIT 1) AS EX", {data.callsign, data.code})
+            local EX = MySQL.Sync.fetchSingle("SELECT EXISTS(SELECT 1 FROM fx_helprequest WHERE callsign = ? AND code = ?) AS EX", {data.callsign, data.code})
 
             if EX.EX == nil then
                 local Ins = MySQL.insert.await("INSERT INTO fx_helprequest (uid,code,street,coords,text,taked,callsign,takedby) VALUES (?,?,?,?,?,?,?,?)", {tostring(data.uid), data.code, data.street, encode(data.coords), data.text, 0, data.callsign, "none"})
@@ -610,4 +611,14 @@ QBCore.Functions.CreateCallback("fx-mdt:client:getClosestPlayerInfo",function(so
     if IsPolice(src) then
         cb({name = Player.PlayerData.charinfo.firstname,lastname = Player.PlayerData.charinfo.lastname,citizenid = Player.PlayerData.citizenid})
     end
+end)
+
+QBCore.Functions.CreateCallback("fx-mdt:server:getWebHook",function(source,cb,t)
+if WEBHOOK_TYPE[t] then
+    cb(WEBHOOK_TYPE[t])
+else
+    TriggerClientEvent("QBCore:Notify",source,"NO WEBHOOK OR CLIENT ID DETECTED","error")
+    cb(false)
+    return
+end
 end)
