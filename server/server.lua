@@ -9,8 +9,8 @@ local HelpRequested = {}
 local CT = CreateThread
 
 local WEBHOOK_TYPE = {
-    imgur = "", -- imgur CLIENT ID
-    discord = "" --DISCORD WEBHOOK
+    imgur = "",
+    discord = ""
 }
 -----------------------------------------------
 local function deepcompare(t1, t2, ignore_mt)
@@ -535,10 +535,10 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
                     streetName,
                     encode(coords),
                     tostring(message),
-                    encode({evidences = {}, polices = {}, fines = {}}),
+                    encode({evidences = {}, polices = {}, fines = {},images = {}}),
                     0,
                     "report",
-                    isvehicle = 0
+                    0
                 })
                 Wait(200)
                 sendToPolicesOnly({title = Title,id = id,name = name,lastname = lastname,citizenid = citizenid,observations = message, data = {evidences = {}, polices = {}, fines = {}},type = "report",location = streetName,coords = coords,taked = 0,isvehicle = 0 },"report")

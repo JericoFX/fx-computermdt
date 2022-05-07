@@ -97,7 +97,7 @@
 						</fieldset>
 						<fieldset class="full-width">
 							<legend>Images:</legend>
-							<Grid {columns} data={tryJson(data[0].data) === true ? JSON.parse(data[0].data).images : data[0].data.images} />
+							<Grid {columns} data={tryJson(data[0].data) === true ? JSON.parse(data[0].data).images : data[0].data.images || []} />
 						</fieldset>
 					{/each}
 				</fieldset>
