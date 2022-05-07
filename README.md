@@ -41,7 +41,9 @@ add this to the qb-radialmenu
 			},
 ```
     
-    
+## IMAGES
+Please install https://github.com/project-error/screenshot-basic and configure in the computermdt server.lua the webhook or discord id, remember to choose from Type in the config.lua
+
 ## Feedback
 
 If you have any feedback, please reach out to me in the PR
