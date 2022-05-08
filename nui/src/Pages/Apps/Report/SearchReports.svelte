@@ -90,16 +90,6 @@
 					name: "Can't Delete",
 			  },
 	];
-
-	// function openInformation(obs: string): ObservationsModal {
-	// 	let open = true;
-	// 	let m = new ObservationsModal({
-	// 		target: container,
-	// 		props: {open: open, obs: obs},
-	// 	});
-	// 	m.$on('closeModal', () => (open = false));
-	// 	return m;
-	// }
 	async function deleteReport(id: string, isvehicle: string) {
 		if (!isEnvBrowser()) {
 			try {

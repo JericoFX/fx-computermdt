@@ -1,12 +1,13 @@
 <script lang="ts">
 	import {fetchNui} from '../../utils/fetchNui';
 	import Accordion, {Panel, Header, Content} from '@smui-extra/accordion';
-	import {Reports, UserInfo, IsBoss} from '../../store/store';
+	import {Reports, UserInfo, IsBoss, OnDuty} from '../../store/store';
 	import {slide} from 'svelte/transition';
 	import {_} from '../../utils/i18n';
 	let container: HTMLDivElement;
 	import InfoAssigment from './InfoAssigment.svelte';
 	import {isEnvBrowser, SendMessage} from '../../utils/misc';
+
 	async function onAsign(data: any): Promise<void> {
 		data.taked = true;
 		if (!isEnvBrowser()) {
@@ -20,7 +21,7 @@
 					}
 				});
 			} catch (err) {
-				console.log(`27 ${err}`);
+				console.log(`23 ${err}`);
 			}
 		} else {
 			let datas = $Reports.findIndex((e) => e.id === data.id);
@@ -39,7 +40,7 @@
 				}
 			});
 		} catch (err) {
-			console.log(`SideTab 107 ${err}`);
+			console.log(`SideTab 42 ${err}`);
 		}
 	}
 	function openInfo({observations, coords, location, id, callsign, data}): InfoAssigment {
@@ -66,15 +67,15 @@
 				}
 			});
 		} catch (err) {
-			console.log(`SearchReports 85 ${err}`);
+			console.log(`SearchReports 69 ${err}`);
 		}
 	}
 </script>
 
-<!-- class:light-dimmed={$OnDuty === false ? true : false} -->
+<!--  -->
 <main>
 	<div bind:this={container} class="calls full-height" style="z-index:801">
-		<div class="window absolute-right " style="width:320px;max-height:71vh">
+		<div class:light-dimmed={$OnDuty === false ? true : false} class="window absolute-right " style="width:320px;max-height:71vh">
 			<div class="window-body  hide-scrollbar scroll" style="height:70vh">
 				<Accordion>
 					{#each $Reports as data}

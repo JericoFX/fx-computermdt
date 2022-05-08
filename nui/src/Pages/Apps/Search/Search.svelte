@@ -3,14 +3,9 @@
 	import SearchVehicle from './SearchVehicle.svelte';
 
 	import {push} from 'svelte-spa-router';
-	import {h, html} from 'gridjs';
-	import colors from '../../../utils/vehicle-colors';
-	import Grid from 'gridjs-svelte';
 
 	import {_} from '../../../utils/i18n';
-	let content;
 	let selected;
-	let grid;
 	const Apps = [
 		{
 			name: 'Vehicles',

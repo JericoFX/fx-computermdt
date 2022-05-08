@@ -29,7 +29,6 @@
 	$: if (params.reload) {
 		fetchNui('getMycalls', {cs: $UserInfo.callsign}).then((cb) => {
 			$currentAsignament = cb;
-
 			grid
 				.updateConfig({
 					data: $currentAsignament ?? [],
@@ -98,13 +97,6 @@
 		try {
 			fetchNui('deleteAssignment', {id: id, callsign: $UserInfo.callsign}).then((cb) => {
 				if (cb) {
-					// if ($currentAsignament.some((e) => e.casid === id)) {
-					// 	$currentAsignament.splice(
-					// 		$currentAsignament.findIndex((e) => e.id === id),
-					// 		1
-					// 	);
-					// }
-					// $currentAsignament = $currentAsignament;
 					grid
 						.updateConfig({
 							data: $currentAsignament ?? [],
@@ -160,10 +152,6 @@
 					</fieldset>
 				</div>
 			</fieldset>
-			<!-- <fieldset class="full-width">
-				<legend> Polices Online </legend>
-				<Grid data={[]} autoWidth search pagination={{enabled: true, page: 4}} columns={['id', 'Name', 'Last Name', 'Send Email', 'Request Help']} />
-			</fieldset> -->
 			<section class="field-row" style="justify-content: space-around;align-content:center;">
 				<button on:click={changeduty}>Change Duty</button>
 				<button on:click={getCodes}>Request Back Up </button>

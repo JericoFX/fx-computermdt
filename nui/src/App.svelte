@@ -30,6 +30,7 @@
 		defaultLangs = defaultLang;
 		$OnDuty = onduty;
 	});
+	//Load the json files for the Police codes and fines.
 	onMount(async () => {
 		setupI18n({withLocale: defaultLangs});
 		$CodesPolice = await loadJson('utils/codes.json');
@@ -75,14 +76,16 @@
 		$currentAsignament = $currentAsignament;
 	});
 
+	//Function that is called when the user presses the escape key.
 	function handleKeydown(event: {keyCode: number}) {
 		if (event.keyCode === 27) {
-			open = false;
+			open = false; // set open to false, that close the nui
 			types = '';
-			fetchNui('exitMDT');
+			fetchNui('exitMDT'); // Send the event to LUA so it can hide the cursor
 		}
 		1;
 	}
+	// APPS
 	const Data: {name: string; icon: string; path: string}[] = [
 		{
 			name: 'report',

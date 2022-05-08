@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {h} from 'gridjs';
 	import Grid from 'gridjs-svelte';
-	import {createEventDispatcher, onDestroy} from 'svelte';
+	import {createEventDispatcher, onDestroy, onMount} from 'svelte';
 	import {PoliceFines, Fines} from '../../../../store/store';
 
 	let grid;
@@ -66,9 +66,8 @@
 			grid.forceRender();
 		}
 	}
-	onDestroy(() => {
-		$PoliceFines.length = 0;
-		console.log('CALLED fines');
+	onMount(() => {
+		grid.forceRender();
 	});
 </script>
 

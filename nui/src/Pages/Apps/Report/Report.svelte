@@ -42,7 +42,7 @@
 		{id: 'report', text: 'Report'},
 	];
 	$: select = 0;
-	let reportData = {
+	const newLocal = {
 		id: uid(),
 		name: '',
 		lastname: '',
@@ -84,6 +84,7 @@
 			this.plate = '';
 		},
 	};
+	let reportData = newLocal;
 	$: if (params.title !== null) {
 		reportData = {
 			...params,
@@ -148,7 +149,7 @@
 	}
 	/*
 *Param Type:String
-this param represent the type of the search, by name, by citizenid etc etc..
+	this param represent the type of the search, by name, by citizenid etc etc..
 */
 	function openSearch(type: string): Search {
 		let open = true;
@@ -250,7 +251,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 				},
 			});
 			m.$on('closeModal', () => (open = false));
-			return;
+			return m;
 		} else {
 			if (!isEnvBrowser()) {
 				try {
@@ -356,7 +357,7 @@ this param represent the type of the search, by name, by citizenid etc etc..
 			$Opacity = 100;
 		}
 	}
-	function openImagesList() {
+	function openImagesList(): Images {
 		let o = true;
 
 		let m = new Images({
@@ -369,10 +370,6 @@ this param represent the type of the search, by name, by citizenid etc etc..
 		return m;
 	}
 	onDestroy(() => {
-		// if (reportData.name !== '') {
-		// 	reportData.reset();
-		// }
-
 		clearInterval(Int);
 		resetTables();
 	});

@@ -8,14 +8,8 @@
 	export let open = false;
 	export let data = [];
 	export let caseID = '';
-	let grid;
-	onMount(() => {
-		grid.forceRender();
-	});
-	// $: if (data.length) {
-	// 	;
-	// }
-	function closeModal() {
+
+	function closeModal(): void {
 		open = false;
 		dispatch('closeModal1', {});
 	}
@@ -51,8 +45,6 @@
 	];
 	let container;
 	function openImage(link: string, description: string): ImagenShow {
-		console.log(link, description, JSON.stringify(data.images));
-
 		let o = true;
 		let m = new ImagenShow({
 			target: container,

@@ -15,7 +15,6 @@
 	function closeModal(cas: boolean) {
 		if (cas) {
 			let op = true;
-
 			let m = new Acepted({
 				target: container,
 				props: {

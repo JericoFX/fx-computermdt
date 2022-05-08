@@ -331,8 +331,8 @@ RegisterNUICallback(
             "fx-mdt:server:getWebHook",
             function(CLIENT_ID)
                 if CLIENT_ID then
-                    
-               
+
+
                 -- Code from qb-phone
                 SetNuiFocus(false, false)
                 CreateMobilePhone(1)
@@ -386,7 +386,7 @@ RegisterNUICallback(
                         takePhoto = false
                     end
 
-                
+
                     end
                     HideHudComponentThisFrame(7)
                     HideHudComponentThisFrame(8)
@@ -404,8 +404,7 @@ RegisterNUICallback(
     end
 )
 
-RegisterCommand("dp",function() 
+RegisterCommand("dp",function()
     DestroyMobilePhone()
     CellCamActivate(false, false)
-
 end)

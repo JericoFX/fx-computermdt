@@ -133,6 +133,7 @@ local contain = {
 
 
 function GetVehicleByData(citizenid)
+    print(citizenid)
     local veh = contain["getVehicleInfo"]("citizenid", citizenid)
     local p = promise.new()
     local vehInfo = {} -- DONT LIKE THIS, NEED TO MAKE IT BETTER
@@ -566,9 +567,10 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
 
         RegisterNetEvent("fx-mdt:server:HelpRequested", function(data)
             local src < const > = source
-            local EX = MySQL.Sync.fetchSingle("SELECT EXISTS(SELECT 1 FROM fx_helprequest WHERE callsign = ? AND code = ?) AS EX", {data.callsign, data.code})
-
-            if EX.EX == nil then
+           
+            --https://overextended.github.io/docs/oxmysql/Usage/scalar
+            local EX = MySQL.scalar.await("SELECT EXISTS(SELECT 1 FROM fx_helprequest WHERE callsign = ? AND code = ?) AS EX", {data.callsign, data.code})
+            if EX == 0 then
                 local Ins = MySQL.insert.await("INSERT INTO fx_helprequest (uid,code,street,coords,text,taked,callsign,takedby) VALUES (?,?,?,?,?,?,?,?)", {tostring(data.uid), data.code, data.street, encode(data.coords), data.text, 0, data.callsign, "none"})
             else
                 TriggerClientEvent("QBCore:Notify", src, "You can´t create more ")
@@ -622,3 +624,6 @@ else
     return
 end
 end)
+function log(text)
+    print(json.encode(text, { pretty = true, indent = "  ", align_keys = true }))
+end
