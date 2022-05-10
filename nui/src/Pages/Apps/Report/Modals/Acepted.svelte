@@ -11,7 +11,6 @@
 	}
 </script>
 
-A conditional block. If the value of `open` is true, then the block is rendered.
 {#if open}
 	<div class="window absolute-center" style:max-width="100vh">
 		<div class="title-bar" />

@@ -580,7 +580,6 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
             TriggerEvent("fx-mdt:server:SendHelpOnLogin")
 
         end)
-
         RegisterNetEvent("fx-mdt:server:SendHelpOnLogin", function()
             Wait(100)
             local p = promise.new()
