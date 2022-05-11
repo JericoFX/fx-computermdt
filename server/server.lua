@@ -318,14 +318,20 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
                     data.report.type or "basic",
                     data.report.isvehicle and 1 or 0
                 })
-
+                
                 if data.report.bolo and data.report.isvehicle then
                     MySQL.query("UPDATE player_vehicles SET bolo = 1 WHERE plate = ?", {tostring(data.report.plate)})
                 end
                 if Res.affectedRows > 0 and data.report.type ~= "basic" then
                     CurrentReports[#CurrentReports+1] = {data.report}
                     cb(true)
+                    for i = 1, #data1 do
+                        local el = data1[i]
+                     
+                        TriggerClientEvent("fx-mdt:client:SendNotify",el.src,data.report.type,data.report.observations,data.report.location) 
+                    end
                     sendToPolicesOnly(data.report,"report")
+                   
                 elseif Res.affectedRows > 0 and data.report.type == "basic" then
                     cb(true)
                 else
@@ -334,6 +340,13 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
         end
     end)
     end)
+QBCore.Functions.CreateCallback("fx-mdt:server:GetAllMenuReports",function(source,cb)
+
+    
+
+end)
+
+
 
     CC("fx-mdt:server:getReportData", function(source, cb, data)
         local Data = {}
@@ -521,10 +534,15 @@ CC("fx-mdt:server:setNewReport", function(source, cb, data)
         local src = source
         local id = uuid()
         local Title = "Basic Report"
-
+        local data1 = GetAllPolices()
         if type(data) == "table" then
            local streetName, coords, name, lastname, citizenid, phone, message in data
-            MySQL.query(
+           for i = 1, #data1 do
+            local el = data1[i]
+            TriggerClientEvent("fx-mdt:client:SendNotify",el.src,"Report",message,streetName)
+        end
+           
+           MySQL.query(
                 "INSERT INTO fx_reports (id, title, name, lastname, citizenid, plate, location, coords, observations, data, amount, type,isvehicle) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)",
                 {
                     tostring(id),

@@ -145,6 +145,10 @@ RegisterNetEvent("fx-mdt:client:openTablet", function()
 	})
 	SetNuiFocus(true, true)
 end)
+RegisterNetEvent("fx-mdt:client:SendNotify",function(typeOfNotify,message,location) 
+	SendData("newNotification",{message = message,location = location,typeOfDispatch = typeOfNotify})
+end)
+
 
 RegisterCommand("mdt", function(source, args)
 

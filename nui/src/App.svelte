@@ -12,7 +12,9 @@
 	import SideTab from './Pages/Apps/SideTab.svelte';
 	import NotifyTab from './Pages/Apps/NotifyTab.svelte';
 	import {onMount} from 'svelte';
+	import Notifications from './Pages/Notification/Notifications.svelte';
 	let open = isEnvBrowser() ? true : false;
+	let container;
 	useNuiEvent('getHelpRequest', ({data}) => {
 		$Notify = data;
 		$Notify = $Notify;
@@ -103,14 +105,28 @@
 			path: `/My/${true}`,
 		},
 	];
+	useNuiEvent('newNotification', ({message, typeOfDispatch, location}) => {
+		let o = true;
+
+		let m = new Notifications({
+			target: document.getElementById('id'),
+			props: {
+				open: o,
+				message: message,
+				typeOfDispatch: typeOfDispatch,
+				location: location,
+			},
+		});
+		m.$on('closeNoti', () => (o = false));
+	});
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
-
+<div class="fit" id="id" />
 {#if open && $isLocaleLoaded === true}
 	<div style={`opacity:${$Opacity}%`}>
 		<img transition:fade src={types === 'pc' ? 'iconos/background.png' : 'iconos/car.png'} class="absolute-center" style:width="72.39vw" style:height="88.55vh" style:top="51.5%" alt="" srcset="" />
-		<div transition:fade class="background  non-selectable absolute-center" style:width="66.66vw" style:height="74.92vh">
+		<div bind:this={container} transition:fade class="background  non-selectable absolute-center" style:width="66.66vw" style:height="74.92vh">
 			<!-- <Home /> -->
 			{#if $Callsign === 'NO CALLSIGN'}
 				<CCallsign />
@@ -134,6 +150,7 @@
 			<WindowsBar />
 		</div>
 	</div>
+	<!-- <Notifications /> -->
 {/if}
 
 <style>

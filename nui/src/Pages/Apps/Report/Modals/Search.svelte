@@ -4,6 +4,7 @@
 	import UserList from './UserList.svelte';
 	export let open = false;
 	export let type = '';
+	let container;
 	$: searchName = '';
 	const dispatch = createEventDispatcher();
 	const closeModal = () => {
@@ -21,7 +22,7 @@
 			}).then((cb) => {
 				if (cb) {
 					let m = new UserList({
-						target: document.getElementById('id'),
+						target: container,
 						props: {
 							open: open,
 							data: cb,
@@ -51,7 +52,7 @@
 </script>
 
 {#if open}
-	<div class="absolute-center">
+	<div bind:this={container} class="div absolute-center" style:z-index="999">
 		<div class="window" style="max-width: 100vh">
 			<div class="title-bar">
 				<div class="title-bar-text">Search by {type}</div>
