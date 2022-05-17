@@ -152,7 +152,12 @@ RegisterNUICallback(
     function(data, cb)
         local ID = data.caseinfo
         local Data = data.userData
-        local coords = json.decode(ID.coords)
+        local coords
+       if ID.coords == "string" then
+        coords =  json.decode(ID.coords)
+       else
+        coords = ID.coords
+       end
         QBCore.Functions.TriggerCallback(
             "fx-mdt:server:updateReport",
             function(cb1)
