@@ -334,8 +334,8 @@ RegisterNUICallback(
     function(data, cb)
         QBCore.Functions.TriggerCallback(
             "fx-mdt:server:getWebHook",
-            function(CLIENT_ID)
-                if CLIENT_ID then
+            function(has,CLIENT_ID)
+                if has and CLIENT_ID then
 
 
                 -- Code from qb-phone
@@ -403,7 +403,8 @@ RegisterNUICallback(
                     Wait(0)
                 end
             else
-                return
+                QBCore.Functions.Notify("No Webhook Detected","error")
+                cb(nil)
             end
             end,Config.Type)
     end

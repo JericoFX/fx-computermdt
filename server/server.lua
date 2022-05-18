@@ -633,8 +633,8 @@ QBCore.Functions.CreateCallback("fx-mdt:client:getClosestPlayerInfo",function(so
 end)
 
 QBCore.Functions.CreateCallback("fx-mdt:server:getWebHook",function(source,cb,t)
-if WEBHOOK_TYPE[t] then
-    cb(WEBHOOK_TYPE[t])
+if WEBHOOK_TYPE[t] ~= "" then
+    cb(true,WEBHOOK_TYPE[t])
 else
     TriggerClientEvent("QBCore:Notify",source,"NO WEBHOOK OR CLIENT ID DETECTED","error")
     cb(false)

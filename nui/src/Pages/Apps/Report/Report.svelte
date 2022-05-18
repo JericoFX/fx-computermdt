@@ -337,21 +337,32 @@
 		$Opacity = 0;
 		try {
 			fetchNui('requestScreenshot', {}).then((cb) => {
-				if (cb !== null) {
+				if (cb === null || cb === false) {
 					$Opacity = 100;
-					let o = true;
-					let m = new ImageDesc({
+					let a = true;
+					let m = new Acepted({
 						target: container,
 						props: {
-							open: o,
-							message: 'Add a Description of the image',
+							open: a,
+							message: 'ERROR No Webhook detected',
 						},
 					});
-					m.$on('closeModal', (cb1) => {
-						const DESCRIPTION = cb1.detail.description;
-						$PoliceImages.push({id: uid(), description: DESCRIPTION, link: cb});
-					});
+					m.$on('closeModal', () => (a = false));
+					return
 				}
+				$Opacity = 100;
+				let o = true;
+				let m = new ImageDesc({
+					target: container,
+					props: {
+						open: o,
+						message: 'Add a Description of the image',
+					},
+				});
+				m.$on('closeModal', (cb1) => {
+					const DESCRIPTION = cb1.detail.description;
+					$PoliceImages.push({id: uid(), description: DESCRIPTION, link: cb});
+				});
 			});
 		} catch (error) {
 			$Opacity = 100;
